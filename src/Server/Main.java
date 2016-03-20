@@ -1,5 +1,0 @@
-package Server;
-
-class Main {
-
-}
