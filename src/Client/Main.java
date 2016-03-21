@@ -1,5 +1,0 @@
-package Client;
-
-class Main {
-
-}
