@@ -9,14 +9,6 @@ import java.util.HashMap;
 public class Server {
     
 	private ServerSocket Server;
-	private String localIP;
-	private String outsideIP;
-	private String masterDom;
-	private String masterPort;
-	
-	private HashMap<Integer,ClienteInfo> clientes;
-	
-	
 	
 	public Server(int port) throws IOException {
 		this.Server = new ServerSocket(port);
@@ -35,4 +27,16 @@ public class Server {
 			t.start();            
         }
 	}
+	
+	public static void main(String argv[]){
+		try {
+			Server s = new Server(6969);
+			s.startServer();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	
 }

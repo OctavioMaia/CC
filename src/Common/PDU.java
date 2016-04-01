@@ -57,8 +57,9 @@ public class PDU {
 			ops[i]=data[i+3];
 		 }
 		 //comecar no 7
-		 byte[] datai = new byte[49152];
-		 for (int i = 0; i < 49152; i++) { //49145
+		 byte[] datai = new byte[49145];
+		 for (int i = 0; i < 49145; i++) { //49145
+			 //System.out.println(7+i);
 			datai[i]=data[7+i];
 		 }
 		 PDU p = new PDU(ver, sec, tip, ops[0], ops[1], ops[2], ops[3], datai);
