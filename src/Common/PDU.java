@@ -1,6 +1,7 @@
 package Common;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class PDU {
 	 //private int inc = 0;
@@ -11,7 +12,6 @@ public class PDU {
 	 private byte op2;
 	 private byte op3;
 	 private byte op4;
-	 private byte nbit;
 	 private byte[] sizebytes;
 	 private byte[] data;
 	 
@@ -35,14 +35,7 @@ public class PDU {
 	 public static byte PROBE_RESPONSE =0x04;
 	 public static byte REQUEST =0x05;
 	 public static byte DATA =0x06;
-	 
-	 public byte getNbit() {
-		return nbit;
-	}
-
-	public void setNbit(byte nbit) {
-		this.nbit = nbit;
-	}
+	
 
 
 
@@ -59,34 +52,30 @@ public class PDU {
 	 
 	 static public byte[] toBytes(PDU pdu){
 		 byte[] obj=new byte[49152];
-		 obj[0]=pdu.getVersion();
-		 obj[1]=pdu.getSecurity();
-		 obj[2]=pdu.getTipo();
+		 int objpos=0;
+		 obj[objpos++]=pdu.getVersion();
+		 obj[objpos++]=pdu.getSecurity();
+		 obj[objpos++]=pdu.getTipo();
 		 byte[] tmp = pdu.getOptions();
 		 for (int i = 0; i < tmp.length; i++) { //4
-			obj[3+i]=tmp[i];
+			obj[objpos++]=tmp[i];
 		 }
-		 obj[7]=pdu.getNbit();
 		 //comecar no 8
-		 int objpos = 8;
+
 		 tmp=pdu.getSizebytes();
-		 for(int i =0;i<(int)obj[7];i++){
-			 obj[objpos]=tmp[i];
-			 objpos++;
+		 for(int i =0;i<intfromByte(tmp);i++){
+			 obj[objpos++]=tmp[i];
 		 }
+		 
 		 //calcular tamanho do  dados a partir do byre[]
 		 int tamanho  = intfromByte(pdu.getSizebytes());
 		 tmp=pdu.getData();
-		 for (int i = 0; i < tmp.length; i++) { //49145
-			obj[objpos]=tmp[i];
-			objpos++;
+		 for (int i = 0; i < tamanho; i++) { //49145
+			obj[objpos++]=tmp[i];
 		 }
 		 return obj;
 	 }
 	 
-	 static private int round(double i, int v){
-		    return (int)Math.round(i/v) * v;
-	}
 	 
 	 static private int intfromByte(byte[] sizebytes){
 		 ByteBuffer wrapped = ByteBuffer.wrap(sizebytes); 
@@ -94,8 +83,8 @@ public class PDU {
 	 }
 	 
 	 static private byte[] bytefromInt(int integer){
-		 int nbit = round(mlog(2,integer*1.0),8);
-		 ByteBuffer dbuf = ByteBuffer.allocate(nbit/8);
+
+		 ByteBuffer dbuf = ByteBuffer.allocate(4);
 		 dbuf.putInt(integer);
 		 return  dbuf.array();
 	 }
@@ -113,10 +102,9 @@ public class PDU {
 		 for (int i = 0; i < 4; i++) { //4
 			ops[i]=data[objpos++];
 		 }
-		 byte nbit = data[objpos++];
 		 
-		 byte[] sizebytes = new byte[(int)nbit];
-		 for(int i =0 ; i<(int)nbit;i++){
+		 byte[] sizebytes = new byte[4];
+		 for(int i =0 ; i<4;i++){
 			 sizebytes[i]=data[objpos++];
 		 }
 		 // apartirn do byte[ calcular  o tamanho
@@ -140,8 +128,9 @@ public class PDU {
 		 this.op3=op3; // numeracao atual
 		 this.op4=op4; // numeraçao total
 		 int tamanhodados = data.length;
+		 System.out.println(Arrays.toString(data) + " ->"+data.length);
+		 System.out.println(new String(data));
 		 byte[] sizebytes = bytefromInt(data.length);
-		 this.nbit = (byte)sizebytes.length;
 		 this.sizebytes=sizebytes;
 		 
 		 this.data = new byte[tamanhodados];
