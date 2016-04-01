@@ -113,6 +113,13 @@ public class PDU {
 		 for (int i = 0; i < 4; i++) { //4
 			ops[i]=data[objpos++];
 		 }
+<<<<<<< HEAD
+		 //comecar no 7
+		 byte[] datai = new byte[49145];
+		 for (int i = 0; i < 49145; i++) { //49145
+			 //System.out.println(7+i);
+			datai[i]=data[7+i];
+=======
 		 byte nbit = data[objpos++];
 		 
 		 byte[] sizebytes = new byte[(int)nbit];
@@ -124,6 +131,7 @@ public class PDU {
 		 byte[] datai = new byte[tamanho];
 		 for (int i = 0; i < tamanho; i++) {
 			datai[i]=data[objpos++];
+>>>>>>> master
 		 }
 		 PDU p = new PDU(ver, sec, tip, ops[0], ops[1], ops[2], ops[3], datai);
 		 return p;
