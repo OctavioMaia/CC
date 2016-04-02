@@ -28,10 +28,11 @@ public class PDU_APP_REG extends PDU_APP{
 		result = prime * result + ((uname == null) ? 0 : uname.hashCode());
 		return result;
 	}
+	
 	@Override
 	public String toString() {
-		return "Super " + super.toString() + "_ PDU_APP_REG [origem=" + origem + ", tipo=" + tipo + ", uname=" + uname + ", pass=" + pass + ", ip=" + ip
-				+ ", port=" + port + "]";
+		return "PDU_APP_REG [origem=" + origem + ", tipo=" + tipo + ", uname=" + uname + ", pass=" + pass + ", ip=" + ip
+				+ ", port=" + port + ", toString()=" + super.toString() + "]";
 	}
 	@Override
 	public boolean equals(Object obj) {
