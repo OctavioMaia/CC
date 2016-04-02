@@ -1,6 +1,7 @@
 package Common;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 public class PDU {
 	 //private int inc = 0;
@@ -11,7 +12,6 @@ public class PDU {
 	 private byte op2;
 	 private byte op3;
 	 private byte op4;
-	 private byte nbit;
 	 private byte[] sizebytes;
 	 private byte[] data;
 	 
@@ -22,80 +22,63 @@ public class PDU {
 	public void setSizebytes(byte[] sizebytes) {
 		this.sizebytes = sizebytes;
 	}
-
-
-
 	
-	 
-	 
-	 public static byte REGISTER =0x00;
-	 public static byte CONSULT_REQUEST =0x01;
-	 public static byte CONSULT_RESPONSE =0x02;
-	 public static byte PROBE_REQUEST =0x03;
-	 public static byte PROBE_RESPONSE =0x04;
-	 public static byte REQUEST =0x05;
-	 public static byte DATA =0x06;
-	 
-	 public byte getNbit() {
-		return nbit;
-	}
-
-	public void setNbit(byte nbit) {
-		this.nbit = nbit;
-	}
+	 public static final byte REGISTER =0x00;
+	 public static final byte CONSULT_REQUEST =0x01;
+	 public static final byte CONSULT_RESPONSE =0x02;
+	 public static final byte PROBE_REQUEST =0x03;
+	 public static final byte PROBE_RESPONSE =0x04;
+	 public static final byte REQUEST =0x05;
+	 public static final byte DATA =0x06;
+	
 
 
 
 	//Nossos
-	 public static byte ARE_YOU_THERE =0x07;
-	 public static byte I_AM_HERE =0x08;
-	 public static byte CONFIRM =0x09;
-	 public static byte ACK =0x0A;
-	 public static byte REGISTER_RESPONSE =0x0B;
+	 public static final byte ARE_YOU_THERE =0x07;
+	 public static final byte I_AM_HERE =0x08;
+	 public static final byte CONFIRM =0x09;
+	 public static final byte ACK =0x0A;
+	 public static final byte REGISTER_RESPONSE =0x0B;
 	 
-	 private static double mlog(int base, double n){
-		 return (Math.log(n) / Math.log(base));
+	 public int getTotalSize(){
+		 int dataSize = PDU.intfromByte(this.getSizebytes());
+		 return dataSize+4+7;
 	 }
 	 
 	 static public byte[] toBytes(PDU pdu){
-		 byte[] obj=new byte[49152];
-		 obj[0]=pdu.getVersion();
-		 obj[1]=pdu.getSecurity();
-		 obj[2]=pdu.getTipo();
+		 byte[] obj=new byte[pdu.getTotalSize()];
+		 int objpos=0;
+		 obj[objpos++]=pdu.getVersion();
+		 obj[objpos++]=pdu.getSecurity();
+		 obj[objpos++]=pdu.getTipo();
 		 byte[] tmp = pdu.getOptions();
 		 for (int i = 0; i < tmp.length; i++) { //4
-			obj[3+i]=tmp[i];
+			obj[objpos++]=tmp[i];
 		 }
-		 obj[7]=pdu.getNbit();
-		 //comecar no 8
-		 int objpos = 8;
+
 		 tmp=pdu.getSizebytes();
-		 for(int i =0;i<(int)obj[7];i++){
-			 obj[objpos]=tmp[i];
-			 objpos++;
+		 for(int i =0;i<4;i++){
+			 obj[objpos++]=tmp[i];
 		 }
+		 
 		 //calcular tamanho do  dados a partir do byre[]
 		 int tamanho  = intfromByte(pdu.getSizebytes());
 		 tmp=pdu.getData();
-		 for (int i = 0; i < tmp.length; i++) { //49145
-			obj[objpos]=tmp[i];
-			objpos++;
+		 for (int i = 0; i < tamanho; i++) { //49145
+			obj[objpos++]=tmp[i];
 		 }
 		 return obj;
 	 }
 	 
-	 static private int round(double i, int v){
-		    return (int)Math.round(i/v) * v;
-	}
 	 
-	 static private int intfromByte(byte[] sizebytes){
+	 static public int intfromByte(byte[] sizebytes){
 		 ByteBuffer wrapped = ByteBuffer.wrap(sizebytes); 
 		 return wrapped.getInt(); 
 	 }
 	 
-	 static private byte[] bytefromInt(int integer){
-		 int nbit = round(mlog(2,integer*1.0),8);
-		 ByteBuffer dbuf = ByteBuffer.allocate(nbit/8);
+	 static public byte[] bytefromInt(int integer){
+		 ByteBuffer dbuf = ByteBuffer.allocate(4);
 		 dbuf.putInt(integer);
 		 return  dbuf.array();
 	 }
@@ -113,10 +96,9 @@ public class PDU {
 		 for (int i = 0; i < 4; i++) { //4
 			ops[i]=data[objpos++];
 		 }
-		 byte nbit = data[objpos++];
 		 
-		 byte[] sizebytes = new byte[(int)nbit];
-		 for(int i =0 ; i<(int)nbit;i++){
+		 byte[] sizebytes = new byte[4];
+		 for(int i =0 ; i<4;i++){
 			 sizebytes[i]=data[objpos++];
 		 }
 		 // apartirn do byte[ calcular  o tamanho
@@ -140,13 +122,9 @@ public class PDU {
 		 this.op3=op3; // numeracao atual
 		 this.op4=op4; // numeraçao total
 		 int tamanhodados = data.length;
-		 byte[] sizebytes = bytefromInt(data.length);
-		 this.nbit = (byte)sizebytes.length;
-		 this.sizebytes=sizebytes;
-		 
+		 this.sizebytes = bytefromInt(tamanhodados);	 
 		 this.data = new byte[tamanhodados];
-		 int i=0;
-		 for (i = 0;  i< tamanhodados; i++) {
+		 for (int i = 0;  i< tamanhodados; i++) {
 			 this.data[i]=data[i];
 			
 		}
@@ -203,6 +181,52 @@ public class PDU {
 	}
 
 
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(data);
+		result = prime * result + op1;
+		result = prime * result + op2;
+		result = prime * result + op3;
+		result = prime * result + op4;
+		result = prime * result + security;
+		result = prime * result + Arrays.hashCode(sizebytes);
+		result = prime * result + tipo;
+		result = prime * result + version;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		PDU other = (PDU) obj;
+		if (!Arrays.equals(data, other.data))
+			return false;
+		if (op1 != other.op1)
+			return false;
+		if (op2 != other.op2)
+			return false;
+		if (op3 != other.op3)
+			return false;
+		if (op4 != other.op4)
+			return false;
+		if (security != other.security)
+			return false;
+		if (!Arrays.equals(sizebytes, other.sizebytes))
+			return false;
+		if (tipo != other.tipo)
+			return false;
+		if (version != other.version)
+			return false;
+		return true;
+	}
 
 	public byte[] getData() {
 		return data;
