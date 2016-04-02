@@ -21,10 +21,11 @@ public class Teste {
 	 }
 	 
 	public static void main(String[] argv){
+		jms();
 		/*PDU info = PDU_Buider.REGISTER_PDU(1, "JMS", "123", "192.168.1.1", 6970);
 		byte[] infoA = PDU.toBytes(info);
 		PDU info2 = PDU.fromBytes(infoA);
-		System.out.println(info2.getData().toString());*/
+		System.out.println(info2.getData().toString());
 		//System.out.println(Integer.toBinaryString(48).length());
 		byte[] a = bytefromInt(48*1024);
 		for (int i = 0; i < a.length; i++) {
@@ -42,7 +43,7 @@ public class Teste {
 		System.out.println(Arrays.toString(bs));
 		
 		byte b = (byte) Integer.parseInt("11111",2);
-		System.out.print(Byte.toString(b)+"\n");*/
+		System.out.print(Byte.toString(b)+"\n");
 		
 		
 		try {
@@ -50,7 +51,25 @@ public class Teste {
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		
+		
+	}
+	static private void jms(){
+		PDU info = PDU_Buider.REGISTER_PDU(1, "JMS", "123", "192.168.1.1", 6970);
+		byte[] infoA = PDU.toBytes(info);
+		PDU info2 = PDU.fromBytes(infoA);
+		PDU_APP pa = PDU_Reader.read(info2);
+		System.out.println(pa.toString());
+		
+		PDU resp = PDU_Buider.REGISTER_PDU_RESPONSE(1);
+		//PDU_Reader.read(PDU.toBytes(resp)).toString();
+		System.out.println(PDU_Reader.read(PDU.toBytes(resp)).toString());
+		
+		PDU arethere = PDU_Buider.ARE_YOU_THERE_PDU("192.168.1.1", 9685);
+		System.out.println(PDU_Reader.read(PDU.toBytes(arethere)).toString());
+		PDU amhere = PDU_Buider.I_AM_HERE_PDU("192.168.1.2", 21);
+		System.out.println(PDU_Reader.read(PDU.toBytes(amhere)).toString());
 		
 	}
 }

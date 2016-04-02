@@ -48,13 +48,15 @@ public final class PDU_Buider {
 		return ret;
 	}
 	
-	static public  PDU ARE_YOU_THERE_PDU(){ //ver se tem de mandar o ip e porta de respsota
-		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ARE_YOU_THERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,new byte[0]);
+	static public  PDU ARE_YOU_THERE_PDU(String ip, int port){ //ver se tem de mandar o ip e porta de respsota
+		String mensagem = "IP_"+ip+";PT_"+port;
+		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ARE_YOU_THERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
 		return ret;
 	}
 	
-	static public  PDU I_AM_HEREE_PDU(){ //ver se tem de mandar o ip e porta de respsota
-		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.I_AM_HERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,new byte[0]);
+	static public  PDU I_AM_HERE_PDU(String ip, int port){ //ver se tem de mandar o ip e porta de respsota
+		String mensagem = "IP_"+ip+";PT_"+port;
+		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.I_AM_HERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
 		return ret;
 	}
 
