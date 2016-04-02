@@ -37,32 +37,22 @@ public class ServerConnection implements Runnable{
 	
     public void run() {
     	byte[] pdu = new byte[49152];
+    	byte aux[] = new byte[1];
+    	
     	while(sockCliente.isConnected()){
     		try {
-				is.read(pdu, 0, 8);
+				is.read(aux, 0, 8);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
     		
-    		PDU register = PDU.fromBytes(pdu);
+    		int j=0;
+    		pdu[]
+    		
+    		System.out.println(register.getVersion());
     		
     		
-    		switch (register.getTipo()) {
-			case 0x00 :
-				//REGISTER
-				
-				break;
-
-			case 0x01 : 
-				// CONSULT_REQUEST
-				
-			case 0x02 :
-				// CONSULT_RESPONSE
-			
-			default:
-				break;
-			}
     		
     		System.out.println(register.getSecurity());
     		register.getTipo();
