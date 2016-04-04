@@ -37,28 +37,22 @@ public class ServerConnection implements Runnable{
 	
     public void run() {
     	byte[] pdu = new byte[49152];
-    	byte aux[] = new byte[1];
     	
     	while(sockCliente.isConnected()){
     		try {
-				is.read(aux, 0, 8);
+				is.read(pdu, j*8, 8);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-    		
+    	
     		int j=0;
-    		pdu[]
     		
     		System.out.println(register.getVersion());
     		
-    		
-    		
     		System.out.println(register.getSecurity());
     		register.getTipo();
-    		
-    		
-    		
+    	
     	}
     	
     }   
