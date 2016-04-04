@@ -59,6 +59,7 @@ public class PDU {
 
 		 tmp=pdu.getSizebytes();
 		 for(int i =0;i<4;i++){
+			 System.out.println("TESTE1:" + objpos);
 			 obj[objpos++]=tmp[i];
 		 }
 		 
@@ -122,7 +123,8 @@ public class PDU {
 		 this.op3=op3; // numeracao atual
 		 this.op4=op4; // numeraçao total
 		 int tamanhodados = data.length;
-		 this.sizebytes = bytefromInt(tamanhodados);	 
+		 this.sizebytes = bytefromInt(tamanhodados);
+		 System.out.println("ConstrutorPDU:"+tamanhodados);
 		 this.data = new byte[tamanhodados];
 		 for (int i = 0;  i< tamanhodados; i++) {
 			 this.data[i]=data[i];

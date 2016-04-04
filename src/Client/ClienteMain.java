@@ -5,45 +5,53 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.net.Inet4Address;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import Common.PDU;
+import Common.PDU_APP;
+import Common.PDU_APP_REG_RESP;
 import Common.PDU_Buider;
+import Common.PDU_Reader;
 
-public class ClienteMain implements TypeRequest{
+public class ClienteMain{
 	private String user;
 	private String ip;
 	private String pass;
 	private int port;
 	 
 	private Socket sock;
-	public InputStream is;
-	public OutputStream os;
+	private InputStream is;
+	private OutputStream os;
 	
 	private static Scanner input = new Scanner(System.in);
 	
-	public ClienteMain(String user,String pass, String ip, String remotehost, int port){
-		this.user = user;
-		this.ip=ip;
-		this.pass=pass;
-		this.port=port;
+	public ClienteMain(String hostServer, int portServer){
+		this.user = new String();
 		try {
-			this.sock = new Socket(remotehost,port);
-		} catch (UnknownHostException e) {
+			this.ip= Inet4Address.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e1) {
 			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		this.pass= new String();
+		this.port=-1;
+		try {
+			this.sock = new Socket(hostServer,portServer);
+		} catch (UnknownHostException e) {
+			System.out.println("Host desconhecido");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Não foi possivel abrir o socket");
 			e.printStackTrace();
 		} 
-		
 		try {
 			this.is = sock.getInputStream();
 			this.os = sock.getOutputStream();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Não foi possivel criar as streams de bytes");
 			e.printStackTrace();
 		}
 		
@@ -63,6 +71,22 @@ public class ClienteMain implements TypeRequest{
 
 	protected void setIp(String ip) {
 		this.ip = ip;
+	}
+
+	protected String getPass() {
+		return pass;
+	}
+
+	protected void setPass(String pass) {
+		this.pass = pass;
+	}
+
+	protected int getPort() {
+		return port;
+	}
+
+	protected void setPort(int port) {
+		this.port = port;
 	}
 
 	protected Socket getSock() {
@@ -103,23 +127,44 @@ public class ClienteMain implements TypeRequest{
 	private void register(){
 		PDU register = PDU_Buider.REGISTER_PDU(1, user, pass, ip, port);
 		try {
+			System.out.println("TIPO:"+register.getTipo());
+			System.out.println("TIPOLENGTH:"+PDU.toBytes(register).length);
 			os.write(PDU.toBytes(register));
+		} catch (IOException e) {
+			System.out.println("Não foi possivel criar o pack para envio para o servidor");
+			e.printStackTrace();
+		}
+		
+		byte[] response = new byte[8];
+		
+		try {
+			is.read(response, 0, 8);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		PDU_APP_REG_RESP resp = (PDU_APP_REG_RESP) PDU_Reader.read(response);;
+		
+		System.out.println("Mensagem: " + resp.getMensagem());
+		
 	}
 	
+	
+	
 	public static void main(String argv[]){
-		int n;
-		int port = 6969;
+		int op;
+		int port = Integer.parseInt(argv[0]);
 		
-		ClienteMain c1 = new ClienteMain("rui", "123","192.168.1.65","localhost", 6969);
+		ClienteMain c1 = new ClienteMain("localhost", port);
+		c1.setUser("RUI FREITAS");
+		c1.setPass("OLATUDOBEM");
+		c1.setPort(12346);
 		
 		System.out.println(ClienteMenus.menuInicio());
 		
-		while ((n = lerint()) != 0) {
-			switch (n) {
+		while ((op = lerint()) != 0) {
+			switch (op) {
 			case 1: {
 				System.out.println("Entrei no registo");
 				c1.register();
@@ -128,6 +173,8 @@ public class ClienteMain implements TypeRequest{
 			default:
 				System.out.println("Insira um numero do menu");
 			}
+			System.out.println(ClienteMenus.menuInicio());
+			
 		}
 	}
 }

@@ -4,10 +4,13 @@ import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
+import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+
 public class ServerInfo {
 	private String localIP;
 	private int port;
-	private HashMap<String,ClienteInfo> clientes; //ip->ClienteInfo
+	private HashMap<String,ClientInfo> clients; //user->ClienteInfo
+	private HashMap<String,ServerDomain> othersServers; 
 
 	public ServerInfo(int port){
 		try {
@@ -17,35 +20,58 @@ public class ServerInfo {
 			e.printStackTrace();
 		}
 		this.port = port;
-		this.clientes = new HashMap<>();
+		this.clients = new HashMap<>();
+		this.othersServers = new HashMap<>();
 	}
 	
-	public ServerInfo(String ip, int port){
-		this.localIP = ip;
-		this.port = port;
-		this.clientes = new HashMap<>();
+	
+
+	public ServerInfo(String ipServer, int portServer){
+		this.localIP = ipServer;
+		this.port = portServer;
+		this.clients = new HashMap<>();
 	}
 
-	protected synchronized String getLocalIP() {
+	private synchronized String getLocalIP() {
 		return localIP;
 	}
-	protected synchronized void setLocalIP(String localIP) {
+	private synchronized void setLocalIP(String localIP) {
 		this.localIP = localIP;
 	}
-	protected synchronized int getPort() {
+	private synchronized int getPort() {
 		return port;
 	}
-	protected synchronized void setPort(int port) {
+	private synchronized void setPort(int port) {
 		this.port = port;
 	}
-	protected synchronized HashMap<String, ClienteInfo> getClientes() {
-		return clientes;
+	private synchronized HashMap<String, ClientInfo> getClientes() {
+		return clients;
 	}
-	protected synchronized void setClientes(HashMap<String, ClienteInfo> clientes) {
-		this.clientes = clientes;
+	private synchronized void setClients(HashMap<String, ClientInfo> clientes) {
+		this.clients = clientes;
 	}
-	protected synchronized void addCliente(String user, String pass, String ip, int port){		
-		ClienteInfo cliente = new ClienteInfo(user, pass, ip, port);
-		this.clientes.put(ip, cliente);
+	protected synchronized HashMap<String, ServerDomain> getOthersServers() {
+		return othersServers;
 	}
+
+	protected synchronized void setOthersServers(HashMap<String, ServerDomain> othersServers) {
+		this.othersServers = othersServers;
+	}
+
+	protected synchronized int addRegisto(int origem, String uname, String pass, String ip, int port){
+		System.out.println("Origem: " + origem);
+		System.out.println("USER: " + uname);
+		System.out.println("PASS: " + pass);
+		System.out.println("IP: " + ip);
+		System.out.println("PORT: " + port);
+		//futuramente verificar a origem pois pode ser o registo de um servidor
+		if(clients.containsKey(uname)){
+			return 2; // Username já existente
+		}
+		if(clients.put(uname, new ClientInfo(uname, pass, ip, port))==null){
+			return 1; // registo com sucesso
+		};
+		return 0;
+	}
+
 }

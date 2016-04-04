@@ -9,6 +9,9 @@ public final class PDU_Reader {
 		byte version = p.getVersion();
 		byte secu = p.getSecurity();
 		byte tipo = p.getTipo();
+		
+		System.out.println("TIPOCLASS:"+tipo);
+		
 		switch (tipo) {
 		case (PDU.REGISTER):
 			int origem = (int)secu;
@@ -38,6 +41,7 @@ public final class PDU_Reader {
 		default:
 			break;
 		}
+		System.out.println("ola");
 		return pa;
 		
 	}

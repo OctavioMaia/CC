@@ -1,12 +1,15 @@
 package Server;
 
-public class ClienteInfo {
+import java.util.concurrent.locks.ReentrantLock;
+
+public class ClientInfo {
 	private String user;
 	private String pass;
 	private String ip;
 	private int port;
-	
-	public ClienteInfo(String user, String pass, String ip, int port) {
+	private ReentrantLock lock; //futuramente usar para quando apensar precisarmos mudificar o cliente.
+
+	public ClientInfo(String user, String pass, String ip, int port) {
 		this.user = user;
 		this.pass = pass;
 		this.ip = ip;

@@ -31,6 +31,7 @@ public final class PDU_Buider {
 		//System.out.println(info + " " +info.length() );
 		byte[] data  = info.getBytes();	
 		byte tam =  (byte) data.length;
+		//System.out.println("PDUBUILDER:"+tam);
         return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,REGISTO,tam,(byte)0x01,(byte)0x01,data);
 		
 	}
