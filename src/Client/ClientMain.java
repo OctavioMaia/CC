@@ -2,21 +2,18 @@ package Client;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Inet4Address;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
 import Common.PDU;
-import Common.PDU_APP;
 import Common.PDU_APP_REG_RESP;
 import Common.PDU_Buider;
 import Common.PDU_Reader;
 
-public class ClienteMain{
+public class ClientMain{
 	private String user;
 	private String ip;
 	private String pass;
@@ -26,9 +23,7 @@ public class ClienteMain{
 	private InputStream is;
 	private OutputStream os;
 	
-	private static Scanner input = new Scanner(System.in);
-	
-	public ClienteMain(String hostServer, int portServer){
+	public ClientMain(String hostServer, int portServer){
 		this.user = new String();
 		try {
 			this.ip= Inet4Address.getLocalHost().getHostAddress();
@@ -113,32 +108,18 @@ public class ClienteMain{
 		this.os = os;
 	}
 
-	protected static int lerint() {
-		Integer ret = 0;
-		String inp = input.nextLine();
-		try {
-			ret = Integer.parseInt(inp);
-		} catch (Exception e) {
-			ret = lerint();
-		}
-		return ret;
-	}
-	
 	private void register(){
 		PDU register = PDU_Buider.REGISTER_PDU(1, user, pass, ip, port);
 		try {
-			System.out.println("TIPO:"+register.getTipo());
-			System.out.println("TIPOLENGTH:"+PDU.toBytes(register).length);
 			os.write(PDU.toBytes(register));
 		} catch (IOException e) {
 			System.out.println("Não foi possivel criar o pack para envio para o servidor");
 			e.printStackTrace();
 		}
 		
-		byte[] response = new byte[8];
-		
+		byte[] response = new byte[11];
 		try {
-			is.read(response, 0, 8);
+			is.read(response, 0, 11);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -156,24 +137,23 @@ public class ClienteMain{
 		int op;
 		int port = Integer.parseInt(argv[0]);
 		
-		ClienteMain c1 = new ClienteMain("localhost", port);
+		ClientMain c1 = new ClientMain("localhost", port);
 		c1.setUser("RUI FREITAS");
 		c1.setPass("OLATUDOBEM");
 		c1.setPort(12346);
 		
-		System.out.println(ClienteMenus.menuInicio());
+		System.out.println(ClientMenus.menuInicio());
 		
-		while ((op = lerint()) != 0) {
+		while ((op = ClientMenus.lerint()) != 0) {
 			switch (op) {
 			case 1: {
-				System.out.println("Entrei no registo");
 				c1.register();
 				break;
 			}
 			default:
 				System.out.println("Insira um numero do menu");
 			}
-			System.out.println(ClienteMenus.menuInicio());
+			System.out.println(ClientMenus.menuInicio());
 			
 		}
 	}

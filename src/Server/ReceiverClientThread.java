@@ -63,11 +63,12 @@ public class ReceiverClientThread implements Runnable{
     }
     
     public void run() {
+    	
     	byte[] version = new byte[1];
     	
     	while(sockCliente.isConnected()){
     		try {
-				while(is.read(version,0,1)!=1){System.out.println("AINDA ESTOU AQUI");};
+				while(is.read(version,0,1)!=1);
 			} catch (IOException e) {
 				System.out.println("Não foi possivel realizar a leitura do campo da versão.");
 				e.printStackTrace();

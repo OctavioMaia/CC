@@ -2,7 +2,7 @@ package Client;
 
 import java.util.Scanner;
 
-public class ClienteMenus {
+public class ClientMenus {
 	
 	private static Scanner input = new Scanner(System.in);
 	
