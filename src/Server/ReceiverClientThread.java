@@ -8,18 +8,10 @@ package Server;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.Socket;
 
-import Common.PDU;
-import Common.PDU_APP;
-import Common.PDU_APP_REG;
-import Common.PDU_APP_REG_RESP;
-import Common.PDU_APP_STATE;
-import Common.PDU_Buider;
+import Common.*;
 import Versions.PDUVersion1;
 
 /**
@@ -28,26 +20,56 @@ import Versions.PDUVersion1;
  */
 public class ReceiverClientThread implements Runnable{
     
+	private String user;
     private Socket sockCliente;
     private ServerInfo server;
     private OutputStream os;
     private InputStream is;
     
     
-    public ReceiverClientThread(Socket sock, ServerInfo info ) throws IOException{
+    public ReceiverClientThread(Socket sock, ServerInfo info ){
+    	this.user=null;
         this.sockCliente=sock;
         this.server = info;
-        this.os = sock.getOutputStream();
-        this.is = sock.getInputStream();
+        try {
+			this.os = sock.getOutputStream();
+	        this.is = sock.getInputStream();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
     
-	
     private void execPDU(PDU_APP pdu){
-    	System.out.println(pdu.getClass().getSimpleName());
     	if(pdu.getClass().getSimpleName().equals("PDU_APP_REG")) {
 			app_registo((PDU_APP_REG)pdu);
 		}else{
+			if(pdu.getClass().getSimpleName().equals("PDU_APP_LOGOUT")){
+				app_logout((PDU_APP_LOGOUT)pdu);
+			}else{
+				if(pdu.getClass().getSimpleName().equals("PDU_APP_LOGIN")){
+					app_login((PDU_APP_LOGIN)pdu);
+				}
+			}
 			System.out.println("ERRO");
+		}
+    }
+    
+    private void app_logout(PDU_APP_LOGOUT pdu){
+    	server.logout(this.user);
+    }
+    
+    private void app_login(PDU_APP_LOGIN pdu){
+    	int mensagem = server.login(pdu.getUname(), pdu.getPass(), pdu.getIp(), pdu.getPort());
+    	if(mensagem==1){
+    		this.user = pdu.getUname();
+    	}
+    	PDU respPDU = PDU_Buider.LOGIN_PDU_RESPONSE(mensagem);
+    	try {
+			os.write(PDU.toBytes(respPDU));
+		} catch (IOException e) {
+			System.out.println("Não foi possivel enviar a mensagem de registo");
+			e.printStackTrace();
 		}
     }
     
@@ -86,6 +108,8 @@ public class ReceiverClientThread implements Runnable{
 			}
     	
     	}
+    	
+    	
     	
     }   
 }

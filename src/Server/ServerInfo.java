@@ -3,13 +3,15 @@ package Server;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
 
 public class ServerInfo {
 	private String localIP;
 	private int port;
-	private HashMap<String,ClientInfo> clients; //user->ClienteInfo
+	private HashMap<String,ClientInfo> clients; //user->ClienteInfo  clientes registados
+	private HashSet<String> online;
 	private HashMap<String,ServerDomain> othersServers; 
 
 	public ServerInfo(int port){
@@ -32,28 +34,27 @@ public class ServerInfo {
 		this.clients = new HashMap<>();
 	}
 
-	private synchronized String getLocalIP() {
+	protected synchronized String getLocalIP() {
 		return localIP;
 	}
-	private synchronized void setLocalIP(String localIP) {
+	protected synchronized void setLocalIP(String localIP) {
 		this.localIP = localIP;
 	}
-	private synchronized int getPort() {
+	protected synchronized int getPort() {
 		return port;
 	}
-	private synchronized void setPort(int port) {
+	protected synchronized void setPort(int port) {
 		this.port = port;
 	}
-	private synchronized HashMap<String, ClientInfo> getClientes() {
+	protected synchronized HashMap<String, ClientInfo> getClientes() {
 		return clients;
 	}
-	private synchronized void setClients(HashMap<String, ClientInfo> clientes) {
+	protected synchronized void setClients(HashMap<String, ClientInfo> clientes) {
 		this.clients = clientes;
 	}
 	protected synchronized HashMap<String, ServerDomain> getOthersServers() {
 		return othersServers;
 	}
-
 	protected synchronized void setOthersServers(HashMap<String, ServerDomain> othersServers) {
 		this.othersServers = othersServers;
 	}
@@ -74,4 +75,38 @@ public class ServerInfo {
 		return 0;
 	}
 
+	protected synchronized void logout(String username){
+		if(this.online.remove(username)){
+			System.out.println("O Cliente " + username + "fez logout da sua conta.");
+		};
+	}
+	/**
+	 * Função que realiza o login de um cliente no server
+	 * Isto so é possivel ser realizado se o cliente estiver
+	 * registado(2) e nao tiver com login feito(3).
+	 * E por fim a pass tem de corresponder
+	 * @param uname
+	 * @param pass
+	 * @param ip
+	 * @param port
+	 * @return
+	 */
+	protected synchronized int login(String uname, String pass, String ip, int port){
+		if(!clients.containsKey(uname)){
+			return 2; // nao tem registo feito
+		}else{
+			if(online.contains(uname)){
+				return 3; // já tem login feito
+			}else{
+				ClientInfo cl = clients.get(uname);
+				if(cl.getPass().equals(pass)){
+					cl.setIp(ip);
+					cl.setPort(port);
+					online.add(uname);
+					return 1;
+				}
+			}
+		}
+		return 0;
+	}
 }
