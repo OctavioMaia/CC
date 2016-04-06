@@ -11,8 +11,9 @@ public class ClientMenus {
 		ap.append("=========MENU=========\n");
 		ap.append("0-Exit\n");
 		ap.append("1-Register\n");
-		ap.append("2-Logout\n");
-		ap.append("3-Consult Music File");
+		ap.append("2-Login\n");
+		ap.append("3-Logout\n");
+		ap.append("4-Consult Music File");
 		return ap.toString();
 	}
 	

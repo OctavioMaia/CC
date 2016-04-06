@@ -24,6 +24,7 @@ public class ServerInfo {
 		this.port = port;
 		this.clients = new HashMap<>();
 		this.othersServers = new HashMap<>();
+		this.online = new HashSet<>();
 	}
 	
 	
@@ -32,6 +33,8 @@ public class ServerInfo {
 		this.localIP = ipServer;
 		this.port = portServer;
 		this.clients = new HashMap<>();
+		this.othersServers = new HashMap<>();
+		this.online = new HashSet<>();
 	}
 
 	protected synchronized String getLocalIP() {
@@ -95,7 +98,8 @@ public class ServerInfo {
 		if(!clients.containsKey(uname)){
 			return 2; // nao tem registo feito
 		}else{
-			if(online.contains(uname)){
+			System.out.println(this.online);
+			if(this.online.contains(uname)){
 				return 3; // já tem login feito
 			}else{
 				ClientInfo cl = clients.get(uname);

@@ -131,6 +131,32 @@ public class ClientMain{
 		
 	}
 	
+	private void login(){
+		PDU register = PDU_Buider.LOGIN_PDU(1, user, pass, ip, port);
+		try {
+			os.write(PDU.toBytes(register));
+		} catch (IOException e) {
+			System.out.println("Não foi possivel criar o pack para envio para o servidor");
+			e.printStackTrace();
+		}
+		
+		byte[] response = new byte[11];
+		try {
+			is.read(response, 0, 11);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		PDU_APP_REG_RESP resp = (PDU_APP_REG_RESP) PDU_Reader.read(response);
+		
+		System.out.println("Mensagem: " + resp.getMensagem());
+	}
+	
+	
+	private void logout(){
+		
+	}
 	
 	
 	public static void main(String argv[]){
@@ -145,10 +171,19 @@ public class ClientMain{
 		System.out.println(ClientMenus.menuInicio());
 		
 		while ((op = ClientMenus.lerint()) != 0) {
+			System.out.println("Opção:"+op);
 			switch (op) {
 			case 1: {
 				c1.register();
 				break;
+			}
+			case 2:{
+				//login 
+				c1.login();
+				break;
+			}
+			case 3:{
+				c1.logout();
 			}
 			default:
 				System.out.println("Insira um numero do menu");

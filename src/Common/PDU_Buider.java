@@ -4,9 +4,10 @@ package Common;
 
 public final class PDU_Buider {
 
-	private static byte LOGIN = 0x01;
-	private static byte LOGOUT = 0x00;
-	private static byte REGISTO = 0x02;
+	public static final byte REGISTO = 0x01;
+	public static final byte LOGIN = 0x02;
+	public static final byte LOGOUT = 0x03;
+	
 	
 	static public PDU LOGIN_PDU(int tipo/*0 server 1 cliente*/,String username,String pass,String ip , int port){
 		//PDU p = new PDU(version, security, tipo, op1, op2, op3, op4, data)

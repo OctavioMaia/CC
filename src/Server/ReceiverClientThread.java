@@ -42,24 +42,37 @@ public class ReceiverClientThread implements Runnable{
     
     private void execPDU(PDU_APP pdu){
     	if(pdu.getClass().getSimpleName().equals("PDU_APP_REG")) {
-			app_registo((PDU_APP_REG)pdu);
-		}else{
-			if(pdu.getClass().getSimpleName().equals("PDU_APP_LOGOUT")){
-				app_logout((PDU_APP_LOGOUT)pdu);
-			}else{
-				if(pdu.getClass().getSimpleName().equals("PDU_APP_LOGIN")){
-					app_login((PDU_APP_LOGIN)pdu);
+    		PDU_APP_REG p = (PDU_APP_REG)pdu;
+    		switch (p.getTipo()) {
+    			case PDU_Buider.REGISTO:
+				{
+					app_registo(p);
+					break;
 				}
+				case PDU_Buider.LOGIN:
+				{
+					app_login(p);
+					break;
+				}
+				case PDU_Buider.LOGOUT:
+				{
+					app_logout(p);
+				}
+					break;
+				default:
+					break;
 			}
+			
+		}else{
 			System.out.println("ERRO");
 		}
     }
     
-    private void app_logout(PDU_APP_LOGOUT pdu){
+    private void app_logout(PDU_APP_REG pdu){
     	server.logout(this.user);
     }
     
-    private void app_login(PDU_APP_LOGIN pdu){
+    private void app_login(PDU_APP_REG pdu){
     	int mensagem = server.login(pdu.getUname(), pdu.getPass(), pdu.getIp(), pdu.getPort());
     	if(mensagem==1){
     		this.user = pdu.getUname();
