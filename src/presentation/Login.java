@@ -1,27 +1,24 @@
 /*
- * Created by JFormDesigner on Wed Apr 06 11:33:57 BST 2016
+ * Created by JFormDesigner on Wed Apr 06 22:42:03 BST 2016
  */
 
 package presentation;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
-
 import javax.swing.*;
 
 import Client.Client;
 
 /**
- * @author Octavio Maia
+ * @author Rui Freitas
  */
-public class Register extends JFrame {
+public class Login extends JFrame {
 	
 	private Menu fatherFrame;
 	
-	public Register(JFrame father) {
-		this.fatherFrame=(Menu)father;
+	public Login(JFrame father) {
+		this.fatherFrame = (Menu)father;
 		initComponents();
 		
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -30,27 +27,28 @@ public class Register extends JFrame {
                 father.setVisible(true);
             }
         });
-	}
+	}	
 
 	private void buttonOKActionPerformed(ActionEvent e) {
 		String ret="";
 		Client c = fatherFrame.getCliente();
 		//no futuro nao se vai inserir aqui a porta em que o cliente esra a escuta
-		int mensage = c.register(
-				this.textFieldUsername.getText(),
+		int mensage = c.login(this.textFieldUsername.getText(),
 				new String(this.passwordField.getPassword()),
 				Integer.parseInt(this.textFieldPorta.getText())
 				);
-		
 		switch (mensage) {
 			case 0:
-				ret = "Insucesso no registo";
+				ret = "Password Incorreta";
 				break;
 			case 1:
-				ret = "Registo realizado com sucesso";
+				ret = "Login realizado com sucesso";
 				break;
 			case 2:
-				ret = "UserName já existente";
+				ret = "O "+c.getUser()+" não se encontra registado";
+				break;
+			case 3:
+				ret = "O "+c.getUser()+" já se encontra com login realizado";
 				break;
 			default:
 				break;
@@ -63,16 +61,19 @@ public class Register extends JFrame {
 			    
 		if(mensage==1){
 			fatherFrame.setVisible(true);
+			fatherFrame.getLogoutButton().setEnabled(true);
+			fatherFrame.getLoginButton().setEnabled(false);
+			fatherFrame.getRegistarButton().setEnabled(false);
+			fatherFrame.setStat(c.getUser()+"-->"+c.getIp());
 			this.dispose();
+			
 		}
-		
 	}
 
 	private void buttonCancelarActionPerformed(ActionEvent e) {
 		fatherFrame.setVisible(true);
 		this.dispose();
 	}
-	
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -88,8 +89,7 @@ public class Register extends JFrame {
 		passwordField = new JPasswordField();
 
 		//======== this ========
-		setTitle("Registo");
-		setResizable(false);
+		setTitle("Login");
 		Container contentPane = getContentPane();
 
 		//---- buttonOK ----
@@ -121,7 +121,6 @@ public class Register extends JFrame {
 		textFieldPorta.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		//---- label1 ----
-		label1.setText("Registo de utilizador");
 		label1.setFont(new Font("Tahoma", Font.PLAIN, 20));
 
 		//---- passwordField ----
@@ -134,39 +133,39 @@ public class Register extends JFrame {
 				.addGroup(contentPaneLayout.createSequentialGroup()
 					.addGroup(contentPaneLayout.createParallelGroup()
 						.addGroup(contentPaneLayout.createSequentialGroup()
-							.addGap(87, 87, 87)
-							.addComponent(label1))
-						.addGroup(contentPaneLayout.createSequentialGroup()
-							.addGap(12, 12, 12)
-							.addGroup(contentPaneLayout.createParallelGroup()
-								.addComponent(label5)
-								.addComponent(label3))
-							.addGap(18, 18, 18)
+							.addGap(19, 19, 19)
 							.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-								.addComponent(passwordField, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-								.addComponent(textFieldPorta, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)))
-						.addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-							.addGap(12, 12, 12)
-							.addGroup(contentPaneLayout.createParallelGroup()
-								.addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-									.addComponent(label4)
+								.addGroup(contentPaneLayout.createSequentialGroup()
+									.addComponent(label5)
 									.addGap(18, 18, 18)
-									.addComponent(textFieldUsername, GroupLayout.PREFERRED_SIZE, 233, GroupLayout.PREFERRED_SIZE))
+									.addComponent(passwordField))
+								.addGroup(contentPaneLayout.createSequentialGroup()
+									.addGroup(contentPaneLayout.createParallelGroup()
+										.addComponent(label4)
+										.addComponent(label3))
+									.addGap(16, 16, 16)
+									.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+										.addComponent(textFieldPorta, GroupLayout.PREFERRED_SIZE, 245, GroupLayout.PREFERRED_SIZE)
+										.addComponent(textFieldUsername, GroupLayout.PREFERRED_SIZE, 245, GroupLayout.PREFERRED_SIZE)))
 								.addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
 									.addComponent(buttonOK, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
 									.addGap(18, 18, 18)
-									.addComponent(buttonCancelar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)))))
-					.addContainerGap(22, Short.MAX_VALUE))
+									.addComponent(buttonCancelar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))))
+						.addGroup(contentPaneLayout.createSequentialGroup()
+							.addGap(148, 148, 148)
+							.addComponent(label1)))
+					.addContainerGap(30, Short.MAX_VALUE))
 		);
 		contentPaneLayout.setVerticalGroup(
 			contentPaneLayout.createParallelGroup()
 				.addGroup(contentPaneLayout.createSequentialGroup()
+					.addContainerGap()
 					.addComponent(label1)
-					.addGap(30, 30, 30)
+					.addGap(18, 18, 18)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(label4, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 						.addComponent(textFieldUsername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(15, 15, 15)
+					.addGap(18, 18, 18)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(label5, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -174,14 +173,14 @@ public class Register extends JFrame {
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(label3, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 						.addComponent(textFieldPorta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(buttonCancelar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonOK, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
 					.addContainerGap())
 		);
-		setSize(375, 270);
-		setLocationRelativeTo(null);
+		pack();
+		setLocationRelativeTo(getOwner());
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 

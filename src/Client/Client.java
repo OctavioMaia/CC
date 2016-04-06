@@ -18,6 +18,7 @@ public class Client{
 	private String ip;
 	private String pass;
 	private int port;
+	private ClientConnectionServer conectServer;
 	 
 	private Socket sock;
 	private InputStream is;
@@ -108,8 +109,8 @@ public class Client{
 		this.os = os;
 	}
 
-	public int register(){
-		PDU register = PDU_Buider.REGISTER_PDU(1, user, pass, ip, port);
+	public int register(String username, String password, int p){
+		PDU register = PDU_Buider.REGISTER_PDU(1, username, password, this.ip, p);
 		try {
 			os.write(PDU.toBytes(register));
 		} catch (IOException e) {
@@ -131,10 +132,10 @@ public class Client{
 		return resp.getMensagem();
 	}
 	
-	public void login(){
-		PDU register = PDU_Buider.LOGIN_PDU(1, user, pass, ip, port);
+	public int login(String username, String password, int p){
+		PDU login = PDU_Buider.LOGIN_PDU(1, username, password, this.ip, p);
 		try {
-			os.write(PDU.toBytes(register));
+			os.write(PDU.toBytes(login));
 		} catch (IOException e) {
 			System.out.println("Não foi possivel criar o pack para envio para o servidor");
 			e.printStackTrace();
@@ -149,16 +150,32 @@ public class Client{
 		}
 		
 		PDU_APP_REG_RESP resp = (PDU_APP_REG_RESP) PDU_Reader.read(response);
+		int m = resp.getMensagem();
 		
-		System.out.println("Mensagem: " + resp.getMensagem());
+		if(m==1){
+			setUser(username);
+			setPass(password);
+			setPort(p);
+		}
+		
+		return m;
 	}
-	
 	
 	public void logout(){
-		
+		PDU logout = PDU_Buider.LOGOUT_PDU(1, user, pass, this.ip, port);
+		try {
+			os.write(PDU.toBytes(logout));
+		} catch (IOException e) {
+			System.out.println("Não foi possivel criar o pack para envio para o servidor");
+			e.printStackTrace();
+		}
+
+		setUser("");
+		setPass("");
+		setPort(-1);
 	}
 	
-	
+	/*
 	public static void main(String argv[]){
 		int op;
 		int port = Integer.parseInt(argv[0]);
@@ -174,12 +191,12 @@ public class Client{
 			System.out.println("Opção:"+op);
 			switch (op) {
 			case 1: {
-				c1.register();
+				//c1.register();
 				break;
 			}
 			case 2:{
 				//login 
-				c1.login();
+				//c1.login();
 				break;
 			}
 			case 3:{
@@ -191,5 +208,5 @@ public class Client{
 			System.out.println(ClientMenus.menuInicio());
 			
 		}
-	}
+	}*/
 }

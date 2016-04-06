@@ -4,14 +4,11 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq {par l {seq {space :87:87:p, comp label1:::p::p}, seq l {space :12:12:p, par l {comp label5::l:p::p, comp label3::l:p::p}, space s:::p, par l:::p {comp passwordField::::235:x, comp textFieldPorta::::235:x}}, seq t {space :p:12:p, par l {seq t {comp label4:::p::p, space s:::p, comp textFieldUsername:::p:233:p}, seq t {comp buttonOK:::p:60:p, space s:::p, comp buttonCancelar:::p:100:p}}}}, space ::22:x}}"
-			"$verticalGroup": "par l {seq {comp label1:::p::p, space :30:30:p, par b {comp label4::b:p:25:p, comp textFieldUsername::b:p::p}, space :15:15:p, par b {comp label5::b:p:20:p, comp passwordField::b:p::p}, space :p:18:p, par b {comp label3::b:p:25:p, comp textFieldPorta::b:p::p}, space ::29:x, par b {comp buttonCancelar::b:p:30:p, comp buttonOK::b:p:30:p}, space :::p}}"
+			"$horizontalGroup": "par l {seq {par l {seq {space :p:19:p, par l:::p {seq {comp label5:::p::p, space s:::p, comp passwordField:::::x}, seq l {par l {comp label4::l:p::p, comp label3::l:p::p}, space :p:16:p, par t {comp textFieldPorta:::p:245:p, comp textFieldUsername:::p:245:p}}, seq t {comp buttonOK:::p:60:p, space s:::p, comp buttonCancelar:::p:100:p}}}, seq l {space :p:148:p, comp label1:::p::p}}, space ::30:x}}"
+			"$verticalGroup": "par l {seq {space :::p, comp label1:::p::p, space :p:18:p, par b {comp label4::b:p:25:p, comp textFieldUsername::b:p::p}, space :p:18:p, par b {comp label5::b:p:20:p, comp passwordField::b:p::p}, space s:::p, par b {comp label3::b:p:25:p, comp textFieldPorta::b:p::p}, space ::57:x, par b {comp buttonCancelar::b:p:30:p, comp buttonOK::b:p:30:p}, space :::p}}"
 		} ) {
 			name: "this"
-			"title": "Registo"
-			"resizable": false
-			"$locationPolicy": 1
-			"$sizePolicy": 1
+			"title": "Login"
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "buttonOK"
 				"text": "Ok"
@@ -49,7 +46,6 @@ new FormModel {
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"
-				"text": "Registo de utilizador"
 				"font": new java.awt.Font( "Tahoma", 0, 20 )
 			} )
 			add( new FormComponent( "javax.swing.JPasswordField" ) {
@@ -57,8 +53,8 @@ new FormModel {
 				"font": new java.awt.Font( "Tahoma", 0, 14 )
 			} )
 		}, new FormLayoutConstraints( null ) {
-			"location": new java.awt.Point( 0, 15 )
-			"size": new java.awt.Dimension( 375, 270 )
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 300 )
 		} )
 	}
 }

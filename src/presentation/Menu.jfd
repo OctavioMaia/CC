@@ -4,8 +4,8 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq {space :::p, par l {seq {space :0:274:x, comp sairButton:::p:75:p}, seq {comp label1:::p::p, space :0:312:x}, comp loginButton::::349:x, comp logoutButton::l::349:x, comp registarButton::l::349:x}, space :::p}}"
-			"$verticalGroup": "par l {seq l {space :::p, comp label1:::p::p, space ::74:x, comp registarButton:::p::p, space u:::p, comp loginButton:::p::p, space u:::p, comp logoutButton:::p::p, space :p:25:p, comp sairButton:::p:30:p, space :::p}}"
+			"$horizontalGroup": "par l {seq {space :::p, par l {seq {space :0:274:x, comp sairButton:::p:75:p}, seq {comp label1:::p::p, space s:::p, comp state::::284:x}, comp loginButton::::349:x, comp logoutButton::l::349:x, comp registarButton::l::349:x}, space :::p}}"
+			"$verticalGroup": "par l {seq l {space :::p, par l {comp label1:::p::p, comp state:::p::p}, space ::65:x, comp registarButton:::p::p, space u:::p, comp loginButton:::p::p, space u:::p, comp logoutButton:::p::p, space :p:25:p, comp sairButton:::p:30:p, space :::p}}"
 		} ) {
 			name: "this"
 			"title": "Menu"
@@ -16,25 +16,35 @@ new FormModel {
 				name: "sairButton"
 				"text": "Sair"
 				"font": new java.awt.Font( "Tahoma", 1, 14 )
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "button1ActionPerformed", true ) )
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "sairButtonActionPerformed", true ) )
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"
 				"text": "Estado:"
+				"font": &Font0 new java.awt.Font( "Tahoma", 0, 14 )
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "loginButton"
 				"text": "Login"
+				"font": #Font0
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "loginButtonActionPerformed", true ) )
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "registarButton"
 				"text": "Registar"
+				"font": #Font0
 				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "registarButtonMouseClicked", true ) )
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "logoutButton"
 				"text": "Logout"
+				"font": #Font0
+				"enabled": false
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "logoutButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "state"
+				"font": #Font0
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
