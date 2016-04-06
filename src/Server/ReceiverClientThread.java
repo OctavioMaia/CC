@@ -104,21 +104,23 @@ public class ReceiverClientThread implements Runnable{
     	while(sockCliente.isConnected()){
     		try {
 				while(is.read(version,0,1)!=1);
+				switch (version[0]) {
+					case 0x01:
+						PDU_APP app_pdu = PDUVersion1.readPDU(version[0], this.is);
+						System.out.println(app_pdu);
+						execPDU(app_pdu);
+						break;
+					default:
+						System.out.println("A versão " + version[0] + "não se encontra disponovel no sistema.");
+						break;
+				}
 			} catch (IOException e) {
 				System.out.println("Não foi possivel realizar a leitura do campo da versão.");
 				e.printStackTrace();
+				break;//ver nmelhor este passo nao sei se isto é correto
 			}
     		
-    		switch (version[0]) {
-			case 0x01:
-				PDU_APP app_pdu = PDUVersion1.readPDU(version[0], this.is);
-				System.out.println(app_pdu);
-				execPDU(app_pdu);
-				break;
-			default:
-				System.out.println("A versão " + version[0] + "não se encontra disponovel no sistema.");
-				break;
-			}
+    		
     	
     	}
     	

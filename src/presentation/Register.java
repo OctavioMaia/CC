@@ -5,19 +5,79 @@
 package presentation;
 
 import java.awt.*;
+import java.awt.event.*;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowStateListener;
+
 import javax.swing.*;
+
+import Client.Client;
 
 /**
  * @author Octavio Maia
  */
 public class Register extends JFrame {
-	public Register() {
+	
+	private Menu fatherFrame;
+	
+	public Register(JFrame father) {
+		this.fatherFrame=(Menu)father;
 		initComponents();
+		
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt){
+                father.setVisible(true);
+            }
+        });
+
+
+		
 	}
+
+	private void buttonOKActionPerformed(ActionEvent e) {
+		String ret="";
+		Client c = fatherFrame.getCliente();
+		c.setUser(this.textFieldUsername.getText());
+		c.setPass(this.textFieldPassword.getText());
+		c.setPort(Integer.parseInt(this.textFieldPorta.getText()));//no futuro nao se vai inserir aqui a porta em que o cliente esra a escuta
+		int mensage = c.register();
+		
+		switch (mensage) {
+			case 0:
+				ret = "Insucesso no registo";
+				break;
+			case 1:
+				ret = "Registo realizado com sucesso";
+				break;
+			case 2:
+				ret = "UserName já existente";
+				break;
+			default:
+				break;
+		}
+		
+		JOptionPane.showMessageDialog(this,
+			    mensage,
+			    "A plain message",
+			    JOptionPane.PLAIN_MESSAGE);
+			    
+		if(mensage==1){
+			fatherFrame.setVisible(true);
+			this.dispose();
+		}
+		
+	}
+
+	private void buttonCancelarActionPerformed(ActionEvent e) {
+		fatherFrame.setVisible(true);
+		this.dispose();
+	}
+	
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - Octavio Maia
+		// Generated using JFormDesigner Evaluation license - Rui Freitas
 		buttonOK = new JButton();
 		buttonCancelar = new JButton();
 		label4 = new JLabel();
@@ -37,12 +97,14 @@ public class Register extends JFrame {
 		//---- buttonOK ----
 		buttonOK.setText("Ok");
 		buttonOK.setFont(new Font("Tahoma", Font.BOLD, 14));
+		buttonOK.addActionListener(e -> buttonOKActionPerformed(e));
 		contentPane.add(buttonOK);
 		buttonOK.setBounds(175, 190, 60, 30);
 
 		//---- buttonCancelar ----
 		buttonCancelar.setText("Cancelar");
 		buttonCancelar.setFont(new Font("Tahoma", Font.BOLD, 14));
+		buttonCancelar.addActionListener(e -> buttonCancelarActionPerformed(e));
 		contentPane.add(buttonCancelar);
 		buttonCancelar.setBounds(240, 190, 100, 30);
 
@@ -92,7 +154,7 @@ public class Register extends JFrame {
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - Octavio Maia
+	// Generated using JFormDesigner Evaluation license - Rui Freitas
 	private JButton buttonOK;
 	private JButton buttonCancelar;
 	private JLabel label4;

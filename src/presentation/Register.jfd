@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "5.2.2.2.228" Java: "1.8.0_65" encoding: "UTF-8"
+JFDML JFormDesigner: "5.2.3.0.281" Java: "1.8.0_71" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -15,6 +15,7 @@ new FormModel {
 				name: "buttonOK"
 				"text": "Ok"
 				"font": new java.awt.Font( "Tahoma", 1, 14 )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonOKActionPerformed", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
 				"width": 60
 				"height": 30
@@ -25,6 +26,7 @@ new FormModel {
 				name: "buttonCancelar"
 				"text": "Cancelar"
 				"font": new java.awt.Font( "Tahoma", 1, 14 )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonCancelarActionPerformed", true ) )
 			}, new FormLayoutConstraints( class com.jformdesigner.runtime.NullConstraints ) {
 				"width": 100
 				"height": 30
