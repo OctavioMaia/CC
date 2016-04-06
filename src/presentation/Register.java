@@ -1,16 +1,14 @@
 /*
- * Created by JFormDesigner on Mon Apr 04 23:02:12 WEST 2016
+ * Created by JFormDesigner on Wed Apr 06 11:33:57 BST 2016
  */
 
 package presentation;
 
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.GroupLayout;
-import javax.swing.border.*;
 
 /**
- * @author Rui Freitas
+ * @author Octavio Maia
  */
 public class Register extends JFrame {
 	public Register() {
@@ -19,79 +17,90 @@ public class Register extends JFrame {
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-		// Generated using JFormDesigner Evaluation license - Rui Freitas
-		dialogPane = new JPanel();
-		contentPanel = new JPanel();
-		buttonBar = new JPanel();
-		okButton = new JButton();
-		cancelButton = new JButton();
+		// Generated using JFormDesigner Evaluation license - Octavio Maia
+		buttonOK = new JButton();
+		buttonCancelar = new JButton();
+		label4 = new JLabel();
+		label5 = new JLabel();
+		label3 = new JLabel();
+		textFieldUsername = new JTextField();
+		textFieldPassword = new JTextField();
+		textFieldPorta = new JTextField();
+		label1 = new JLabel();
 
 		//======== this ========
+		setTitle("Registo");
+		setResizable(false);
 		Container contentPane = getContentPane();
-		contentPane.setLayout(new BorderLayout());
+		contentPane.setLayout(null);
 
-		//======== dialogPane ========
-		{
-			dialogPane.setBorder(new EmptyBorder(12, 12, 12, 12));
+		//---- buttonOK ----
+		buttonOK.setText("Ok");
+		buttonOK.setFont(new Font("Tahoma", Font.BOLD, 14));
+		contentPane.add(buttonOK);
+		buttonOK.setBounds(175, 190, 60, 30);
 
-			// JFormDesigner evaluation mark
-			dialogPane.setBorder(new javax.swing.border.CompoundBorder(
-				new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder(0, 0, 0, 0),
-					"JFormDesigner Evaluation", javax.swing.border.TitledBorder.CENTER,
-					javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dialog", java.awt.Font.BOLD, 12),
-					java.awt.Color.red), dialogPane.getBorder())); dialogPane.addPropertyChangeListener(new java.beans.PropertyChangeListener(){public void propertyChange(java.beans.PropertyChangeEvent e){if("border".equals(e.getPropertyName()))throw new RuntimeException();}});
+		//---- buttonCancelar ----
+		buttonCancelar.setText("Cancelar");
+		buttonCancelar.setFont(new Font("Tahoma", Font.BOLD, 14));
+		contentPane.add(buttonCancelar);
+		buttonCancelar.setBounds(240, 190, 100, 30);
 
-			dialogPane.setLayout(new BorderLayout());
+		//---- label4 ----
+		label4.setText("Username:");
+		label4.setFont(new Font("Tahoma", Font.BOLD, 14));
+		contentPane.add(label4);
+		label4.setBounds(20, 60, label4.getPreferredSize().width, 25);
 
-			//======== contentPanel ========
-			{
+		//---- label5 ----
+		label5.setText("Password:");
+		label5.setFont(new Font("Tahoma", Font.BOLD, 14));
+		contentPane.add(label5);
+		label5.setBounds(20, 100, label5.getPreferredSize().width, 20);
 
-				GroupLayout contentPanelLayout = new GroupLayout(contentPanel);
-				contentPanel.setLayout(contentPanelLayout);
-				contentPanelLayout.setHorizontalGroup(
-					contentPanelLayout.createParallelGroup()
-						.addGap(0, 400, Short.MAX_VALUE)
-				);
-				contentPanelLayout.setVerticalGroup(
-					contentPanelLayout.createParallelGroup()
-						.addGap(0, 300, Short.MAX_VALUE)
-				);
-			}
-			dialogPane.add(contentPanel, BorderLayout.CENTER);
+		//---- label3 ----
+		label3.setText("Port:");
+		label3.setFont(new Font("Tahoma", Font.BOLD, 14));
+		contentPane.add(label3);
+		label3.setBounds(20, 140, label3.getPreferredSize().width, 25);
 
-			//======== buttonBar ========
-			{
-				buttonBar.setBorder(new EmptyBorder(12, 0, 0, 0));
-				buttonBar.setLayout(new GridBagLayout());
-				((GridBagLayout)buttonBar.getLayout()).columnWidths = new int[] {0, 85, 80};
-				((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
+		//---- textFieldUsername ----
+		textFieldUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(textFieldUsername);
+		textFieldUsername.setBounds(110, 60, 230, textFieldUsername.getPreferredSize().height);
 
-				//---- okButton ----
-				okButton.setText("OK");
-				buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 5), 0, 0));
+		//---- textFieldPassword ----
+		textFieldPassword.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(textFieldPassword);
+		textFieldPassword.setBounds(110, 100, 230, textFieldPassword.getPreferredSize().height);
 
-				//---- cancelButton ----
-				cancelButton.setText("Cancel");
-				buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
-					GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-					new Insets(0, 0, 0, 0), 0, 0));
-			}
-			dialogPane.add(buttonBar, BorderLayout.SOUTH);
-		}
-		contentPane.add(dialogPane, BorderLayout.CENTER);
-		pack();
-		setLocationRelativeTo(getOwner());
+		//---- textFieldPorta ----
+		textFieldPorta.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		contentPane.add(textFieldPorta);
+		textFieldPorta.setBounds(110, 140, 230, textFieldPorta.getPreferredSize().height);
+
+		//---- label1 ----
+		label1.setText("Registo de utilizador");
+		label1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		contentPane.add(label1);
+		label1.setBounds(new Rectangle(new Point(95, 5), label1.getPreferredSize()));
+
+		contentPane.setPreferredSize(new Dimension(375, 270));
+		setSize(375, 270);
+		setLocationRelativeTo(null);
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
 
 	// JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-	// Generated using JFormDesigner Evaluation license - Rui Freitas
-	private JPanel dialogPane;
-	private JPanel contentPanel;
-	private JPanel buttonBar;
-	private JButton okButton;
-	private JButton cancelButton;
+	// Generated using JFormDesigner Evaluation license - Octavio Maia
+	private JButton buttonOK;
+	private JButton buttonCancelar;
+	private JLabel label4;
+	private JLabel label5;
+	private JLabel label3;
+	private JTextField textFieldUsername;
+	private JTextField textFieldPassword;
+	private JTextField textFieldPorta;
+	private JLabel label1;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }
