@@ -35,6 +35,7 @@ public class Server {
 	}
 	
 	public void startServer(){
+		System.out.println(this.info.getLocalIP());
 		while(true){
             Socket sockCliente = null;
             try {
