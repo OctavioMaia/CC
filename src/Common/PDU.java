@@ -122,11 +122,10 @@ public class PDU {
 		 this.op3=op3; // numeracao atual
 		 this.op4=op4; // numeraçao total
 		 int tamanhodados = data.length;
-		 this.sizebytes = bytefromInt(tamanhodados);	 
+		 this.sizebytes = bytefromInt(tamanhodados);
 		 this.data = new byte[tamanhodados];
 		 for (int i = 0;  i< tamanhodados; i++) {
-			 this.data[i]=data[i];
-			
+			 this.data[i]=data[i];			
 		}
 	 }
 

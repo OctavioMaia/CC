@@ -13,7 +13,7 @@ public class Teste {
 		 return wrapped.getInt(); 
 	 }
 	 
-	 static private byte[] bytefromInt(int integer){
+	static private byte[] bytefromInt(int integer){
 
 		 ByteBuffer dbuf = ByteBuffer.allocate(4);
 		 dbuf.putInt(integer);
@@ -21,7 +21,7 @@ public class Teste {
 	 }
 	 
 	public static void main(String[] argv){
-		jms();
+		//jms();
 		/*PDU info = PDU_Buider.REGISTER_PDU(1, "JMS", "123", "192.168.1.1", 6970);
 		byte[] infoA = PDU.toBytes(info);
 		PDU info2 = PDU.fromBytes(infoA);
@@ -52,9 +52,16 @@ public class Teste {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}*/
-		
+		//freitas();
+		//System.out.println(argv[0]);
 		
 	}
+	
+	private static void freitas(){
+		System.out.println(0x01);
+	}
+	
+	
 	static private void jms(){
 		PDU info = PDU_Buider.REGISTER_PDU(1, "JMS", "123", "192.168.1.1", 6970);
 		byte[] infoA = PDU.toBytes(info);

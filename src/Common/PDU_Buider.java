@@ -4,9 +4,10 @@ package Common;
 
 public final class PDU_Buider {
 
-	private static byte LOGIN = 0x01;
-	private static byte LOGOUT = 0x00;
-	private static byte REGISTO = 0x02;
+	public static final byte REGISTO = 0x01;
+	public static final byte LOGIN = 0x02;
+	public static final byte LOGOUT = 0x03;
+	
 	
 	static public PDU LOGIN_PDU(int tipo/*0 server 1 cliente*/,String username,String pass,String ip , int port){
 		//PDU p = new PDU(version, security, tipo, op1, op2, op3, op4, data)
@@ -28,7 +29,6 @@ public final class PDU_Buider {
 	static public PDU REGISTER_PDU(int tipo/*0 server 1 cliente*/,String username,String pass,String ip , int port){
 		//PDU p = new PDU(version, security, tipo, op1, op2, op3, op4, data)
 		String info = "UN_" + username + ";PW_"+pass+";IP_"+ip+";PT_"+port;
-		//System.out.println(info + " " +info.length() );
 		byte[] data  = info.getBytes();	
 		byte tam =  (byte) data.length;
         return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,REGISTO,tam,(byte)0x01,(byte)0x01,data);

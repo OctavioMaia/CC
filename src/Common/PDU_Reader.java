@@ -9,6 +9,7 @@ public final class PDU_Reader {
 		byte version = p.getVersion();
 		byte secu = p.getSecurity();
 		byte tipo = p.getTipo();
+		
 		switch (tipo) {
 		case (PDU.REGISTER):
 			int origem = (int)secu;
@@ -31,7 +32,7 @@ public final class PDU_Reader {
 			pa = new PDU_APP_STATE((int)version,campos[0].split("_")[1] , Integer.parseInt(campos[1].split("_")[1]), 1);
 			break;
 		case (PDU.I_AM_HERE):
-			 data = new String(p.getData());
+			data = new String(p.getData());
 			campos= data.split(";");
 			pa = new PDU_APP_STATE((int)version,campos[0].split("_")[1] , Integer.parseInt(campos[1].split("_")[1]), 0);
 			break;
