@@ -4,7 +4,7 @@ public class PDU_APP_STATE extends PDU_APP{
 
 	private String ip;
 	private int port;
-	private int tipo ; //pegunta ou respsta
+	private int tipo ; //pegunta ou resposta
 	public PDU_APP_STATE(int version) {
 		super(version);
 		// TODO Auto-generated constructor stub
