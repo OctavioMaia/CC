@@ -9,6 +9,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import Client.Client;
+import Client.ClientConnectionServer;
 
 /**
  * @author Rui Freitas
@@ -65,8 +66,11 @@ public class Login extends JFrame {
 			fatherFrame.getLoginButton().setEnabled(false);
 			fatherFrame.getRegistarButton().setEnabled(false);
 			fatherFrame.setStat(c.getUser()+"-->"+c.getIp());
+			ClientConnectionServer consult = new ClientConnectionServer(Thread.currentThread(),c);
+			c.setConectServer(consult);
+			Thread threadConsult = new Thread(consult);
+			threadConsult.start();
 			this.dispose();
-			
 		}
 	}
 

@@ -19,7 +19,7 @@ public class Client{
 	private String pass;
 	private int port;
 	private ClientConnectionServer conectServer;
-	 
+	
 	private Socket sock;
 	private InputStream is;
 	private OutputStream os;
@@ -50,63 +50,58 @@ public class Client{
 			System.out.println("Não foi possivel criar as streams de bytes");
 			e.printStackTrace();
 		}
+		this.conectServer = null;
 		
 	}
 	
 	public String getUser() {
 		return user;
 	}
-	
+
 	public void setUser(String user) {
 		this.user = user;
 	}
-	
 	public String getIp() {
 		return ip;
 	}
-
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
-
 	public String getPass() {
 		return pass;
 	}
-
 	public void setPass(String pass) {
 		this.pass = pass;
 	}
-
 	public int getPort() {
 		return port;
 	}
-
 	public void setPort(int port) {
 		this.port = port;
 	}
-
 	public Socket getSock() {
 		return sock;
 	}
-
 	public void setSock(Socket sock) {
 		this.sock = sock;
 	}
-
 	public InputStream getIs() {
 		return is;
 	}
-
 	public void setIsr(InputStream is) {
 		this.is = is;
 	}
-
 	public OutputStream getOs() {
 		return os;
 	}
-
 	public void setOsw(OutputStream os) {
 		this.os = os;
+	}
+	public ClientConnectionServer getConectServer() {
+		return conectServer;
+	}
+	public void setConectServer(ClientConnectionServer conectServer) {
+		this.conectServer = conectServer;
 	}
 
 	public int register(String username, String password, int p){
@@ -117,7 +112,7 @@ public class Client{
 			System.out.println("Não foi possivel criar o pack para envio para o servidor");
 			e.printStackTrace();
 		}
-		
+		//partilhar duvida se esta parte devia de estar aqui ou devia ser uma leitura como o de registo fora desta função
 		byte[] response = new byte[11];
 		try {
 			is.read(response, 0, 11);
@@ -131,7 +126,6 @@ public class Client{
 		
 		return resp.getMensagem();
 	}
-	
 	public int login(String username, String password, int p){
 		PDU login = PDU_Buider.LOGIN_PDU(1, username, password, this.ip, p);
 		try {
@@ -156,11 +150,11 @@ public class Client{
 			setUser(username);
 			setPass(password);
 			setPort(p);
+			this.conectServer = new ClientConnectionServer(Thread.currentThread(), this);
 		}
 		
 		return m;
 	}
-	
 	public void logout(){
 		PDU logout = PDU_Buider.LOGOUT_PDU(1, user, pass, this.ip, port);
 		try {
