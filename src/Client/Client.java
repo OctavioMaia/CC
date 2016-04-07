@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Inet4Address;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -20,6 +21,8 @@ public class Client{
 	private int port;
 	private ClientConnectionServer conectServer;
 	
+	private ServerSocket serverSocket;
+	
 	private Socket sock;
 	private InputStream is;
 	private OutputStream os;
@@ -33,7 +36,6 @@ public class Client{
 			e1.printStackTrace();
 		}
 		this.pass= new String();
-		this.port=-1;
 		try {
 			this.sock = new Socket(hostServer,portServer);
 		} catch (UnknownHostException e) {
@@ -50,6 +52,15 @@ public class Client{
 			System.out.println("Não foi possivel criar as streams de bytes");
 			e.printStackTrace();
 		}
+		
+		try {
+			this.serverSocket = new ServerSocket(0);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.port = this.serverSocket.getLocalPort();
+		
 		this.conectServer = null;
 		
 	}
@@ -103,6 +114,12 @@ public class Client{
 	public void setConectServer(ClientConnectionServer conectServer) {
 		this.conectServer = conectServer;
 	}
+	public ServerSocket getServerSocket() {
+		return serverSocket;
+	}
+	public void setServerSocket(ServerSocket serverSocket) {
+		this.serverSocket = serverSocket;
+	}
 
 	public int register(String username, String password, int p){
 		PDU register = PDU_Buider.REGISTER_PDU(1, username, password, this.ip, p);
@@ -144,6 +161,7 @@ public class Client{
 		}
 		
 		PDU_APP_REG_RESP resp = (PDU_APP_REG_RESP) PDU_Reader.read(response);
+		System.out.println("Cliente:"+resp);
 		int m = resp.getMensagem();
 		
 		if(m==1){
@@ -168,39 +186,5 @@ public class Client{
 		setPass("");
 		setPort(-1);
 	}
-	
-	/*
-	public static void main(String argv[]){
-		int op;
-		int port = Integer.parseInt(argv[0]);
-		
-		Client c1 = new Client("localhost", port);
-		c1.setUser("RUI FREITAS");
-		c1.setPass("OLATUDOBEM");
-		c1.setPort(12346);
-		
-		System.out.println(ClientMenus.menuInicio());
-		
-		while ((op = ClientMenus.lerint()) != 0) {
-			System.out.println("Opção:"+op);
-			switch (op) {
-			case 1: {
-				//c1.register();
-				break;
-			}
-			case 2:{
-				//login 
-				//c1.login();
-				break;
-			}
-			case 3:{
-				c1.logout();
-			}
-			default:
-				System.out.println("Insira um numero do menu");
-			}
-			System.out.println(ClientMenus.menuInicio());
-			
-		}
-	}*/
+
 }

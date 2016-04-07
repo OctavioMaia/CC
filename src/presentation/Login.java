@@ -36,7 +36,7 @@ public class Login extends JFrame {
 		//no futuro nao se vai inserir aqui a porta em que o cliente esra a escuta
 		int mensage = c.login(this.textFieldUsername.getText(),
 				new String(this.passwordField.getPassword()),
-				Integer.parseInt(this.textFieldPorta.getText())
+				c.getPort()
 				);
 		switch (mensage) {
 			case 0:
@@ -50,6 +50,9 @@ public class Login extends JFrame {
 				break;
 			case 3:
 				ret = "O "+c.getUser()+" já se encontra com login realizado";
+				break;
+			case 4:
+				ret = "O servidor nao conseguiu criar coneção com o servidor";
 				break;
 			default:
 				break;
@@ -86,10 +89,7 @@ public class Login extends JFrame {
 		buttonCancelar = new JButton();
 		label4 = new JLabel();
 		label5 = new JLabel();
-		label3 = new JLabel();
 		textFieldUsername = new JTextField();
-		textFieldPorta = new JTextField();
-		label1 = new JLabel();
 		passwordField = new JPasswordField();
 
 		//======== this ========
@@ -114,18 +114,8 @@ public class Login extends JFrame {
 		label5.setText("Password:");
 		label5.setFont(new Font("Tahoma", Font.BOLD, 14));
 
-		//---- label3 ----
-		label3.setText("Port:");
-		label3.setFont(new Font("Tahoma", Font.BOLD, 14));
-
 		//---- textFieldUsername ----
 		textFieldUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		//---- textFieldPorta ----
-		textFieldPorta.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		//---- label1 ----
-		label1.setFont(new Font("Tahoma", Font.PLAIN, 20));
 
 		//---- passwordField ----
 		passwordField.setFont(new Font("Tahoma", Font.PLAIN, 14));
@@ -135,37 +125,26 @@ public class Login extends JFrame {
 		contentPaneLayout.setHorizontalGroup(
 			contentPaneLayout.createParallelGroup()
 				.addGroup(contentPaneLayout.createSequentialGroup()
-					.addGroup(contentPaneLayout.createParallelGroup()
+					.addGap(19, 19, 19)
+					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
 						.addGroup(contentPaneLayout.createSequentialGroup()
-							.addGap(19, 19, 19)
-							.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-								.addGroup(contentPaneLayout.createSequentialGroup()
-									.addComponent(label5)
-									.addGap(18, 18, 18)
-									.addComponent(passwordField))
-								.addGroup(contentPaneLayout.createSequentialGroup()
-									.addGroup(contentPaneLayout.createParallelGroup()
-										.addComponent(label4)
-										.addComponent(label3))
-									.addGap(16, 16, 16)
-									.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
-										.addComponent(textFieldPorta, GroupLayout.PREFERRED_SIZE, 245, GroupLayout.PREFERRED_SIZE)
-										.addComponent(textFieldUsername, GroupLayout.PREFERRED_SIZE, 245, GroupLayout.PREFERRED_SIZE)))
-								.addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-									.addComponent(buttonOK, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
-									.addGap(18, 18, 18)
-									.addComponent(buttonCancelar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE))))
+							.addComponent(label5)
+							.addGap(18, 18, 18)
+							.addComponent(passwordField))
 						.addGroup(contentPaneLayout.createSequentialGroup()
-							.addGap(148, 148, 148)
-							.addComponent(label1)))
+							.addComponent(label4)
+							.addGap(16, 16, 16)
+							.addComponent(textFieldUsername, GroupLayout.PREFERRED_SIZE, 245, GroupLayout.PREFERRED_SIZE))
+						.addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
+							.addComponent(buttonOK, GroupLayout.PREFERRED_SIZE, 60, GroupLayout.PREFERRED_SIZE)
+							.addGap(18, 18, 18)
+							.addComponent(buttonCancelar, GroupLayout.PREFERRED_SIZE, 100, GroupLayout.PREFERRED_SIZE)))
 					.addContainerGap(30, Short.MAX_VALUE))
 		);
 		contentPaneLayout.setVerticalGroup(
 			contentPaneLayout.createParallelGroup()
 				.addGroup(contentPaneLayout.createSequentialGroup()
-					.addContainerGap()
-					.addComponent(label1)
-					.addGap(18, 18, 18)
+					.addGap(29, 29, 29)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(label4, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
 						.addComponent(textFieldUsername, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
@@ -173,11 +152,7 @@ public class Login extends JFrame {
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(label5, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(18, 18, 18)
-					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addComponent(label3, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textFieldPorta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(buttonCancelar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonOK, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
@@ -194,10 +169,7 @@ public class Login extends JFrame {
 	private JButton buttonCancelar;
 	private JLabel label4;
 	private JLabel label5;
-	private JLabel label3;
 	private JTextField textFieldUsername;
-	private JTextField textFieldPorta;
-	private JLabel label1;
 	private JPasswordField passwordField;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

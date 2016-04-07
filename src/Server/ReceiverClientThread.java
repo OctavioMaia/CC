@@ -9,6 +9,7 @@ package Server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 
 import Client.Client;
@@ -25,7 +26,6 @@ public class ReceiverClientThread implements Runnable{
 	private ServerInfo server;
 	
     private Socket sockRegisto;
-    
     private OutputStream osRegisto;
     private InputStream isRegisto;
     
@@ -37,6 +37,7 @@ public class ReceiverClientThread implements Runnable{
     public ReceiverClientThread(Socket sock, ServerInfo info ){
     	this.user=null;
         this.sockRegisto=sock;
+        this.sockConsulta=null;
         this.server = info;
         try {
 			this.osRegisto = sock.getOutputStream();
@@ -45,6 +46,7 @@ public class ReceiverClientThread implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+        
         
         this.osConsulta = null;
         this.isConsulta = null;
@@ -77,24 +79,38 @@ public class ReceiverClientThread implements Runnable{
     
     private void app_login(PDU_APP_REG pdu){
     	int mensagem = server.login(pdu.getUname(), pdu.getPass(), pdu.getIp(), pdu.getPort());
+    	
     	if(mensagem==1){
-    		this.user = this.server.getUser(pdu.getUname());
     		try {
-				this.sockConsulta = new Socket(this.user.getIp(), this.user.getPort());
-				this.isConsulta = sockConsulta.getInputStream();
-	    		this.osConsulta = sockConsulta.getOutputStream();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+    			System.out.println(pdu.getIp() +"--"+pdu.getPort());
+        		this.sockConsulta = new Socket(pdu.getIp(),pdu.getPort());
+        		this.isConsulta = sockConsulta.getInputStream();
+        		this.osConsulta = sockConsulta.getOutputStream();
+        		this.user = this.server.getUser(pdu.getUname());
+        	} catch (IOException e) {
+    			System.out.println("Não foi possivel abrir o socktConsulta");
+    			try {
+					sockConsulta.close();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+    			mensagem=4;
+    			e.printStackTrace();
+    		}
     	}
+    	
     	PDU respPDU = PDU_Buider.LOGIN_PDU_RESPONSE(mensagem);
+    	System.out.println("LOGIN_RESPONSE-"+respPDU.toString());
+    	
     	try {
 			osRegisto.write(PDU.toBytes(respPDU));
 		} catch (IOException e) {
 			System.out.println("Não foi possivel enviar a mensagem de registo");
 			e.printStackTrace();
 		}
+    	
+    	
     }
     
     private void app_registo(PDU_APP_REG pdu){
@@ -151,9 +167,9 @@ public class ReceiverClientThread implements Runnable{
 						System.out.println("A versão " + version[0] + "não se encontra disponovel no sistema.");
 						break;
 				}
-			} catch (IOException | NullPointerException e ) {
-				
-				System.out.println("Não foi possivel realizar a leitura do campo da versão.\n O cliente " + this.user.getUser() +" caiu.");
+			} catch (IOException e ) {
+				//this.server.logout(user.getUser());
+				System.out.println("Não foi possivel realizar a leitura do campo da versão.");
 				/*
 				//timeout 10 segundos
 				long startTime = System.currentTimeMillis(); //fetch starting time
@@ -183,5 +199,21 @@ public class ReceiverClientThread implements Runnable{
 				*/
 			}
     	}	
+    	try {
+			sockRegisto.close();
+			osRegisto.close();
+			isRegisto.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			sockConsulta.close();
+			osConsulta.close();
+			isConsulta.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
     }   
 }

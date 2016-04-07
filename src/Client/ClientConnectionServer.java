@@ -20,29 +20,25 @@ import Versions.PDUVersion1;
 public class ClientConnectionServer implements Runnable{
 
 	private Thread main;
-	private ServerSocket serverS;
 	private Client cliente;
 	private Socket sock;
-	private InputStream is;
-	private OutputStream os;
+	private InputStream isConsult;
+	private OutputStream osConsult;
 	
 	public ClientConnectionServer(Thread m,Client c) {
 		this.main = m;
 		this.cliente = c;
-		try {
-			this.serverS = new ServerSocket(this.cliente.getPort());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		this.sock = null;
+		this.isConsult = null;
+		this.osConsult = null;
 	}
 	
 	private void startServer(){
 		try {
-			this.sock = this.serverS.accept();
+			this.sock = this.cliente.getServerSocket().accept();
 			System.out.println(Thread.currentThread().getName() + "O server ligou-se ao cliente");
-			this.is = sock.getInputStream();
-			this.os = sock.getOutputStream();
+			this.isConsult = sock.getInputStream();
+			this.osConsult = sock.getOutputStream();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -52,10 +48,10 @@ public class ClientConnectionServer implements Runnable{
 		byte[] version = new byte[1];
 		while(sock.isConnected()){
     		try {
-				while(is.read(version,0,1)!=1);
+				while(isConsult.read(version,0,1)!=1);
 				switch (version[0]) {
 					case 0x01:
-						PDU_APP app_pdu = PDUVersion1.readPDU(version[0], this.is);
+						PDU_APP app_pdu = PDUVersion1.readPDU(version[0], this.isConsult);
 						System.out.println(Thread.currentThread().getName()+app_pdu);
 						execPDU(app_pdu);
 						break;
@@ -106,7 +102,7 @@ public class ClientConnectionServer implements Runnable{
 	private void responseARE_YOU_THERE(){
 		PDU iamhere = PDU_Buider.I_AM_HERE_PDU(cliente.getIp(), cliente.getPort());
 		try {
-			os.write(PDU.toBytes(iamhere));
+			osConsult.write(PDU.toBytes(iamhere));
 		} catch (IOException e) {
 			System.out.println(Thread.currentThread().getName() + "Não foi possivel criar o pack para envio para o servidor");
 			e.printStackTrace();
