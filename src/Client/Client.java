@@ -182,9 +182,9 @@ public class Client{
 			e.printStackTrace();
 		}
 
-		setUser("");
+	/*	setUser("");
 		setPass("");
-		setPort(-1);
+		setPort(-1);*/
 	}
 
 }
