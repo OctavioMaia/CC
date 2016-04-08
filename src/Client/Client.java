@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Inet4Address;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
@@ -19,7 +20,9 @@ public class Client{
 	private String pass;
 	private int port;
 	private ClientConnectionServer conectServer;
-	 
+	
+	private ServerSocket serverSocket;
+	
 	private Socket sock;
 	private InputStream is;
 	private OutputStream os;
@@ -33,7 +36,6 @@ public class Client{
 			e1.printStackTrace();
 		}
 		this.pass= new String();
-		this.port=-1;
 		try {
 			this.sock = new Socket(hostServer,portServer);
 		} catch (UnknownHostException e) {
@@ -51,62 +53,72 @@ public class Client{
 			e.printStackTrace();
 		}
 		
+		try {
+			this.serverSocket = new ServerSocket(0);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.port = this.serverSocket.getLocalPort();
+		
+		this.conectServer = null;
+		
 	}
 	
 	public String getUser() {
 		return user;
 	}
-	
+
 	public void setUser(String user) {
 		this.user = user;
 	}
-	
 	public String getIp() {
 		return ip;
 	}
-
 	public void setIp(String ip) {
 		this.ip = ip;
 	}
-
 	public String getPass() {
 		return pass;
 	}
-
 	public void setPass(String pass) {
 		this.pass = pass;
 	}
-
 	public int getPort() {
 		return port;
 	}
-
 	public void setPort(int port) {
 		this.port = port;
 	}
-
 	public Socket getSock() {
 		return sock;
 	}
-
 	public void setSock(Socket sock) {
 		this.sock = sock;
 	}
-
 	public InputStream getIs() {
 		return is;
 	}
-
 	public void setIsr(InputStream is) {
 		this.is = is;
 	}
-
 	public OutputStream getOs() {
 		return os;
 	}
-
 	public void setOsw(OutputStream os) {
 		this.os = os;
+	}
+	public ClientConnectionServer getConectServer() {
+		return conectServer;
+	}
+	public void setConectServer(ClientConnectionServer conectServer) {
+		this.conectServer = conectServer;
+	}
+	public ServerSocket getServerSocket() {
+		return serverSocket;
+	}
+	public void setServerSocket(ServerSocket serverSocket) {
+		this.serverSocket = serverSocket;
 	}
 
 	public int register(String username, String password, int p){
@@ -117,7 +129,7 @@ public class Client{
 			System.out.println("Não foi possivel criar o pack para envio para o servidor");
 			e.printStackTrace();
 		}
-		
+		//partilhar duvida se esta parte devia de estar aqui ou devia ser uma leitura como o de registo fora desta função
 		byte[] response = new byte[11];
 		try {
 			is.read(response, 0, 11);
@@ -131,7 +143,6 @@ public class Client{
 		
 		return resp.getMensagem();
 	}
-	
 	public int login(String username, String password, int p){
 		PDU login = PDU_Buider.LOGIN_PDU(1, username, password, this.ip, p);
 		try {
@@ -150,17 +161,18 @@ public class Client{
 		}
 		
 		PDU_APP_REG_RESP resp = (PDU_APP_REG_RESP) PDU_Reader.read(response);
+		System.out.println("Cliente:"+resp);
 		int m = resp.getMensagem();
 		
 		if(m==1){
 			setUser(username);
 			setPass(password);
 			setPort(p);
+			this.conectServer = new ClientConnectionServer(Thread.currentThread(), this);
 		}
 		
 		return m;
 	}
-	
 	public void logout(){
 		PDU logout = PDU_Buider.LOGOUT_PDU(1, user, pass, this.ip, port);
 		try {
@@ -174,39 +186,5 @@ public class Client{
 		setPass("");
 		setPort(-1);
 	}
-	
-	/*
-	public static void main(String argv[]){
-		int op;
-		int port = Integer.parseInt(argv[0]);
-		
-		Client c1 = new Client("localhost", port);
-		c1.setUser("RUI FREITAS");
-		c1.setPass("OLATUDOBEM");
-		c1.setPort(12346);
-		
-		System.out.println(ClientMenus.menuInicio());
-		
-		while ((op = ClientMenus.lerint()) != 0) {
-			System.out.println("Opção:"+op);
-			switch (op) {
-			case 1: {
-				//c1.register();
-				break;
-			}
-			case 2:{
-				//login 
-				//c1.login();
-				break;
-			}
-			case 3:{
-				c1.logout();
-			}
-			default:
-				System.out.println("Insira um numero do menu");
-			}
-			System.out.println(ClientMenus.menuInicio());
-			
-		}
-	}*/
+
 }

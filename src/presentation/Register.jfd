@@ -4,8 +4,8 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq {par l {seq {space :87:87:p, comp label1:::p::p}, seq l {space :12:12:p, par l {comp label5::l:p::p, comp label3::l:p::p}, space s:::p, par l:::p {comp passwordField::::235:x, comp textFieldPorta::::235:x}}, seq t {space :p:12:p, par l {seq t {comp label4:::p::p, space s:::p, comp textFieldUsername:::p:233:p}, seq t {comp buttonOK:::p:60:p, space s:::p, comp buttonCancelar:::p:100:p}}}}, space ::22:x}}"
-			"$verticalGroup": "par l {seq {comp label1:::p::p, space :30:30:p, par b {comp label4::b:p:25:p, comp textFieldUsername::b:p::p}, space :15:15:p, par b {comp label5::b:p:20:p, comp passwordField::b:p::p}, space :p:18:p, par b {comp label3::b:p:25:p, comp textFieldPorta::b:p::p}, space ::29:x, par b {comp buttonCancelar::b:p:30:p, comp buttonOK::b:p:30:p}, space :::p}}"
+			"$horizontalGroup": "par l {seq {par l {seq {space :87:87:p, comp label1:::p::p}, seq l {space :12:12:p, comp label5:::p::p, space s:::p, comp passwordField:::p:235:p}, seq t {space :p:12:p, par l {seq t {comp label4:::p::p, space s:::p, comp textFieldUsername:::p:233:p}, seq t {comp buttonOK:::p:60:p, space s:::p, comp buttonCancelar:::p:100:p}}}}, space ::22:x}}"
+			"$verticalGroup": "par l {seq {comp label1:::p::p, space :30:30:p, par b {comp label4::b:p:25:p, comp textFieldUsername::b:p::p}, space :15:15:p, par b {comp label5::b:p:20:p, comp passwordField::b:p::p}, space ::72:x, par b {comp buttonCancelar::b:p:30:p, comp buttonOK::b:p:30:p}, space :::p}}"
 		} ) {
 			name: "this"
 			"title": "Registo"
@@ -34,18 +34,9 @@ new FormModel {
 				"text": "Password:"
 				"font": #Font0
 			} )
-			add( new FormComponent( "javax.swing.JLabel" ) {
-				name: "label3"
-				"text": "Port:"
-				"font": #Font0
-			} )
 			add( new FormComponent( "javax.swing.JTextField" ) {
 				name: "textFieldUsername"
-				"font": &Font1 new java.awt.Font( "Tahoma", 0, 14 )
-			} )
-			add( new FormComponent( "javax.swing.JTextField" ) {
-				name: "textFieldPorta"
-				"font": #Font1
+				"font": new java.awt.Font( "Tahoma", 0, 14 )
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"

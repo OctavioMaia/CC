@@ -29,7 +29,7 @@ public class Menu extends JFrame {
             public void windowActivated(WindowEvent e) {
             	super.windowActivated(e);
             	if(stat==null){
-            		state.setText("?????");
+            		state.setText("-----");
             	}else{
             		state.setText(stat);
             	}
@@ -82,6 +82,7 @@ public class Menu extends JFrame {
 		cliente.logout();
 		this.registarButton.setEnabled(true);
 		this.loginButton.setEnabled(true);
+		this.state.setText(".....");
 	}
 
 	private void loginButtonActionPerformed(ActionEvent e) {

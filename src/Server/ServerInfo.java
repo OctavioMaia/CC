@@ -77,11 +77,8 @@ public class ServerInfo {
 		};
 		return 0;
 	}
-
-	protected synchronized void logout(String username){
-		if(this.online.remove(username)){
-			System.out.println("O Cliente " + username + "fez logout da sua conta.");
-		};
+	protected synchronized boolean logout(String username){
+		return this.online.remove(username);
 	}
 	/**
 	 * Função que realiza o login de um cliente no server
@@ -112,5 +109,9 @@ public class ServerInfo {
 			}
 		}
 		return 0;
+	}
+
+	protected synchronized ClientInfo getUser(String user){
+		return this.clients.get(user);
 	}
 }

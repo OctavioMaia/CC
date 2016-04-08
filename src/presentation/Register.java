@@ -39,7 +39,7 @@ public class Register extends JFrame {
 		int mensage = c.register(
 				this.textFieldUsername.getText(),
 				new String(this.passwordField.getPassword()),
-				Integer.parseInt(this.textFieldPorta.getText())
+				c.getPort()
 				);
 		
 		switch (mensage) {
@@ -81,9 +81,7 @@ public class Register extends JFrame {
 		buttonCancelar = new JButton();
 		label4 = new JLabel();
 		label5 = new JLabel();
-		label3 = new JLabel();
 		textFieldUsername = new JTextField();
-		textFieldPorta = new JTextField();
 		label1 = new JLabel();
 		passwordField = new JPasswordField();
 
@@ -110,15 +108,8 @@ public class Register extends JFrame {
 		label5.setText("Password:");
 		label5.setFont(new Font("Tahoma", Font.BOLD, 14));
 
-		//---- label3 ----
-		label3.setText("Port:");
-		label3.setFont(new Font("Tahoma", Font.BOLD, 14));
-
 		//---- textFieldUsername ----
 		textFieldUsername.setFont(new Font("Tahoma", Font.PLAIN, 14));
-
-		//---- textFieldPorta ----
-		textFieldPorta.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		//---- label1 ----
 		label1.setText("Registo de utilizador");
@@ -138,13 +129,9 @@ public class Register extends JFrame {
 							.addComponent(label1))
 						.addGroup(contentPaneLayout.createSequentialGroup()
 							.addGap(12, 12, 12)
-							.addGroup(contentPaneLayout.createParallelGroup()
-								.addComponent(label5)
-								.addComponent(label3))
+							.addComponent(label5)
 							.addGap(18, 18, 18)
-							.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.LEADING, false)
-								.addComponent(passwordField, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)
-								.addComponent(textFieldPorta, GroupLayout.DEFAULT_SIZE, 235, Short.MAX_VALUE)))
+							.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, 235, GroupLayout.PREFERRED_SIZE))
 						.addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
 							.addGap(12, 12, 12)
 							.addGroup(contentPaneLayout.createParallelGroup()
@@ -170,11 +157,7 @@ public class Register extends JFrame {
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(label5, GroupLayout.PREFERRED_SIZE, 20, GroupLayout.PREFERRED_SIZE)
 						.addComponent(passwordField, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addGap(18, 18, 18)
-					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addComponent(label3, GroupLayout.PREFERRED_SIZE, 25, GroupLayout.PREFERRED_SIZE)
-						.addComponent(textFieldPorta, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 29, Short.MAX_VALUE)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 72, Short.MAX_VALUE)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(buttonCancelar, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
 						.addComponent(buttonOK, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE))
@@ -191,9 +174,7 @@ public class Register extends JFrame {
 	private JButton buttonCancelar;
 	private JLabel label4;
 	private JLabel label5;
-	private JLabel label3;
 	private JTextField textFieldUsername;
-	private JTextField textFieldPorta;
 	private JLabel label1;
 	private JPasswordField passwordField;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
