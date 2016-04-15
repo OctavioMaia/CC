@@ -1,6 +1,7 @@
 package Common;
 
-
+import java.util.Iterator;
+import java.util.Map;
 
 public final class PDU_Buider {
 
@@ -60,4 +61,48 @@ public final class PDU_Buider {
 		return ret;
 	}
 
+	//Fase2
+	/**
+	 * Parametros
+	 * fonte indica quem envia o consulyt request (0 é o servidor que consulta , 1 é o cliente)
+	 * ip ip de quem consulta e e porta onde uqre receber a resposta
+	 * banda, musica e extensao especificado no enunciado
+	 * */
+	static public PDU CONSULT_REQUEST(int fonte /*0 server 1 cliente*/,String ip, int port, String banda, String musica, String ext){
+		String mensagem = "IP_"+ip+";PT_"+port+";BAND_"+banda+";MUSIC_"+musica+";EXT_"+ext;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_REQUEST,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		return ret;
+	}
+	
+	/**
+	 * Parametros
+	 * fonte indica quem envia o consulyt request (0 é o servidor que consulta , 1 é o cliente)
+	 * ip ip de quem consulta e e porta onde tem comunicaçao aberta para falar
+	 * foud so é considerado quendo provem de um cliente, assim como o results so é considerado quando prevem de um server
+	 * caso  a musica no cliente nao sega eencontrada o ip e porta sao ignorados
+	 * a informaçao de ser encontrado ou nao vai no 1 campo da opçoes
+	 * */
+	static public PDU CONSULT_RESPONSE(int fonte /*0 server 1 cliente*/,String ip, int port, boolean found, Map<String,String> results ){
+		PDU ret =null;
+		if(fonte == 0){
+			int total = results.size();
+			String mensagem = "TOT_"+total;
+			Iterator<String> it = results.keySet().iterator();
+			while (it.hasNext()) {
+				String string =it.next();
+				mensagem = 
+			}
+		}else{
+			if(found){
+				String mensagem = "IP_"+ip+";PT_"+port;
+				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x01, (byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+			}else{
+				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x00, (byte)0x00,(byte)0x01,(byte)0x01,new byte[0]);
+			}
+		}
+		
+		return ret;
+	}
+	
+	
 }
