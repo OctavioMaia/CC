@@ -29,12 +29,20 @@ public final class PDU_Reader {
 		case (PDU.ARE_YOU_THERE):
 			data = new String(p.getData());
 			campos= data.split(";");
-			pa = new PDU_APP_STATE((int)version,campos[0].split("_")[1] , Integer.parseInt(campos[1].split("_")[1]), 1);
+			pa = new PDU_APP_STATE((int)version,campos[1].split("_")[1], Integer.parseInt(campos[2].split("_")[1]),campos[0].split("_")[1], 1);
 			break;
 		case (PDU.I_AM_HERE):
 			data = new String(p.getData());
 			campos= data.split(";");
-			pa = new PDU_APP_STATE((int)version,campos[0].split("_")[1] , Integer.parseInt(campos[1].split("_")[1]), 0);
+			pa = new PDU_APP_STATE((int)version,campos[1].split("_")[1] , Integer.parseInt(campos[2].split("_")[1]), campos[0].split("_")[1],0);
+			break;
+		case (PDU.CONSULT_REQUEST):
+			data = new String(p.getData());
+			//int origem = (int)secu;
+			campos = data.split(";");
+			pa = new PDU_APP_CONS_REQ((int)version, campos[3].split("_")[1], campos[4].split("_")[1],
+					campos[5].split("_")[1], (int)secu, campos[0].split("_")[1],
+					campos[1].split("_")[1], Integer.parseInt(campos[2].split("_")[1]));
 			break;
 		default:
 			break;
