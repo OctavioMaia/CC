@@ -1,6 +1,7 @@
 package Common;
 
-
+import java.util.Iterator;
+import java.util.Map;
 
 public final class PDU_Buider {
 
@@ -48,16 +49,78 @@ public final class PDU_Buider {
 		return ret;
 	}
 	
-	static public  PDU ARE_YOU_THERE_PDU(String ip, int port){ //ver se tem de mandar o ip e porta de respsota
-		String mensagem = "IP_"+ip+";PT_"+port;
+	static public  PDU ARE_YOU_THERE_PDU(String ip, int port, String idUser){ //ver se tem de mandar o ip e porta de respsota
+		String mensagem = "ID_"+idUser+";IP_"+ip+";PT_"+port;
 		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ARE_YOU_THERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
 		return ret;
 	}
 	
-	static public  PDU I_AM_HERE_PDU(String ip, int port){ //ver se tem de mandar o ip e porta de respsota
-		String mensagem = "IP_"+ip+";PT_"+port;
+	static public  PDU I_AM_HERE_PDU(String ip, int port,String idUser){ //ver se tem de mandar o ip e porta de respsota
+		String mensagem = "ID_"+idUser+";IP_"+ip+";PT_"+port;
 		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.I_AM_HERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
 		return ret;
 	}
 
+	//Fase2
+	/**
+	 * Parametros
+	 * fonte indica quem envia o consulyt request (0 é o servidor que consulta , 1 é o cliente)
+	 * ip ip de quem consulta e e porta onde uqre receber a resposta
+	 * banda, musica e extensao especificado no enunciado
+	 * */
+	static public PDU CONSULT_REQUEST_PDU(int fonte /*0 server 1 cliente*/,String ip, int port, String banda, String musica, String ext, String userID){
+		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port+";BAND_"+banda+";MUSIC_"+musica+";EXT_"+ext;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_REQUEST,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		return ret;
+	}
+	
+	/**
+	 * Parametros
+	 * fonte indica quem envia o consulyt request (0 é o servidor que consulta , 1 é o cliente)
+	 * ip ip de quem consulta e e porta onde tem comunicaçao aberta para falar
+	 * foud so é considerado quendo provem de um cliente, assim como o results so é considerado quando prevem de um server
+	 * caso  a musica no cliente nao sega eencontrada o ip e porta sao ignorados
+	 * a informaçao de ser encontrado ou nao vai no 1 campo da opçoes
+	 * no server o user id tb é ignorado
+	 * */
+	static public PDU CONSULT_RESPONSE_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port, boolean found, Map<String,String> results ){
+		PDU ret =null;
+		if(fonte == 0){
+			int total = results.size();
+			String mensagem = "IP_"+ip+";PT_"+port;
+			mensagem += ";TOT_"+total;
+			Iterator<String> it = results.keySet().iterator();
+			while (it.hasNext()) {
+				String nome =it.next();
+				mensagem += ";"+ nome+"_"+results.get(nome);
+			}
+			ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x00, (byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		}else{
+			if(found){
+				String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port;
+				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x01, (byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+			}else{
+				String mensagem = "ID_"+userID+";IP_"+ip;
+				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x00, (byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
+			}
+		}
+		
+		return ret;
+	}
+	/***
+	 
+	 */
+	static public PDU PROB_REQUEST_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port){
+		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.PROBE_REQUEST,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		return ret;
+		
+	}
+	
+	static public PDU PROB_RESPONSE_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port,long timestamp){
+		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port+";TS_"+timestamp;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.PROBE_RESPONSE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		return ret;
+	}
+	
 }
