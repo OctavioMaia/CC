@@ -57,11 +57,23 @@ public class PDU_APP_CONS_REQ extends PDU_APP{
 	public void setIdUser(String idUser) {
 		this.idUser = idUser;
 	}
-	@Override
-	public String toString() {
-		return "PDU_APP_CONS_REQ [banda=" + banda + ", musica=" + musica + ", ext=" + ext + ", fonte=" + fonte
-				+ ", idUser=" + idUser + ", toString()=" + super.toString() + "]";
+	
+	public String getIp() {
+		return ip;
 	}
+
+	public void setIp(String ip) {
+		this.ip = ip;
+	}
+
+	public int getPort() {
+		return port;
+	}
+
+	public void setPort(int port) {
+		this.port = port;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -70,9 +82,12 @@ public class PDU_APP_CONS_REQ extends PDU_APP{
 		result = prime * result + ((ext == null) ? 0 : ext.hashCode());
 		result = prime * result + fonte;
 		result = prime * result + ((idUser == null) ? 0 : idUser.hashCode());
+		result = prime * result + ((ip == null) ? 0 : ip.hashCode());
 		result = prime * result + ((musica == null) ? 0 : musica.hashCode());
+		result = prime * result + port;
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -99,12 +114,27 @@ public class PDU_APP_CONS_REQ extends PDU_APP{
 				return false;
 		} else if (!idUser.equals(other.idUser))
 			return false;
+		if (ip == null) {
+			if (other.ip != null)
+				return false;
+		} else if (!ip.equals(other.ip))
+			return false;
 		if (musica == null) {
 			if (other.musica != null)
 				return false;
 		} else if (!musica.equals(other.musica))
 			return false;
+		if (port != other.port)
+			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "PDU_APP_CONS_REQ [banda=" + banda + ", musica=" + musica + ", ext=" + ext + ", fonte=" + fonte
+				+ ", idUser=" + idUser + ", ip=" + ip + ", port=" + port + ", toString()=" + super.toString() + "]";
+	}
+
+	
 	
 }
