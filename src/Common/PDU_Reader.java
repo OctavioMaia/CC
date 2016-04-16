@@ -50,6 +50,19 @@ public final class PDU_Reader {
 		case (PDU.CONSULT_RESPONSE):
 			pa = leConsResp(p);
 			break;
+		case(PDU.PROBE_REQUEST):
+			data = new String(p.getData());
+			//int origem = (int)secu;
+			campos = data.split(";");
+			pa = new PDU_APP_PROB_REQUEST(version, campos[0].split("_")[1], campos[1].split("_")[1], Integer.parseInt(campos[2].split("_")[1]), (int)secu);
+			break;
+		case(PDU.PROBE_RESPONSE):
+			data = new String(p.getData());
+			//int origem = (int)secu;
+			campos = data.split(";");
+			pa = new PDU_APP_PROB_RESPONSE(version, campos[0].split("_")[1], campos[1].split("_")[1], 
+					Integer.parseInt(campos[2].split("_")[1]), (int)secu, Long.parseLong(campos[3].split("_")[1]));
+			break;
 		default:
 			break;
 		}
