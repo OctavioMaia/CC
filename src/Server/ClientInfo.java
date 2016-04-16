@@ -8,13 +8,18 @@ public class ClientInfo {
 	private String ip;
 	private int port;
 	private ReentrantLock lock; //futuramente usar para quando apensar precisarmos mudificar o cliente.
-
-	public ClientInfo(String user, String pass, String ip, int port) {
+	private Thread runRequest; //Thread que foi aberta apos a abertura do socket no server para um cliente
+	private long timeStanp;
+	
+	public ClientInfo(String user, String pass, String ip, int port, Thread currentThread) {
 		this.user = user;
 		this.pass = pass;
 		this.ip = ip;
 		this.port = port;
+		this.runRequest = currentThread;
+		this.timeStanp = System.currentTimeMillis();
 	}
+	
 	
 	protected synchronized String getUser() {
 		return user;
@@ -40,5 +45,11 @@ public class ClientInfo {
 	public synchronized void setPort(int port) {
 		this.port = port;
 	}
-
+	public Thread getRunRequest() {
+		return runRequest;
+	}
+	public void setRunRequest(Thread runRequest) {
+		this.runRequest = runRequest;
+	}
+	
 }

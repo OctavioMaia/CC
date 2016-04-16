@@ -72,13 +72,16 @@ public class ServerInfo {
 		if(clients.containsKey(uname)){
 			return 2; // Username já existente
 		}
-		if(clients.put(uname, new ClientInfo(uname, pass, ip, port))==null){
+		if(clients.put(uname, new ClientInfo(uname, pass, ip, port, Thread.currentThread()))==null){
 			return 1; // registo com sucesso
 		};
 		return 0;
 	}
 	protected synchronized boolean logout(String username){
-		return this.online.remove(username);
+		boolean flag = this.online.remove(username);
+		System.out.println(online.toString() +"and " + flag);
+		return flag;
+		
 	}
 	/**
 	 * Função que realiza o login de um cliente no server
@@ -113,5 +116,12 @@ public class ServerInfo {
 
 	protected synchronized ClientInfo getUser(String user){
 		return this.clients.get(user);
+	}
+
+
+
+	
+	public void setTimeStampClient(String user) {
+		
 	}
 }

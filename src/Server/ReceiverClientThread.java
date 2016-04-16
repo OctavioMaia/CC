@@ -46,8 +46,6 @@ public class ReceiverClientThread implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-        
-        
         this.osConsulta = null;
         this.isConsulta = null;
     }
@@ -64,6 +62,18 @@ public class ReceiverClientThread implements Runnable{
 			}
 		}else{
 			if(pdu.getClass().getSimpleName().equals("PDU_APP_STATE")){
+				PDU_APP_STATE p = (PDU_APP_STATE) pdu;
+				switch (p.getTipo()) {
+					case PDU_APP_STATE.I_AM_HERE_PDU: {
+						receiveI_AM_HERE(p);
+						break;
+					}
+					case PDU_APP_STATE.ARE_YOU_THERE: {
+						break;
+					}
+				default:
+					break;
+				}
 				this.receiveI_AM_HERE((PDU_APP_STATE)pdu);
 			}else{
 				System.out.println("ERRO");
@@ -73,6 +83,7 @@ public class ReceiverClientThread implements Runnable{
     
     private void app_logout(PDU_APP_REG pdu){
     	if(this.server.logout(pdu.getUname())){
+    		//pensar em fazer close aos sockets
     		System.out.println("O Cliente " + pdu.getUname() + " fez logout da sua conta.");
     	}
     }
@@ -124,30 +135,10 @@ public class ReceiverClientThread implements Runnable{
 		}
     }
     
-    private void sendARE_YOU_THERE(){
-    	PDU iamhere = PDU_Buider.I_AM_HERE_PDU(server.getClientes().get(user).getIp(), server.getClientes().get(user).getPort());
-		try {
-			osConsulta.write(PDU.toBytes(iamhere));
-		} catch (IOException e) {
-			System.out.println(Thread.currentThread().getName() + "Não foi possivel criar o pack para envio para o servidor");
-			e.printStackTrace();
-		}
-    }
     private void receiveI_AM_HERE(PDU_APP_STATE pdu){
-    	
+    	this.server.setTimeStampClient(this.user.getUser());
     }
     
-    /*
-     * Esta função vai testar se o cliente esta on.
-     * Se por algum motivo a conecção do socket for a vida vai ser lancada uma exeção
-     * no while principal o que vai fazer com que seja enviado um ping ao cliente 
-     * caso este nao responda num determinado tempo a flagPING vai passar a falso
-     * o que vai fazer com que ocorra a saida do ciclo e assim acaba a conecção do cliente
-     */
-    private boolean connected(Socket sock, boolean flagPING){
-		return sock.isConnected() && flagPING;
-    }
-
     public void run() {
     	int nBytes;
     	boolean flagPING = false;
@@ -168,35 +159,7 @@ public class ReceiverClientThread implements Runnable{
 						break;
 				}
 			} catch (IOException e ) {
-				//this.server.logout(user.getUser());
-				System.out.println("Não foi possivel realizar a leitura do campo da versão.");
-				/*
-				//timeout 10 segundos
-				long startTime = System.currentTimeMillis(); //fetch starting time
-				try {
-					while((nBytes = isConsulta.read(version,0,1))!=1 || (System.currentTimeMillis()-startTime)<10000)
-					{
-					    System.out.println("Estou a espera do I_AM_HERE do " + this.user.getUser());
-					}
-				} catch (IOException e1) {
-					 //o cliente nao se encontra disponivel por nenhum dos canais
-					 //de comunicação fazer logout e fechar a thread
-					 
-					//e1.printStackTrace();
-					System.out.println("Cliente " + this.user.getUser() + "não se encontra disponivel");
-					server.logout(this.user.getUser());
-					break;
-				}
-				if(nBytes==1){
-					PDU_APP pduIAMHERE = PDUVersion1.readPDU(version[0], isConsulta);
-					flagPING=true;
-				}else{
-					//remover cliente de online fazer logout
-					System.out.println("Cliente " + this.user.getUser() + "não se encontra disponivel");
-					server.logout(this.user.getUser());
-					break;
-				}
-				*/
+				System.out.println("Não foi possivel realizar a leitura do campo da versão.");				
 			}
     	}	
     	try {
