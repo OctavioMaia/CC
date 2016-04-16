@@ -4,6 +4,7 @@ import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class PDU {
+	
 	 //private int inc = 0;
 	 private byte version;
 	 private byte security;
@@ -40,6 +41,8 @@ public class PDU {
 	 public static final byte CONFIRM =0x09;
 	 public static final byte ACK =0x0A;
 	 public static final byte REGISTER_RESPONSE =0x0B;
+	 
+	 public static final int MAXDATASIZE= (48*1024)-(7+4);
 	 
 	 public int getTotalSize(){
 		 int dataSize = PDU.intfromByte(this.getSizebytes());
