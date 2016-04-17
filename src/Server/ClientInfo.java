@@ -10,14 +10,16 @@ public class ClientInfo {
 	private ReentrantLock lock; //futuramente usar para quando apensar precisarmos mudificar o cliente.
 	private Thread runRequest; //Thread que foi aberta apos a abertura do socket no server para um cliente
 	private long timeStanp;
+	private boolean flagStopThread;
 	
-	public ClientInfo(String user, String pass, String ip, int port, Thread currentThread) {
+ 	public ClientInfo(String user, String pass, String ip, int port, Thread currentThread) {
 		this.user = user;
 		this.pass = pass;
 		this.ip = ip;
 		this.port = port;
 		this.runRequest = currentThread;
 		this.timeStanp = System.currentTimeMillis();
+		this.flagStopThread = false;
 	}
 	
 	
@@ -45,11 +47,44 @@ public class ClientInfo {
 	public synchronized void setPort(int port) {
 		this.port = port;
 	}
-	public Thread getRunRequest() {
+	public synchronized Thread getRunRequest() {
 		return runRequest;
 	}
-	public void setRunRequest(Thread runRequest) {
+	public synchronized void setRunRequest(Thread runRequest) {
 		this.runRequest = runRequest;
 	}
+	public boolean getFlagStopThread() {
+		return flagStopThread;
+	}
+	public void setFlagStopThread(boolean flagStopThread) {
+		this.flagStopThread = flagStopThread;
+	}
+
+
+	public synchronized void logout(){
+		this.flagStopThread = true ;
+		this.runRequest=null;
+	}
 	
+	/*
+	 * return true caso esteja ativo
+	 * return falso caso contrario
+	 */
+	public boolean checkTimeStamp(int maxTime){
+		if((System.currentTimeMillis()-this.timeStanp)>maxTime){
+			flagStopThread=true;
+			return false;
+		}
+		return true;
+	}
+
+
+	public synchronized long getTimeStanp() {
+		return timeStanp;
+	}
+
+
+	public synchronized void setTimeStanp(long timeStanp) {
+		this.timeStanp = timeStanp;
+	}
 }

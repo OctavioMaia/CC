@@ -136,7 +136,7 @@ public class ReceiverClientThread implements Runnable{
     }
     
     private void receiveI_AM_HERE(PDU_APP_STATE pdu){
-    	this.server.setTimeStampClient(this.user.getUser());
+    	this.user.setTimeStanp(System.currentTimeMillis());
     }
     
     public void run() {
@@ -145,7 +145,7 @@ public class ReceiverClientThread implements Runnable{
     	
     	byte[] version = new byte[1];
     	
-    	while(sockRegisto.isConnected()){
+    	while(sockRegisto.isConnected() && !this.user.getFlagStopThread()){
     		try {
 				while(isRegisto.read(version,0,1)!=1);
 				switch (version[0]) {

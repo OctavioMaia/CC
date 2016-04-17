@@ -12,6 +12,7 @@ public class ServerInfo {
 	private int port;
 	private HashMap<String,ClientInfo> clients; //user->ClienteInfo  clientes registados
 	private HashSet<String> online;
+
 	private HashMap<String,ServerDomain> othersServers; 
 
 	public ServerInfo(int port){
@@ -27,8 +28,6 @@ public class ServerInfo {
 		this.online = new HashSet<>();
 	}
 	
-	
-
 	public ServerInfo(String ipServer, int portServer){
 		this.localIP = ipServer;
 		this.port = portServer;
@@ -37,6 +36,12 @@ public class ServerInfo {
 		this.online = new HashSet<>();
 	}
 
+	public HashSet<String> getOnline() {
+		return online;
+	}
+	public void setOnline(HashSet<String> online) {
+		this.online = online;
+	}
 	protected synchronized String getLocalIP() {
 		return localIP;
 	}
@@ -118,10 +123,16 @@ public class ServerInfo {
 		return this.clients.get(user);
 	}
 
-
-
-	
-	public void setTimeStampClient(String user) {
-		
+	/*
+	 * 
+	 */
+	public synchronized void checkTimeStampClient(String user,int maxTime) {
+		ClientInfo c = this.clients.get(user);
+		if(c.checkTimeStamp(maxTime)==false){
+			//caso em que nao foi verificada a permaneicia do cliente no serviço
+			c.logout();
+			this.online.remove(user);
+		};
 	}
+
 }
