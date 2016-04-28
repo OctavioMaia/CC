@@ -4,8 +4,8 @@ new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq {space :::p, par l {seq {space :0:274:x, comp sairButton:::p:75:p}, seq {comp label1:::p::p, space s:::p, comp state::::284:x}, comp loginButton::::349:x, comp logoutButton::l::349:x, comp registarButton::l::349:x}, space :::p}}"
-			"$verticalGroup": "par l {seq l {space :::p, par l {comp label1:::p::p, comp state:::p::p}, space ::65:x, comp registarButton:::p::p, space u:::p, comp loginButton:::p::p, space u:::p, comp logoutButton:::p::p, space :p:25:p, comp sairButton:::p:30:p, space :::p}}"
+			"$horizontalGroup": "par l {seq {space :::p, par l {seq {space :0:339:x, comp sairButton:::p:75:p}, seq {comp label1:::p::p, space s:::p, comp state::::349:x}, comp loginButton::::414:x, comp logoutButton::l::414:x, comp registarButton::l::414:x, comp musicSearchButton::l::414:x}, space :::p}}"
+			"$verticalGroup": "par l {seq l {space :::p, par l {comp label1:::p::p, comp state:::p::p}, space :p:33:p, comp registarButton:::p::p, space u:::p, comp loginButton:::p::p, space u:::p, comp logoutButton:::p::p, space u:::p, comp musicSearchButton:::p::p, space ::116:x, comp sairButton:::p:30:p, space :::p}}"
 		} ) {
 			name: "this"
 			"title": "Menu"
@@ -46,9 +46,15 @@ new FormModel {
 				name: "state"
 				"font": #Font0
 			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "musicSearchButton"
+				"text": "Music Search"
+				"font": new java.awt.Font( "Tahoma", 0, 14 )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "musicSearchButtonActionPerformed", true ) )
+			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 385, 295 )
+			"size": new java.awt.Dimension( 450, 390 )
 		} )
 	}
 }

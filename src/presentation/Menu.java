@@ -91,6 +91,10 @@ public class Menu extends JFrame {
 		this.setVisible(false);
 	}
 
+	private void musicSearchButtonActionPerformed(ActionEvent e) {
+		
+	}
+
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
 		// Generated using JFormDesigner Evaluation license - Rui Freitas
@@ -100,6 +104,7 @@ public class Menu extends JFrame {
 		registarButton = new JButton();
 		logoutButton = new JButton();
 		state = new JLabel();
+		musicSearchButton = new JButton();
 
 		//======== this ========
 		setTitle("Menu");
@@ -139,6 +144,11 @@ public class Menu extends JFrame {
 		//---- state ----
 		state.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
+		//---- musicSearchButton ----
+		musicSearchButton.setText("Music Search");
+		musicSearchButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		musicSearchButton.addActionListener(e -> musicSearchButtonActionPerformed(e));
+
 		GroupLayout contentPaneLayout = new GroupLayout(contentPane);
 		contentPane.setLayout(contentPaneLayout);
 		contentPaneLayout.setHorizontalGroup(
@@ -147,15 +157,16 @@ public class Menu extends JFrame {
 					.addContainerGap()
 					.addGroup(contentPaneLayout.createParallelGroup()
 						.addGroup(contentPaneLayout.createSequentialGroup()
-							.addGap(0, 274, Short.MAX_VALUE)
+							.addGap(0, 339, Short.MAX_VALUE)
 							.addComponent(sairButton, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
 						.addGroup(contentPaneLayout.createSequentialGroup()
 							.addComponent(label1)
 							.addGap(18, 18, 18)
-							.addComponent(state, GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE))
-						.addComponent(loginButton, GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-						.addComponent(logoutButton, GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-						.addComponent(registarButton, GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE))
+							.addComponent(state, GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE))
+						.addComponent(loginButton, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+						.addComponent(logoutButton, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+						.addComponent(registarButton, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE)
+						.addComponent(musicSearchButton, GroupLayout.DEFAULT_SIZE, 414, Short.MAX_VALUE))
 					.addContainerGap())
 		);
 		contentPaneLayout.setVerticalGroup(
@@ -165,17 +176,19 @@ public class Menu extends JFrame {
 					.addGroup(contentPaneLayout.createParallelGroup()
 						.addComponent(label1)
 						.addComponent(state))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+					.addGap(33, 33, 33)
 					.addComponent(registarButton)
 					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 					.addComponent(loginButton)
 					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 					.addComponent(logoutButton)
-					.addGap(25, 25, 25)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+					.addComponent(musicSearchButton)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
 					.addComponent(sairButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
-		setSize(385, 295);
+		setSize(450, 390);
 		setLocationRelativeTo(null);
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
@@ -188,5 +201,6 @@ public class Menu extends JFrame {
 	private JButton registarButton;
 	private JButton logoutButton;
 	private JLabel state;
+	private JButton musicSearchButton;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }
