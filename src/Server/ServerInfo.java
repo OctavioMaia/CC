@@ -1,20 +1,31 @@
 package Server;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.Inet4Address;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import com.sun.org.apache.xalan.internal.xsltc.compiler.sym;
+import Common.PDU;
+import Common.PDU_Buider;
 
 public class ServerInfo {
 	private String localIP;
 	private int port;
 	private HashMap<String,ClientInfo> clients; //user->ClienteInfo  clientes registados
 	private HashSet<String> online;
-
 	private HashMap<String,ServerDomain> othersServers; 
-
+	private Socket sockMaster;
+	private InputStream isMasterSocket;
+	private OutputStream osMasterSocket;
+	private String masterIP;
+	private int masterPort;
+	
+	
+	
 	public ServerInfo(int port){
 		try {
 			localIP = Inet4Address.getLocalHost().getHostAddress();
@@ -26,6 +37,11 @@ public class ServerInfo {
 		this.clients = new HashMap<>();
 		this.othersServers = new HashMap<>();
 		this.online = new HashSet<>();
+		this.sockMaster=null;
+		this.isMasterSocket=null;
+		this.osMasterSocket=null;
+		this.masterIP="";
+		this.masterPort=-1;
 	}
 	
 	public ServerInfo(String ipServer, int portServer){
@@ -45,7 +61,7 @@ public class ServerInfo {
 	protected synchronized String getLocalIP() {
 		return localIP;
 	}
-	protected synchronized void setLocalIP(String localIP) {
+	public synchronized void setLocalIP(String localIP) {
 		this.localIP = localIP;
 	}
 	protected synchronized int getPort() {
@@ -68,16 +84,11 @@ public class ServerInfo {
 	}
 
 	protected synchronized int addRegisto(int origem, String uname, String pass, String ip, int port){
-		System.out.println("Origem: " + origem);
-		System.out.println("USER: " + uname);
-		System.out.println("PASS: " + pass);
-		System.out.println("IP: " + ip);
-		System.out.println("PORT: " + port);
 		//futuramente verificar a origem pois pode ser o registo de um servidor
 		if(clients.containsKey(uname)){
 			return 2; // Username já existente
 		}
-		if(clients.put(uname, new ClientInfo(uname, pass, ip, port, Thread.currentThread()))==null){
+		if(clients.put(uname, new ClientInfo(origem,uname, pass, ip, port, Thread.currentThread()))==null){
 			return 1; // registo com sucesso
 		};
 		return 0;
@@ -135,4 +146,29 @@ public class ServerInfo {
 		};
 	}
 
+	
+	protected synchronized void connectToMaster(String ip, int port){
+		this.masterIP=ip;
+		this.masterPort=port;
+		try {
+			this.sockMaster = new Socket(this.masterIP, this.masterPort);
+			this.isMasterSocket = sockMaster.getInputStream();
+			this.osMasterSocket = sockMaster.getOutputStream();
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		//enviar um registo para o master
+		PDU pduRegisterMaster = PDU_Buider.REGISTER_PDU(0, this.localIP+":"+this.port, "", this.localIP, this.port);
+		try {
+			this.osMasterSocket.write(PDU.toBytes(pduRegisterMaster));
+		} catch (IOException e) {
+			System.out.println("Impossivel enviar mensagem de registo para o master");
+			e.printStackTrace();
+		}
+	}
 }

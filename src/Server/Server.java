@@ -18,7 +18,6 @@ public class Server {
 			this.server = new ServerSocket(port);
 			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		try {
@@ -27,7 +26,6 @@ public class Server {
 			try {
 				server.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
 			e.printStackTrace();
@@ -51,8 +49,16 @@ public class Server {
         }
 	}
 	
+	public void connectToMaster(String ip, int port){
+		this.info.connectToMaster(ip, port);
+	}
+	
 	public static void main(String argv[]){
 		Server s = new Server(Integer.parseInt(argv[0]));
+		if(argv.length==3){
+			s.connectToMaster(argv[1], Integer.parseInt(argv[2]));
+			System.out.println("I' m the master server");
+		}
 		s.startServer();
 	}
 

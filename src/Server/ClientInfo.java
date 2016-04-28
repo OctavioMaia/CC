@@ -3,6 +3,7 @@ package Server;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ClientInfo {
+	private int tipoCliente; /*0 server 1 cliente*/
 	private String user;
 	private String pass;
 	private String ip;
@@ -12,7 +13,8 @@ public class ClientInfo {
 	private long timeStanp;
 	private boolean flagStopThread;
 	
- 	public ClientInfo(String user, String pass, String ip, int port, Thread currentThread) {
+ 	public ClientInfo(int origem,String user, String pass, String ip, int port, Thread currentThread) {
+ 		this.tipoCliente=origem;
 		this.user = user;
 		this.pass = pass;
 		this.ip = ip;

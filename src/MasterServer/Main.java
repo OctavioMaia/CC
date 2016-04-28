@@ -1,5 +1,0 @@
-package MasterServer;
-
-class Main {
-
-}
