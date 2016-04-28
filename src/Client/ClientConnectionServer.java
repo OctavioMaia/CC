@@ -100,28 +100,26 @@ public class ClientConnectionServer implements Runnable{
 	 * ao cliente. Envia um I_AM_HERE
 	 */
 	private void responseARE_YOU_THERE(){
-		PDU iamhere = PDU_Buider.I_AM_HERE_PDU(cliente.getIp(), cliente.getPort());
-		try {
-			osConsult.write(PDU.toBytes(iamhere));
-		} catch (IOException e) {
-			System.out.println(Thread.currentThread().getName() + "Não foi possivel criar o pack para envio para o servidor");
-			e.printStackTrace();
-		}
+
 	}
 	/*
 	 * Função para realizar o que for necessario a quando
 	 * do um pedido de ping afirmativo
 	 */
 	private void makeSomething(PDU_APP_STATE p){
-		//ainda nao sei o que fazer aqui
 	}
 	
 	@Override
 	public void run() {
+		startServer();
 		while(main.getState()!=Thread.State.TERMINATED){
-			startServer();
-			readFromSock();
-			
+			try {
+				Thread.sleep(15000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("Estou aberto");
         }
 	}
 }

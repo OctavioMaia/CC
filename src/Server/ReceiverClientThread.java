@@ -145,7 +145,7 @@ public class ReceiverClientThread implements Runnable{
     	
     	byte[] version = new byte[1];
     	
-    	while(sockRegisto.isConnected() && !this.user.getFlagStopThread()){
+    	while(sockRegisto.isConnected()){// &&  !this.user.getFlagStopThread()
     		try {
 				while(isRegisto.read(version,0,1)!=1);
 				switch (version[0]) {
@@ -167,7 +167,6 @@ public class ReceiverClientThread implements Runnable{
 			osRegisto.close();
 			isRegisto.close();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
@@ -175,8 +174,8 @@ public class ReceiverClientThread implements Runnable{
 			osConsulta.close();
 			isConsulta.close();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
+		
     }   
 }

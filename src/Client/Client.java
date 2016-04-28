@@ -20,12 +20,13 @@ public class Client{
 	private String pass;
 	private int port;
 	private ClientConnectionServer conectServer;
-	
+	private SendPingServer pingServer;
 	private ServerSocket serverSocket;
-	
 	private Socket sock;
 	private InputStream is;
 	private OutputStream os;
+	
+	
 	
 	public Client(String hostServer, int portServer){
 		this.user = new String();
@@ -62,66 +63,73 @@ public class Client{
 		this.port = this.serverSocket.getLocalPort();
 		
 		this.conectServer = null;
+		this.pingServer=null;
 		
 	}
 	
-	public String getUser() {
+	public synchronized String getUser() {
 		return user;
 	}
 
-	public void setUser(String user) {
+	public synchronized void setUser(String user) {
 		this.user = user;
 	}
-	public String getIp() {
+	public synchronized String getIp() {
 		return ip;
 	}
-	public void setIp(String ip) {
+	public synchronized void setIp(String ip) {
 		this.ip = ip;
 	}
-	public String getPass() {
+	public synchronized String getPass() {
 		return pass;
 	}
-	public void setPass(String pass) {
+	public synchronized void setPass(String pass) {
 		this.pass = pass;
 	}
-	public int getPort() {
+	public synchronized int getPort() {
 		return port;
 	}
-	public void setPort(int port) {
+	public synchronized void setPort(int port) {
 		this.port = port;
 	}
-	public Socket getSock() {
+	public synchronized Socket getSock() {
 		return sock;
 	}
-	public void setSock(Socket sock) {
+	public synchronized void setSock(Socket sock) {
 		this.sock = sock;
 	}
-	public InputStream getIs() {
+	public synchronized InputStream getIs() {
 		return is;
 	}
-	public void setIsr(InputStream is) {
+	public synchronized void setIsr(InputStream is) {
 		this.is = is;
 	}
-	public OutputStream getOs() {
+	public synchronized OutputStream getOs() {
 		return os;
 	}
-	public void setOsw(OutputStream os) {
+	public synchronized void setOsw(OutputStream os) {
 		this.os = os;
 	}
-	public ClientConnectionServer getConectServer() {
+	public synchronized ClientConnectionServer getConectServer() {
 		return conectServer;
 	}
-	public void setConectServer(ClientConnectionServer conectServer) {
+	public synchronized void setConectServer(ClientConnectionServer conectServer) {
 		this.conectServer = conectServer;
 	}
-	public ServerSocket getServerSocket() {
+	public synchronized ServerSocket getServerSocket() {
 		return serverSocket;
 	}
-	public void setServerSocket(ServerSocket serverSocket) {
+	public synchronized void setServerSocket(ServerSocket serverSocket) {
 		this.serverSocket = serverSocket;
 	}
+	public synchronized SendPingServer getPingServer() {
+		return pingServer;
+	}
+	public synchronized void setPingServer(SendPingServer pingServer) {
+		this.pingServer = pingServer;
+	}
 
-	public int register(String username, String password, int p){
+	public synchronized int register(String username, String password, int p){
 		PDU register = PDU_Buider.REGISTER_PDU(1, username, password, this.ip, p);
 		try {
 			os.write(PDU.toBytes(register));
@@ -143,7 +151,7 @@ public class Client{
 		
 		return resp.getMensagem();
 	}
-	public int login(String username, String password, int p){
+	public synchronized int login(String username, String password, int p){
 		PDU login = PDU_Buider.LOGIN_PDU(1, username, password, this.ip, p);
 		try {
 			os.write(PDU.toBytes(login));
@@ -156,7 +164,6 @@ public class Client{
 		try {
 			is.read(response, 0, 11);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
@@ -169,11 +176,23 @@ public class Client{
 			setPass(password);
 			setPort(p);
 			this.conectServer = new ClientConnectionServer(Thread.currentThread(), this);
+			this.pingServer = new SendPingServer(this,Thread.currentThread());
+			Thread cs = new Thread(this.conectServer);
+			Thread ps = new Thread(this.pingServer);
+			cs.start();
+			ps.start();
 		}
-		
 		return m;
 	}
-	public void logout(){
+	public synchronized void setIs(InputStream is) {
+		this.is = is;
+	}
+
+	public synchronized void setOs(OutputStream os) {
+		this.os = os;
+	}
+
+	public synchronized void logout(){
 		PDU logout = PDU_Buider.LOGOUT_PDU(1, user, pass, this.ip, port);
 		try {
 			os.write(PDU.toBytes(logout));
@@ -181,10 +200,6 @@ public class Client{
 			System.out.println("Não foi possivel criar o pack para envio para o servidor");
 			e.printStackTrace();
 		}
-
-	/*	setUser("");
-		setPass("");
-		setPort(-1);*/
 	}
 
 }

@@ -45,6 +45,8 @@ public class Server {
                 System.out.println("Erro ao criar socket para cliente.");
             }
             Thread t = new Thread(new ReceiverClientThread(sockCliente,this.info));
+            Thread cp = new Thread( new CheckPingClients(info, Thread.currentThread()));
+            cp.start();
 			t.start();            
         }
 	}
@@ -52,8 +54,6 @@ public class Server {
 	public static void main(String argv[]){
 		Server s = new Server(Integer.parseInt(argv[0]));
 		s.startServer();
-		
 	}
-	
-	
+
 }
