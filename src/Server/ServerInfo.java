@@ -9,22 +9,25 @@ import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import Client.SendPingServer;
 import Common.PDU;
+import Common.PDU_APP;
+import Common.PDU_APP_REG_RESP;
 import Common.PDU_Buider;
+import Common.PDU_Reader;
+import Versions.PDUVersion1;
 
 public class ServerInfo {
 	private String localIP;
 	private int port;
 	private HashMap<String,ClientInfo> clients; //user->ClienteInfo  clientes registados
-	private HashSet<String> online;
-	private HashMap<String,ServerDomain> othersServers; 
+	private HashSet<String> online; 
 	private Socket sockMaster;
+	//informações sobre o server master
 	private InputStream isMasterSocket;
 	private OutputStream osMasterSocket;
 	private String masterIP;
 	private int masterPort;
-	
-	
 	
 	public ServerInfo(int port){
 		try {
@@ -35,12 +38,11 @@ public class ServerInfo {
 		}
 		this.port = port;
 		this.clients = new HashMap<>();
-		this.othersServers = new HashMap<>();
 		this.online = new HashSet<>();
 		this.sockMaster=null;
 		this.isMasterSocket=null;
 		this.osMasterSocket=null;
-		this.masterIP="";
+		this.masterIP=null;
 		this.masterPort=-1;
 	}
 	
@@ -48,7 +50,6 @@ public class ServerInfo {
 		this.localIP = ipServer;
 		this.port = portServer;
 		this.clients = new HashMap<>();
-		this.othersServers = new HashMap<>();
 		this.online = new HashSet<>();
 	}
 
@@ -75,12 +76,6 @@ public class ServerInfo {
 	}
 	protected synchronized void setClients(HashMap<String, ClientInfo> clientes) {
 		this.clients = clientes;
-	}
-	protected synchronized HashMap<String, ServerDomain> getOthersServers() {
-		return othersServers;
-	}
-	protected synchronized void setOthersServers(HashMap<String, ServerDomain> othersServers) {
-		this.othersServers = othersServers;
 	}
 
 	protected synchronized int addRegisto(int origem, String uname, String pass, String ip, int port){
@@ -134,9 +129,14 @@ public class ServerInfo {
 		return this.clients.get(user);
 	}
 
-	/*
-	 * 
-	 */
+	protected synchronized boolean containsOnline(String user){
+		return this.online.contains(user);		
+	} 
+	
+	protected synchronized void addOnline(String user){
+		this.online.add(user);
+	}
+	
 	public synchronized void checkTimeStampClient(String user,int maxTime) {
 		ClientInfo c = this.clients.get(user);
 		if(c.checkTimeStamp(maxTime)==false){
@@ -170,5 +170,25 @@ public class ServerInfo {
 			System.out.println("Impossivel enviar mensagem de registo para o master");
 			e.printStackTrace();
 		}
+		byte pdu[] = new byte[11];
+		try {
+			isMasterSocket.read(pdu, 0, 11);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		PDU_APP app = PDU_Reader.read(pdu);
+		
+		if(app.getClass().getSimpleName().equals("PDU_APP_REG_RESP")){
+			PDU_APP_REG_RESP appResp = (PDU_APP_REG_RESP) app;
+			
+			if(appResp.getMensagem()==1){
+				PDU pduPING = PDU_Buider.I_AM_HERE_PDU(localIP, port, localIP+":"+ port);
+				Thread pingMaster = new Thread(new SendPingMaster(Thread.currentThread(),pduPING,osMasterSocket));
+				pingMaster.start();
+			}
+			
+		}
+		
 	}
 }

@@ -146,7 +146,7 @@ public class Client{
 			e.printStackTrace();
 		}
 		
-		PDU_APP_REG_RESP resp = (PDU_APP_REG_RESP) PDU_Reader.read(response);;
+		PDU_APP_REG_RESP resp = (PDU_APP_REG_RESP) PDU_Reader.read(response);
 		
 		
 		return resp.getMensagem();

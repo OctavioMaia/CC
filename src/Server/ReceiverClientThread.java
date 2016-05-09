@@ -125,7 +125,7 @@ public class ReceiverClientThread implements Runnable{
     }
     
     private void app_registo(PDU_APP_REG pdu){
-    	int mensagem = server.addRegisto(pdu.getOrigem(), pdu.getUname(), pdu.getPass(), pdu.getIp(), pdu.getPort());
+    	int mensagem = server.addRegisto( pdu.getOrigem(), pdu.getUname(), pdu.getPass(), pdu.getIp(), pdu.getPort());
     	PDU respPDU = PDU_Buider.REGISTER_PDU_RESPONSE(mensagem);
     	try {
 			osRegisto.write(PDU.toBytes(respPDU));
@@ -137,12 +137,12 @@ public class ReceiverClientThread implements Runnable{
     
     private void receiveI_AM_HERE(PDU_APP_STATE pdu){
     	this.user.setTimeStanp(System.currentTimeMillis());
+    	if(!this.server.containsOnline(this.user.getUser())){
+    		this.server.addOnline(this.user.getUser());
+    	}
     }
     
-    public void run() {
-    	int nBytes;
-    	boolean flagPING = false;
-    	
+    public void run() {    	
     	byte[] version = new byte[1];
     	
     	while(sockRegisto.isConnected()){// &&  !this.user.getFlagStopThread()
