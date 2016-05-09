@@ -17,7 +17,6 @@ public class ServerInfo {
 	private int port;
 	private HashMap<String,ClientInfo> clients; //user->ClienteInfo  clientes registados
 	private HashSet<String> online;
-	private HashMap<String,ServerDomain> othersServers; 
 	private Socket sockMaster;
 	private InputStream isMasterSocket;
 	private OutputStream osMasterSocket;
@@ -35,7 +34,6 @@ public class ServerInfo {
 		}
 		this.port = port;
 		this.clients = new HashMap<>();
-		this.othersServers = new HashMap<>();
 		this.online = new HashSet<>();
 		this.sockMaster=null;
 		this.isMasterSocket=null;
@@ -48,7 +46,6 @@ public class ServerInfo {
 		this.localIP = ipServer;
 		this.port = portServer;
 		this.clients = new HashMap<>();
-		this.othersServers = new HashMap<>();
 		this.online = new HashSet<>();
 	}
 
@@ -75,12 +72,6 @@ public class ServerInfo {
 	}
 	protected synchronized void setClients(HashMap<String, ClientInfo> clientes) {
 		this.clients = clientes;
-	}
-	protected synchronized HashMap<String, ServerDomain> getOthersServers() {
-		return othersServers;
-	}
-	protected synchronized void setOthersServers(HashMap<String, ServerDomain> othersServers) {
-		this.othersServers = othersServers;
 	}
 
 	protected synchronized int addRegisto(int origem, String uname, String pass, String ip, int port){

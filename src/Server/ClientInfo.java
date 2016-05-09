@@ -61,8 +61,13 @@ public class ClientInfo {
 	public void setFlagStopThread(boolean flagStopThread) {
 		this.flagStopThread = flagStopThread;
 	}
-
-
+	public synchronized long getTimeStanp() {
+			return timeStanp;
+		}
+	public synchronized void setTimeStanp(long timeStanp) {
+		this.timeStanp = timeStanp;
+	}
+	
 	public synchronized void logout(){
 		this.flagStopThread = true ;
 		this.runRequest=null;
@@ -80,14 +85,5 @@ public class ClientInfo {
 		}
 		return true;
 	}
-
-
-	public synchronized long getTimeStanp() {
-		return timeStanp;
-	}
-
-
-	public synchronized void setTimeStanp(long timeStanp) {
-		this.timeStanp = timeStanp;
-	}
+	
 }
