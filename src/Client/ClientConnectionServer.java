@@ -3,15 +3,9 @@ package Client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
-
-import Common.PDU;
 import Common.PDU_APP;
-import Common.PDU_APP_REG;
 import Common.PDU_APP_STATE;
-import Common.PDU_Buider;
-import Server.ReceiverClientThread;
 import Versions.PDUVersion1;
 
 /*

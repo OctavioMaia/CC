@@ -9,10 +9,7 @@ package Server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
 import java.net.Socket;
-
-import Client.Client;
 import Common.*;
 import Versions.PDUVersion1;
 
@@ -43,7 +40,6 @@ public class ReceiverClientThread implements Runnable{
 			this.osRegisto = sock.getOutputStream();
 	        this.isRegisto = sock.getInputStream();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
         this.osConsulta = null;
@@ -74,7 +70,6 @@ public class ReceiverClientThread implements Runnable{
 				default:
 					break;
 				}
-				this.receiveI_AM_HERE((PDU_APP_STATE)pdu);
 			}else{
 				System.out.println("ERRO");
 			}
@@ -140,9 +135,6 @@ public class ReceiverClientThread implements Runnable{
     }
     
     public void run() {
-    	int nBytes;
-    	boolean flagPING = false;
-    	
     	byte[] version = new byte[1];
     	
     	while(sockRegisto.isConnected()){// &&  !this.user.getFlagStopThread()
@@ -155,7 +147,7 @@ public class ReceiverClientThread implements Runnable{
 						execPDU(app_pdu);
 						break;
 					default:
-						System.out.println("A versão " + version[0] + "não se encontra disponovel no sistema.");
+						System.out.println("A versão " + version[0] + " não se encontra disponovel no sistema.");
 						break;
 				}
 			} catch (IOException e ) {

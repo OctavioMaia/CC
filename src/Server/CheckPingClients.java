@@ -18,7 +18,6 @@ public class CheckPingClients implements Runnable{
 				System.out.println("Vou ver o utilizador " + user);
 				this.server.checkTimeStampClient(user, CheckPingClients.maxTime);
 			}
-			
 			try {
 				Thread.sleep(CheckPingClients.maxTime);
 			} catch (InterruptedException e) {

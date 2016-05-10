@@ -16,13 +16,8 @@ public class Server {
 	public Server(int port) {
 		try {
 			this.server = new ServerSocket(port);
-			
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		try {
 			this.info = new ServerInfo(Inet4Address.getLocalHost().getHostAddress(),port);
-		} catch (UnknownHostException e) {
+		} catch (IOException e) {
 			try {
 				server.close();
 			} catch (IOException e1) {
@@ -32,23 +27,28 @@ public class Server {
 		}
 	}
 	
+	
+	protected synchronized ServerInfo getInfo() {
+		return info;
+	}
+	protected synchronized void setInfo(ServerInfo info) {
+		this.info = info;
+	}
 	public void startServer(){
 		System.out.println(this.info.getLocalIP());
 		while(true){
-            Socket sockCliente = null;
             try {
-            	sockCliente = server.accept();
+            	Socket sockCliente = server.accept();
+            	Thread t = new Thread( new ReceiverClientThread(sockCliente,this.info));
+                Thread cp = new Thread( new CheckPingClients(info, Thread.currentThread()));
+                cp.start();
+    			t.start();
             } catch (IOException ex) {
                 ex.printStackTrace();
                 System.out.println("Erro ao criar socket para cliente.");
             }
-            Thread t = new Thread(new ReceiverClientThread(sockCliente,this.info));
-            Thread cp = new Thread( new CheckPingClients(info, Thread.currentThread()));
-            cp.start();
-			t.start();            
         }
 	}
-	
 	public void connectToMaster(String ip, int port){
 		this.info.connectToMaster(ip, port);
 	}
@@ -57,9 +57,12 @@ public class Server {
 		Server s = new Server(Integer.parseInt(argv[0]));
 		if(argv.length==3){
 			s.connectToMaster(argv[1], Integer.parseInt(argv[2]));
-			System.out.println("I' m the master server");
+			System.out.println("Connect to master server");
+			
+			SendPingMaster spm = new SendPingMaster(s.getInfo(), Thread.currentThread());
+			Thread tSPM = new Thread(spm);
+			tSPM.start();
 		}
 		s.startServer();
 	}
-
 }
