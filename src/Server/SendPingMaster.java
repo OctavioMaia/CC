@@ -9,6 +9,7 @@ public class SendPingMaster implements Runnable{
 
 	private ServerInfo server;
 	private Thread main;
+	private static int maxTimeSend = 40000;
 	
 	public SendPingMaster(ServerInfo s,Thread main) {
 		this.server=s;
@@ -18,6 +19,12 @@ public class SendPingMaster implements Runnable{
 	@Override
 	public void run() {
 		while(main.getState()!=Thread.State.TERMINATED){
+			try {
+				Thread.sleep(maxTimeSend);
+			} catch (InterruptedException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			PDU pdu = PDU_Buider.I_AM_HERE_PDU(server.getLocalIP(), server.getPort(), server.getId()); 
 			try {
 				server.getOsMasterSocket().write(PDU.toBytes(pdu));

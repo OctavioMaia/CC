@@ -11,7 +11,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import Common.*;
-import Versions.PDUVersion1;
+import Versions.PDUVersion;
 
 /**
  *
@@ -138,21 +138,8 @@ public class ReceiverClientThread implements Runnable{
     	byte[] version = new byte[1];
     	
     	while(sockRegisto.isConnected()){// &&  !this.user.getFlagStopThread()
-    		try {
-				while(isRegisto.read(version,0,1)!=1);
-				switch (version[0]) {
-					case 0x01:
-						PDU_APP app_pdu = PDUVersion1.readPDU(version[0], this.isRegisto);
-						System.out.println(app_pdu);
-						execPDU(app_pdu);
-						break;
-					default:
-						System.out.println("A versão " + version[0] + " não se encontra disponovel no sistema.");
-						break;
-				}
-			} catch (IOException e ) {
-				System.out.println("Não foi possivel realizar a leitura do campo da versão.");				
-			}
+    		PDU_APP pdu = PDUVersion.readPDU(isRegisto);
+    		execPDU(pdu);
     	}	
     	try {
 			sockRegisto.close();

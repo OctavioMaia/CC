@@ -169,8 +169,15 @@ public class ServerInfo {
 			this.isMasterSocket = sockMaster.getInputStream();
 			this.osMasterSocket = sockMaster.getOutputStream();
 			//enviar um registo para o master
-			PDU pduRegisterMaster = PDU_Buider.REGISTER_PDU(0, this.localIP+":"+this.port, ""+this.port, this.localIP, this.port);
+			PDU pduRegisterMaster = PDU_Buider.REGISTER_PDU(0, this.id, ""+this.port, this.localIP, this.port);
 			this.osMasterSocket.write(PDU.toBytes(pduRegisterMaster));
+			//receber confirmação
+			//this.isMasterSocket.read(arg0, arg1, arg2)
+			
+			
+			PDU pduLoginMaster = PDU_Buider.LOGIN_PDU(0, this.id, ""+this.port, this.localIP, this.port);
+			this.osMasterSocket.write(PDU.toBytes(pduLoginMaster));
+		
 		} catch (IOException e) {
 			System.out.println("Impossivel enviar mensagem de registo para o master");
 			e.printStackTrace();
