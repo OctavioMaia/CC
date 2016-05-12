@@ -26,7 +26,7 @@ public class PDUVersion {
 			System.out.println(Thread.currentThread().getName() + " Não foi possivel realizar a leitura do campo da versão.");		
 			e.printStackTrace();
 		}
-		System.out.println(Thread.currentThread().getName()+pdu);
+		System.out.println(Thread.currentThread() + " " +pdu);
 		return pdu;
 	}
 	
@@ -51,7 +51,7 @@ public class PDUVersion {
 		int tam = PDU.intfromByte(sizebyte);
 				
 		try {
-			System.out.println(is.read(pdu,nReadBytes,tam));
+			is.read(pdu,nReadBytes,tam);
 		} catch (IOException e) {
 			System.out.println(Thread.currentThread().getName() + " Não foi possivel realizar a leitura dos bytes do campo data.");
 			e.printStackTrace();

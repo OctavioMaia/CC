@@ -13,8 +13,8 @@ public class ClientInfo {
 	private long timeStanp;
 	private boolean flagStopThread;
 	
- 	public ClientInfo(int origem,String user, String pass, String ip, int port, Thread currentThread) {
- 		this.tipoCliente=origem;
+ 	public ClientInfo(int TipoClienteOrigem,String user, String pass, String ip, int port, Thread currentThread) {
+ 		this.tipoCliente=TipoClienteOrigem;
 		this.user = user;
 		this.pass = pass;
 		this.ip = ip;

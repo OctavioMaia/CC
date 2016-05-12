@@ -19,11 +19,11 @@ public class Server {
 			this.info = new ServerInfo(Inet4Address.getLocalHost().getHostAddress(),port);
 		} catch (IOException e) {
 			try {
+				System.out.println("Não foi possivel inicializar o servidor");
 				server.close();
 			} catch (IOException e1) {
-				e1.printStackTrace();
+				System.out.println("Não foi possive criar o servidor Socket");
 			}
-			e.printStackTrace();
 		}
 	}
 	
@@ -34,14 +34,15 @@ public class Server {
 	protected synchronized void setInfo(ServerInfo info) {
 		this.info = info;
 	}
+	
 	public void startServer(){
-		System.out.println(this.info.getLocalIP());
+		System.out.println(this.info.getId());
+		Thread cp = new Thread( new CheckPingClients(info, Thread.currentThread()));
+		cp.start();
 		while(true){
             try {
             	Socket sockCliente = server.accept();
             	Thread t = new Thread( new ReceiverClientThread(sockCliente,this.info));
-                Thread cp = new Thread( new CheckPingClients(info, Thread.currentThread()));
-                cp.start();
     			t.start();
             } catch (IOException ex) {
                 ex.printStackTrace();
@@ -49,19 +50,22 @@ public class Server {
             }
         }
 	}
-	public void connectToMaster(String ip, int port){
+	public void connectToMaster(String ip, int port) throws IOException{
 		this.info.connectToMaster(ip, port);
 	}
 	
 	public static void main(String argv[]){
 		Server s = new Server(Integer.parseInt(argv[0]));
 		if(argv.length==3){
-			s.connectToMaster(argv[1], Integer.parseInt(argv[2]));
-			System.out.println("Connect to master server");
-			
-			SendPingMaster spm = new SendPingMaster(s.getInfo(), Thread.currentThread());
-			Thread tSPM = new Thread(spm);
-			tSPM.start();
+			try {
+				s.connectToMaster(argv[1], Integer.parseInt(argv[2]));
+				System.out.println("Connect to master server");
+				SendPingMaster spm = new SendPingMaster(s.getInfo(), Thread.currentThread());
+				Thread tSPM = new Thread(spm);
+				tSPM.start();
+			} catch (IOException e) {
+				System.out.println("Não foi possivel estabelecer conecção com o server master ("+argv[1]+":"+Integer.parseInt(argv[2]) +")");
+			}
 		}
 		s.startServer();
 	}

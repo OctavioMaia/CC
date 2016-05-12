@@ -21,16 +21,11 @@ public class SendPingMaster implements Runnable{
 		while(main.getState()!=Thread.State.TERMINATED){
 			try {
 				Thread.sleep(maxTimeSend);
-			} catch (InterruptedException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			PDU pdu = PDU_Buider.I_AM_HERE_PDU(server.getLocalIP(), server.getPort(), server.getId()); 
-			try {
+				PDU pdu = PDU_Buider.I_AM_HERE_PDU(server.getLocalIP(), server.getPort(), server.getId()); 
 				server.getOsMasterSocket().write(PDU.toBytes(pdu));
-			} catch (IOException e) {
-				System.out.println("Não é possivel enviar");
-				e.printStackTrace();
+			} catch (IOException | InterruptedException e1) {
+				System.out.println(Thread.currentThread() + "Não é possivel enviar ping para Master");
+				break;
 			}
 		}
 	}

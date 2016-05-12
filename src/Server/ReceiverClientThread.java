@@ -22,10 +22,12 @@ public class ReceiverClientThread implements Runnable{
 	private ClientInfo user;
 	private ServerInfo server;
 	
+	//socket criado pelo servidor
     private Socket sockRegisto;
     private OutputStream osRegisto;
     private InputStream isRegisto;
     
+    //socket criado pelo cliente
     private Socket sockConsulta;
     private OutputStream osConsulta;
     private InputStream isConsulta;
@@ -64,9 +66,6 @@ public class ReceiverClientThread implements Runnable{
 						receiveI_AM_HERE(p);
 						break;
 					}
-					case PDU_APP_STATE.ARE_YOU_THERE: {
-						break;
-					}
 				default:
 					break;
 				}
@@ -79,7 +78,7 @@ public class ReceiverClientThread implements Runnable{
     private void app_logout(PDU_APP_REG pdu){
     	if(this.server.logout(pdu.getUname())){
     		//pensar em fazer close aos sockets
-    		System.out.println("O Cliente " + pdu.getUname() + " fez logout da sua conta.");
+    		System.out.println("Logout realizado com sucesso: " + pdu.getUname() + " -> " + pdu.getIp() +":"+pdu.getPort());
     	}
     }
     
@@ -88,17 +87,16 @@ public class ReceiverClientThread implements Runnable{
     	
     	if(mensagem==1){
     		try {
-    			System.out.println(pdu.getIp() +"--"+pdu.getPort());
+    			this.user = this.server.getUser(pdu.getUname());
         		this.sockConsulta = new Socket(pdu.getIp(),pdu.getPort());
         		this.isConsulta = sockConsulta.getInputStream();
         		this.osConsulta = sockConsulta.getOutputStream();
-        		this.user = this.server.getUser(pdu.getUname());
+        		System.out.println("Login realizado com sucesso: " + pdu.getUname() + " -> " + pdu.getIp() +":"+pdu.getPort());
         	} catch (IOException e) {
     			System.out.println("Não foi possivel abrir o socktConsulta");
     			try {
 					sockConsulta.close();
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
     			mensagem=4;
@@ -124,8 +122,9 @@ public class ReceiverClientThread implements Runnable{
     	PDU respPDU = PDU_Buider.REGISTER_PDU_RESPONSE(mensagem);
     	try {
 			osRegisto.write(PDU.toBytes(respPDU));
+    		System.out.println("Registo realizado com sucesso: " + pdu.getUname() + " -> " + pdu.getIp() +":"+pdu.getPort());
 		} catch (IOException e) {
-			System.out.println("Não foi possivel enviar a mensagem de registo");
+			System.out.println("Não foi possivel enviar a resposta do registo");
 			e.printStackTrace();
 		}
     }
@@ -135,11 +134,9 @@ public class ReceiverClientThread implements Runnable{
     }
     
     public void run() {
-    	byte[] version = new byte[1];
-    	
-    	while(sockRegisto.isConnected()){// &&  !this.user.getFlagStopThread()
+    	while(sockRegisto.isConnected()){
     		PDU_APP pdu = PDUVersion.readPDU(isRegisto);
-    		execPDU(pdu);
+    		if(pdu!=null) { execPDU(pdu); }
     	}	
     	try {
 			sockRegisto.close();

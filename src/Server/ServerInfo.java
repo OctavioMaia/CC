@@ -11,6 +11,7 @@ import java.util.HashSet;
 
 import Common.PDU;
 import Common.PDU_Buider;
+import Versions.PDUVersion;
 
 public class ServerInfo {
 	private String id;
@@ -45,7 +46,7 @@ public class ServerInfo {
 	}
 	
 	public ServerInfo(String ipServer, int portServer){
-		this.id=ipServer+":"+port;
+		this.id=ipServer+":"+portServer;
 		this.localIP = ipServer;
 		this.port = portServer;
 		this.clients = new HashMap<>();
@@ -161,26 +162,26 @@ public class ServerInfo {
 			this.online.remove(user);
 		};
 	}
-	protected synchronized void connectToMaster(String ip, int port){
+	protected synchronized void connectToMaster(String ip, int port) throws IOException{
 		this.masterIP=ip;
 		this.masterPort=port;
-		try {
-			this.sockMaster = new Socket(this.masterIP, this.masterPort);
-			this.isMasterSocket = sockMaster.getInputStream();
-			this.osMasterSocket = sockMaster.getOutputStream();
-			//enviar um registo para o master
-			PDU pduRegisterMaster = PDU_Buider.REGISTER_PDU(0, this.id, ""+this.port, this.localIP, this.port);
-			this.osMasterSocket.write(PDU.toBytes(pduRegisterMaster));
-			//receber confirmação
-			//this.isMasterSocket.read(arg0, arg1, arg2)
-			
-			
-			PDU pduLoginMaster = PDU_Buider.LOGIN_PDU(0, this.id, ""+this.port, this.localIP, this.port);
-			this.osMasterSocket.write(PDU.toBytes(pduLoginMaster));
 		
-		} catch (IOException e) {
-			System.out.println("Impossivel enviar mensagem de registo para o master");
-			e.printStackTrace();
-		}
+		this.sockMaster = new Socket(this.masterIP, this.masterPort);
+		this.isMasterSocket = sockMaster.getInputStream();
+		this.osMasterSocket = sockMaster.getOutputStream();
+		//enviar um registo para o master
+		PDU pduRegisterMaster = PDU_Buider.REGISTER_PDU(0, this.id, ""+this.port, this.localIP, this.port);
+		this.osMasterSocket.write(PDU.toBytes(pduRegisterMaster));
+		
+		//receber confirmação de registo
+		PDUVersion.readPDU(isMasterSocket);
+		
+		
+		PDU pduLoginMaster = PDU_Buider.LOGIN_PDU(0, this.id, ""+this.port, this.localIP, this.port);
+		this.osMasterSocket.write(PDU.toBytes(pduLoginMaster));
+		// receber confirmação de login
+		PDUVersion.readPDU(isMasterSocket);
+			
+		
 	}
 }
