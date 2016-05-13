@@ -78,7 +78,7 @@ public class ClientInfo {
 	 * return falso caso contrario
 	 */
 	public boolean checkTimeStamp(int maxTime){
-		System.out.println("Tempo:" + (System.currentTimeMillis()-this.timeStanp) + " " + ((System.currentTimeMillis()-this.timeStanp)>maxTime));
+		System.out.println("O utilizador " + this.user + " não envia ping á: " + (System.currentTimeMillis()-this.timeStanp) + " segundos. Fazer logout automático? " + ((System.currentTimeMillis()-this.timeStanp)>maxTime));
 		if((System.currentTimeMillis()-this.timeStanp)>maxTime){
 			flagStopThread=true;
 			return false;

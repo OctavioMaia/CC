@@ -135,8 +135,15 @@ public class ReceiverClientThread implements Runnable{
     
     public void run() {
     	while(sockRegisto.isConnected()){
-    		PDU_APP pdu = PDUVersion.readPDU(isRegisto);
-    		if(pdu!=null) { execPDU(pdu); }
+			try {
+				PDU_APP pdu = PDUVersion.readPDU(isRegisto);
+				if(pdu!=null) { execPDU(pdu); }
+			} catch (IOException e) {
+				if(sockRegisto.isInputShutdown()){
+					System.out.println("Impossivel estabeler ligação com " + this.user.getUser()+" from " + this.user.getIp() + ":" + this.user.getPort());
+					break;
+				}
+			}
     	}	
     	try {
 			sockRegisto.close();

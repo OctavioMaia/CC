@@ -9,10 +9,9 @@ import Common.PDU_Reader;
 
 public class PDUVersion {
 
-	public static PDU_APP readPDU(InputStream is){
+	public static PDU_APP readPDU(InputStream is) throws IOException{
 		byte[] version = new byte[1];
 		PDU_APP pdu = null;
-		try {
 			while(is.read(version,0,1)!=1);
 			switch (version[0]) {
 				case 0x01:
@@ -22,10 +21,6 @@ public class PDUVersion {
 					System.out.println(Thread.currentThread().getName() + " A versão " + version[0] + " não se encontra disponovel no sistema.");
 					break;
 			}
-		} catch (IOException e) {
-			System.out.println(Thread.currentThread().getName() + " Não foi possivel realizar a leitura do campo da versão.");		
-			e.printStackTrace();
-		}
 		System.out.println(Thread.currentThread() + " " +pdu);
 		return pdu;
 	}

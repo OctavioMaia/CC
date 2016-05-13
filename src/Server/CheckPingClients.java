@@ -15,7 +15,6 @@ public class CheckPingClients implements Runnable{
 	public void run() {
 		while(main.getState()!=Thread.State.TERMINATED){
 			for(String user : this.server.getOnline()){
-				System.out.println("Vou ver o utilizador " + user);
 				this.server.checkTimeStampClient(user, CheckPingClients.maxTime);
 			}
 			try {
