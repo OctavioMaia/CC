@@ -1,5 +1,11 @@
 package Common;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -8,6 +14,7 @@ public final class PDU_Buider {
 	public static final byte REGISTO = 0x01;
 	public static final byte LOGIN = 0x02;
 	public static final byte LOGOUT = 0x03;
+	private static final int chunk =47*1024;
 	
 	
 	static public PDU LOGIN_PDU(int tipo/*0 server 1 cliente*/,String username,String pass,String ip , int port){
@@ -117,10 +124,56 @@ public final class PDU_Buider {
 		
 	}
 	
+	static public PDU REQUEST_FILE_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port, String musica){
+		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port+";MU_"+musica;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.REQUEST,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		return ret;
+		
+	}
+	
 	static public PDU PROB_RESPONSE_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port,long timestamp){
 		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port+";TS_"+timestamp;
 		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.PROBE_RESPONSE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
 		return ret;
 	}
+	static public ArrayList<PDU> DATA_PDU(String path,String song) throws IOException{
+		ArrayList<PDU> ret = new ArrayList<>();
+		Path path2 = Paths.get(path);
+		byte[] data = Files.readAllBytes(path2);
+		byte[][] splited = divideArray(data,chunk); //divide em dados de 47k
+		int totalPDUs = splited.length;
+		for (int i = 0; i < splited.length; i++) {
+			byte[] mensagem = splited[i];
+			//int mensageLengt = mensagem.length;
+			if(i==0){
+				mensagem = concatenarArray((song+";").getBytes(),mensagem);
+			}
+			PDU p = new PDU((byte)0x01, (byte)0x00, PDU.DATA,(byte)0x00,(byte)0x00,(byte)(i+1),(byte)totalPDUs, mensagem);
+			ret.add(p);
+		}
+		return ret;
+	}
+	
+	protected static byte[] concatenarArray(byte[] one, byte[] two){
+		byte[] c = new byte[one.length + two.length];
+		System.arraycopy(one, 0, c, 0, one.length);
+		System.arraycopy(two, 0, c, one.length, two.length);
+		return c;
+	}
+	
+	private static byte[][] divideArray(byte[] source, int chunksize) {
+
+
+        byte[][] ret = new byte[(int)Math.ceil(source.length / (double)chunksize)][chunksize];
+
+        int start = 0;
+
+        for(int i = 0; i < ret.length; i++) {
+            ret[i] = Arrays.copyOfRange(source,start, start + chunksize);
+            start += chunksize ;
+        }
+
+        return ret;
+    }
 	
 }
