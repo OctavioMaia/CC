@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+
+import Common.PDU;
 import Common.PDU_APP;
 import Common.PDU_APP_CONS_REQ;
 import Common.PDU_APP_STATE;
@@ -68,7 +70,13 @@ public class ClientConnectionServer implements Runnable{
 		//enviar a porta UDP que este cliente vai ter disponivel para comunicar com outros clientes.
 		if(this.cliente.getPortUDP()!=-1){
 			//significa que o cliente tem o DatagraSocket inicializado
-			PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.cliente.getPortUDP(), found, null);
+			PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.cliente.getPortUDP(), found, null );
+			try {
+				this.osConsult.write(PDU.toBytes(pduResponse));
+			} catch (IOException e) {
+				System.out.println("Não foi possivel responder ao Consul Request por parte do servidor");
+				e.printStackTrace();
+			}
 		}
 	}
 	

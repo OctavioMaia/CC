@@ -30,15 +30,12 @@ public class ReceiverClientThread implements Runnable{
     private InputStream isRegisto;
     
     //socket criado pelo cliente
-    private Socket sockConsulta;
-    private OutputStream osConsulta;
-    private InputStream isConsulta;
+    
     
     
     public ReceiverClientThread(Socket sock, ServerInfo info ){
     	this.user=null;
         this.sockRegisto=sock;
-        this.sockConsulta=null;
         this.server = info;
         try {
 			this.osRegisto = sock.getOutputStream();
@@ -46,15 +43,20 @@ public class ReceiverClientThread implements Runnable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-        this.osConsulta = null;
-        this.isConsulta = null;
     }
     
     private void execPDU_APP_CONS_REQ(PDU_APP_CONS_REQ pdu){
     	boolean found = false;
-    	Map<String,String> results = this.server.consultRequestToUsersOnline();
+    	Map<String,String> results = this.server.consultRequestToUsersOnline(this.user.getUser(),pdu.getBanda(),pdu.getMusica(),pdu.getExt());
     	if(results.size()!=0){ found = true;} 
-    	PDU_Buider.CONSULT_RESPONSE_PDU(0, this.server.getId(), this.server.getLocalIP(), this.server.getPort(), found , results);
+    	PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(0, this.server.getId(), this.server.getLocalIP(), this.server.getPort(), found , results);
+    	try {
+			osRegisto.write(PDU.toBytes(pduResponse));
+		} catch (IOException e) {
+			System.out.println("Não foi possivel enviar uma repsosta ao ConsulRequest");
+			e.printStackTrace();
+		}
+    	
     }
     
     private void execPDU_APP_REG(PDU_APP_REG pdu){
@@ -97,14 +99,15 @@ public class ReceiverClientThread implements Runnable{
     	if(mensagem==1){
     		try {
     			this.user = this.server.getUser(pdu.getUname());
-        		this.sockConsulta = new Socket(pdu.getIp(),pdu.getPort());
-        		this.isConsulta = sockConsulta.getInputStream();
-        		this.osConsulta = sockConsulta.getOutputStream();
+    			Socket sockConsulta = new Socket(pdu.getIp(),pdu.getPort());
+        		this.user.setSockConsulta(sockConsulta);
+        		this.user.setIsConsulta( sockConsulta.getInputStream() );
+        		this.user.setOsConsulta( sockConsulta.getOutputStream() );
         		System.out.println("Login realizado com sucesso: " + pdu.getUname() + " -> " + pdu.getIp() +":"+pdu.getPort());
         	} catch (IOException e) {
     			System.out.println("Não foi possivel abrir o socktConsulta");
     			try {
-					sockConsulta.close();
+					this.user.getSockConsulta().close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
 				}
@@ -160,9 +163,9 @@ public class ReceiverClientThread implements Runnable{
 			e1.printStackTrace();
 		}
 		try {
-			sockConsulta.close();
-			osConsulta.close();
-			isConsulta.close();
+			this.user.getSockConsulta().close();
+			this.user.getOsConsulta().close();
+			this.user.getIsConsulta().close();
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}

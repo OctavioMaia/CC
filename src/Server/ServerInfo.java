@@ -185,11 +185,15 @@ public class ServerInfo {
 			
 		
 	}
-	protected synchronized Map<String,String> consultRequestToUsersOnline(){
+	protected synchronized Map<String,String> consultRequestToUsersOnline(String userRequest, String banda, String musica, String ext){
+		Map<String,String> result = new HashMap<>();
 		for (String userOnline : this.online) {
-			this.clients.get(userOnline).
+			if(!userOnline.equals(userRequest)){
+				Map<String,String> clientResult = this.clients.get(userOnline).consultRequestUser(banda, musica, ext);
+				result.putAll(clientResult);
+			}
+			
 		}
-		return null;
-		
+		return result;
 	}
 }
