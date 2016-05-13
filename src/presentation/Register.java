@@ -37,7 +37,7 @@ public class Register extends JFrame {
 		int mensage = c.register(
 				this.textFieldUsername.getText(),
 				new String(this.passwordField.getPassword()),
-				c.getPort()
+				c.getPortTCP()
 				);
 		
 		switch (mensage) {

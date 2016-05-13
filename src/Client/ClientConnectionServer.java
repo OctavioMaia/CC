@@ -58,7 +58,7 @@ public class ClientConnectionServer implements Runnable{
 	private void execPDU_APP_CONSULT_REQUEST(PDU_APP_CONS_REQ pdu){
 		boolean found=false;
 		File[] files = new File(this.cliente.getFolderMusic()).listFiles();
-		for(int i=0; i<files.length && !found) ;i++){
+		for(int i=0; i<files.length && !found ;i++){
 			if(files[i].isFile() && files[i].getName().contains(pdu.getBanda()) 
 								 && files[i].getName().contains(pdu.getMusica()) 
 								 && files[i].getName().contains(pdu.getExt()) ){
@@ -66,7 +66,10 @@ public class ClientConnectionServer implements Runnable{
 			}
 		}
 		//enviar a porta UDP que este cliente vai ter disponivel para comunicar com outros clientes.
-		PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.cliente.getPort(), found, null);
+		if(this.cliente.getPortUDP()!=-1){
+			//significa que o cliente tem o DatagraSocket inicializado
+			PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.cliente.getPortUDP(), found, null);
+		}
 	}
 	
 	
@@ -76,15 +79,9 @@ public class ClientConnectionServer implements Runnable{
 	 */
 	private void execPDU(PDU_APP pdu){
 		switch (pdu.getClass().getSimpleName()) {
-			case "PDU_APP_STATE":{
-				execPDU_APP_STATE((PDU_APP_STATE)pdu);
-				break;
-			}
-			case "PDU_APP_CONS_REQ":{
-				execPDU_APP_CONSULT_REQUEST((PDU_APP_CONS_REQ)pdu);
-				break;
-			}
-			default:{
+			case "PDU_APP_STATE":{ execPDU_APP_STATE((PDU_APP_STATE)pdu); break; }
+			case "PDU_APP_CONS_REQ":{ execPDU_APP_CONSULT_REQUEST((PDU_APP_CONS_REQ)pdu); break; }
+			default:{ 
 				System.out.println(Thread.currentThread().getName() + "Ainda nao esta disponivel esta função");
 				break;
 			}
@@ -100,7 +97,7 @@ public class ClientConnectionServer implements Runnable{
 				if(app_pdu!=null) { execPDU(app_pdu); }
 			} catch (IOException e) {
 				if(sock.isInputShutdown()){
-					System.out.println("Impossivel estabeler ligação com " + this.cliente.getUser()+" from " + this.cliente.getIp() + ":" + this.cliente.getPort());
+					System.out.println("Impossivel estabeler ligação com servidor");
 					break;
 				}
 			}

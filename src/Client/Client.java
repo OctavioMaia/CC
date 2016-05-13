@@ -194,7 +194,7 @@ public class Client{
 	}
 
 	public synchronized void logout(){
-		PDU logout = PDU_Buider.LOGOUT_PDU(1, user, pass, this.ip, port);
+		PDU logout = PDU_Buider.LOGOUT_PDU(1, this.user, this.pass, this.ip, this.portTCP);
 		try {
 			os.write(PDU.toBytes(logout));
 		} catch (IOException e) {
@@ -204,14 +204,13 @@ public class Client{
 
 	public synchronized Map<String, String> consultRequest(String banda, String musica, String ext){
 		Map<String, String> result = null;
-		PDU pduRequest = PDU_Buider.CONSULT_REQUEST_PDU(1, this.ip, this.port, banda, musica, ext, this.user);
+		PDU pduRequest = PDU_Buider.CONSULT_REQUEST_PDU(1, this.ip, this.portTCP, banda, musica, ext, this.user);
 		try {
 			os.write(PDU.toBytes(pduRequest));
 		} catch (IOException e) {
 			System.out.println("Não foi possivel enviar o pedido de consulta para o servidor");
 			e.printStackTrace();
 		}
-		
 		try {
 			PDU_APP pduResponse = PDUVersion.readPDU(is);
 			if(pduResponse.getClass().getName().equals("PDU_APP_CONS_RESP")){

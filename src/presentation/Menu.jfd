@@ -1,11 +1,11 @@
-JFDML JFormDesigner: "5.2.3.0.281" Java: "1.8.0_71" encoding: "UTF-8"
+JFDML JFormDesigner: "5.2.3.0.281" Java: "1.8.0_91" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
 		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
-			"$horizontalGroup": "par l {seq {space :::p, par l {seq {space :0:339:x, comp sairButton:::p:75:p}, seq {comp label1:::p::p, space s:::p, comp state::::349:x}, comp loginButton::::414:x, comp logoutButton::l::414:x, comp registarButton::l::414:x, comp musicSearchButton::l::414:x}, space :::p}}"
-			"$verticalGroup": "par l {seq l {space :::p, par l {comp label1:::p::p, comp state:::p::p}, space :p:33:p, comp registarButton:::p::p, space u:::p, comp loginButton:::p::p, space u:::p, comp logoutButton:::p::p, space u:::p, comp musicSearchButton:::p::p, space ::116:x, comp sairButton:::p:30:p, space :::p}}"
+			"$horizontalGroup": "par l {seq {space :::p, par l {seq {space :0:0:x, comp sairButton:::p:75:p}, comp loginButton:::::x, comp logoutButton::l:::x, comp musicRequestButton::l:::x, comp registarButton::l:::x, seq l {par l {comp label2:::p::p, comp label1::l:p::p}, space :::p, par l {comp state::::404:x, seq {comp folder::::321:x, space :::p, comp buttonChangeFolder:::p::p}}}}, space :::p}}"
+			"$verticalGroup": "par l {seq l {space :::p, par l {seq {space :0:9:x, comp label1:::p::p}, comp state::::26:x}, space :::p, par l {comp buttonChangeFolder:::p::p, par t:l {comp folder:::p:24:p, comp label2:::p::p}}, space ::32:x, comp registarButton:::p::p, space u:::p, comp loginButton:::p::p, space u:::p, comp logoutButton:::p::p, space u:::p, comp musicRequestButton:::p::p, space :p:82:p, comp sairButton:::p:30:p, space :::p}}"
 		} ) {
 			name: "this"
 			"title": "Menu"
@@ -14,13 +14,13 @@ new FormModel {
 			"$locationPolicy": 1
 			add( new FormComponent( "javax.swing.JButton" ) {
 				name: "sairButton"
-				"text": "Sair"
+				"text": "Exit"
 				"font": new java.awt.Font( "Tahoma", 1, 14 )
 				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "sairButtonActionPerformed", true ) )
 			} )
 			add( new FormComponent( "javax.swing.JLabel" ) {
 				name: "label1"
-				"text": "Estado:"
+				"text": "State"
 				"font": &Font0 new java.awt.Font( "Tahoma", 0, 14 )
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
@@ -47,14 +47,30 @@ new FormModel {
 				"font": #Font0
 			} )
 			add( new FormComponent( "javax.swing.JButton" ) {
-				name: "musicSearchButton"
-				"text": "Music Search"
+				name: "musicRequestButton"
+				"text": "Music Request"
 				"font": new java.awt.Font( "Tahoma", 0, 14 )
-				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "musicSearchButtonActionPerformed", true ) )
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "musicRequestButtonActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Music Folder:"
+				"font": new java.awt.Font( "Tahoma", 0, 14 )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "folder"
+				"font": #Font0
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "buttonChangeFolder"
+				"text": "Change"
+				"font": new java.awt.Font( "Tahoma", 0, 14 )
+				"enabled": false
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonChangeFolderActionPerformed", true ) )
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
-			"size": new java.awt.Dimension( 450, 390 )
+			"size": new java.awt.Dimension( 525, 395 )
 		} )
 	}
 }

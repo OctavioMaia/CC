@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import Common.PDU;
 import Common.PDU_Buider;
@@ -182,6 +183,13 @@ public class ServerInfo {
 		// receber confirmação de login
 		PDUVersion.readPDU(isMasterSocket);
 			
+		
+	}
+	protected synchronized Map<String,String> consultRequestToUsersOnline(){
+		for (String userOnline : this.online) {
+			this.clients.get(userOnline).
+		}
+		return null;
 		
 	}
 }

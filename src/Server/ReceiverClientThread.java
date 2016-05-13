@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.util.Map;
+
 import Common.*;
 import Versions.PDUVersion;
 
@@ -48,30 +50,37 @@ public class ReceiverClientThread implements Runnable{
         this.isConsulta = null;
     }
     
+    private void execPDU_APP_CONS_REQ(PDU_APP_CONS_REQ pdu){
+    	boolean found = false;
+    	Map<String,String> results = this.server.consultRequestToUsersOnline();
+    	if(results.size()!=0){ found = true;} 
+    	PDU_Buider.CONSULT_RESPONSE_PDU(0, this.server.getId(), this.server.getLocalIP(), this.server.getPort(), found , results);
+    }
+    
+    private void execPDU_APP_REG(PDU_APP_REG pdu){
+    	switch (pdu.getTipo()) {
+			case PDU_Buider.REGISTO	:	{app_registo(pdu); break;}
+			case PDU_Buider.LOGIN	: 	{app_login(pdu); break;}
+			case PDU_Buider.LOGOUT	:	{app_logout(pdu); break;}
+			default:
+				break;
+    	}
+    }
+    
+    private void execPDU_APP_STATE(PDU_APP_STATE pdu){
+    	switch (pdu.getTipo()) {
+			case PDU_APP_STATE.I_AM_HERE_PDU : { receiveI_AM_HERE(pdu); break; }
+			default:
+				break;
+		}
+    }
+    
     private void execPDU(PDU_APP pdu){
-    	if(pdu.getClass().getSimpleName().equals("PDU_APP_REG")) {
-    		PDU_APP_REG p = (PDU_APP_REG)pdu;
-    		switch (p.getTipo()) {
-    			case PDU_Buider.REGISTO	:	{app_registo(p);break;}
-				case PDU_Buider.LOGIN	: 	{app_login(p);	break;}
-				case PDU_Buider.LOGOUT	:	{app_logout(p);	break;}
-				default:
-					break;
-			}
-		}else{
-			if(pdu.getClass().getSimpleName().equals("PDU_APP_STATE")){
-				PDU_APP_STATE p = (PDU_APP_STATE) pdu;
-				switch (p.getTipo()) {
-					case PDU_APP_STATE.I_AM_HERE_PDU: {
-						receiveI_AM_HERE(p);
-						break;
-					}
-				default:
-					break;
-				}
-			}else{
-				System.out.println("ERRO");
-			}
+    	switch (pdu.getClass().getSimpleName()) {
+			case "PDU_APP_REG"		: 	{ execPDU_APP_REG((PDU_APP_REG)pdu); break; }
+			case "PDU_APP_STATE"	: 	{ execPDU_APP_STATE((PDU_APP_STATE)pdu); break; }
+			case "PDU_APP_CONS_REQ"	:	{ execPDU_APP_CONS_REQ((PDU_APP_CONS_REQ)pdu); break; }
+			default: { System.out.println("ERRO"); break; }
 		}
     }
     
@@ -105,7 +114,7 @@ public class ReceiverClientThread implements Runnable{
     	}
     	
     	PDU respPDU = PDU_Buider.LOGIN_PDU_RESPONSE(mensagem);
-    	System.out.println("LOGIN_RESPONSE-"+respPDU.toString());
+
     	
     	try {
 			osRegisto.write(PDU.toBytes(respPDU));
@@ -113,8 +122,6 @@ public class ReceiverClientThread implements Runnable{
 			System.out.println("Não foi possivel enviar a mensagem de registo");
 			e.printStackTrace();
 		}
-    	
-    	
     }
     
     private void app_registo(PDU_APP_REG pdu){

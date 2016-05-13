@@ -36,7 +36,7 @@ public class Login extends JFrame {
 		//no futuro nao se vai inserir aqui a porta em que o cliente esra a escuta
 		int mensage = c.login(this.textFieldUsername.getText(),
 				new String(this.passwordField.getPassword()),
-				c.getPort()
+				c.getPortTCP()
 				);
 		switch (mensage) {
 			case 0:
@@ -73,6 +73,12 @@ public class Login extends JFrame {
 			c.setConectServer(consult);
 			Thread threadConsult = new Thread(consult);
 			threadConsult.start();
+			while (!fatherFrame.changeFolderMusic()) {
+				JOptionPane.showMessageDialog(this,
+					    "Necessita de escolher uma diretoria valida",
+					    "Folder Music",
+					    JOptionPane.PLAIN_MESSAGE);
+			}
 			this.dispose();
 		}
 	}

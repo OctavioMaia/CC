@@ -6,23 +6,45 @@ package presentation;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Map;
+
 import javax.swing.*;
 
 /**
  * @author Rui Freitas
  */
 public class MusicSearch extends JFrame {
-	public MusicSearch() {
+	
+	private Menu fatherFrame;
+	
+	public MusicSearch(JFrame father) {
+		this.fatherFrame = (Menu)father;
 		initComponents();
+		
+		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+		addWindowListener(new java.awt.event.WindowAdapter() {
+            public void windowClosed(java.awt.event.WindowEvent evt){
+                father.setVisible(true);
+            }
+        });
 	}
 
 	private void buttonCancelarActionPerformed(ActionEvent e) {
+		this.fatherFrame.setVisible(true);
 		this.dispose();
 	}
 
-	private void buttonSearchActionPerformed(ActionEvent e) {
-		//codigo para procurar por uma banda ou musica
+	private void buttonRequestActionPerformed(ActionEvent e) {
+		Map<String, String> res = fatherFrame.cliente.consultRequest(this.textBanda.getText(), this.textMusic.getText(), this.textExt.getText());
+		if(res!=null){
+			JOptionPane.showMessageDialog(this,
+				    "Existem utilizadores com esta musica mas a função de comunicação ainda nao está disponivel",
+				    "Music Request Message",
+				    JOptionPane.PLAIN_MESSAGE);
+		}
 	}
+
+
 
 	private void initComponents() {
 		// JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -30,11 +52,14 @@ public class MusicSearch extends JFrame {
 		label1 = new JLabel();
 		textBanda = new JTextField();
 		label2 = new JLabel();
-		textMusica = new JTextField();
-		buttonCancelar = new JButton();
-		buttonSearch = new JButton();
+		textMusic = new JTextField();
+		buttonExit = new JButton();
+		buttonRequest = new JButton();
+		label3 = new JLabel();
+		textExt = new JTextField();
 
 		//======== this ========
+		setTitle("Music Request");
 		Container contentPane = getContentPane();
 
 		//---- label1 ----
@@ -42,16 +67,20 @@ public class MusicSearch extends JFrame {
 		label1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		//---- label2 ----
-		label2.setText("Music (.ext)");
+		label2.setText("Music:");
 		label2.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
-		//---- buttonCancelar ----
-		buttonCancelar.setText("Cancelar");
-		buttonCancelar.addActionListener(e -> buttonCancelarActionPerformed(e));
+		//---- buttonExit ----
+		buttonExit.setText("Exit");
+		buttonExit.addActionListener(e -> buttonCancelarActionPerformed(e));
 
-		//---- buttonSearch ----
-		buttonSearch.setText("Search");
-		buttonSearch.addActionListener(e -> buttonSearchActionPerformed(e));
+		//---- buttonRequest ----
+		buttonRequest.setText("Request");
+		buttonRequest.addActionListener(e -> buttonRequestActionPerformed(e));
+
+		//---- label3 ----
+		label3.setText("Ext(.ext)");
+		label3.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		GroupLayout contentPaneLayout = new GroupLayout(contentPane);
 		contentPane.setLayout(contentPaneLayout);
@@ -68,13 +97,18 @@ public class MusicSearch extends JFrame {
 							.addGroup(contentPaneLayout.createParallelGroup()
 								.addComponent(textBanda)
 								.addGroup(contentPaneLayout.createSequentialGroup()
-									.addComponent(textMusica, GroupLayout.PREFERRED_SIZE, 272, GroupLayout.PREFERRED_SIZE)
+									.addComponent(textMusic, GroupLayout.PREFERRED_SIZE, 272, GroupLayout.PREFERRED_SIZE)
 									.addGap(0, 0, Short.MAX_VALUE))))
 						.addGroup(GroupLayout.Alignment.TRAILING, contentPaneLayout.createSequentialGroup()
-							.addGap(0, 214, Short.MAX_VALUE)
-							.addComponent(buttonSearch)
-							.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
-							.addComponent(buttonCancelar)))
+							.addGap(0, 234, Short.MAX_VALUE)
+							.addComponent(buttonRequest)
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(buttonExit))
+						.addGroup(contentPaneLayout.createSequentialGroup()
+							.addComponent(label3, GroupLayout.PREFERRED_SIZE, 82, GroupLayout.PREFERRED_SIZE)
+							.addGap(10, 10, 10)
+							.addComponent(textExt, GroupLayout.PREFERRED_SIZE, 90, GroupLayout.PREFERRED_SIZE)
+							.addGap(0, 182, Short.MAX_VALUE)))
 					.addContainerGap())
 		);
 		contentPaneLayout.setVerticalGroup(
@@ -87,11 +121,15 @@ public class MusicSearch extends JFrame {
 					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
 						.addComponent(label2)
-						.addComponent(textMusica, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 142, Short.MAX_VALUE)
+						.addComponent(textMusic, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(contentPaneLayout.createParallelGroup()
+						.addComponent(label3)
+						.addComponent(textExt, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
 					.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-						.addComponent(buttonCancelar)
-						.addComponent(buttonSearch))
+						.addComponent(buttonExit)
+						.addComponent(buttonRequest))
 					.addContainerGap())
 		);
 		pack();
@@ -104,8 +142,10 @@ public class MusicSearch extends JFrame {
 	private JLabel label1;
 	private JTextField textBanda;
 	private JLabel label2;
-	private JTextField textMusica;
-	private JButton buttonCancelar;
-	private JButton buttonSearch;
+	private JTextField textMusic;
+	private JButton buttonExit;
+	private JButton buttonRequest;
+	private JLabel label3;
+	private JTextField textExt;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

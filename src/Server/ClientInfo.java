@@ -1,6 +1,10 @@
 package Server;
 
+import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+
+import Common.PDU;
+import Common.PDU_Buider;
 
 public class ClientInfo {
 	private int tipoCliente; /*0 server 1 cliente*/
@@ -84,6 +88,13 @@ public class ClientInfo {
 			return false;
 		}
 		return true;
+	}
+	
+	public Map<String,String> consultRequestUser(String banda,String musica, String ext){
+		//Verificar melhor quais os ips e portas a enviar
+		PDU pdurequest = PDU_Buider.CONSULT_REQUEST_PDU(0, this.ip, this.port, banda, musica, ext, this.user);
+		
+		return null;
 	}
 	
 }
