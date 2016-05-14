@@ -47,7 +47,13 @@ public class ReceiverClientThread implements Runnable{
     
     private void execPDU_APP_CONS_REQ(PDU_APP_CONS_REQ pdu){
     	boolean found = false;
-    	Map<String,String> results = this.server.consultRequestToUsersOnline(this.user.getUser(),pdu.getBanda(),pdu.getMusica(),pdu.getExt());
+    	Map<String,String> results = null;
+    	//vou fazer trafulha aqui
+    	if(pdu.getFonte()==1){
+    		results = this.server.consultRequestToUsersOnline(this.user.getUser(),pdu.getBanda(),pdu.getMusica(),pdu.getExt());
+    	}else{
+    		results = this.server.consultRequestToUsersOnline("",pdu.getBanda(),pdu.getMusica(),pdu.getExt());
+    	}
     	if(results.size()!=0){ found = true;} 
     	PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(0, this.server.getId(), this.server.getLocalIP(), this.server.getPort(), found , results);
     	try {
@@ -56,7 +62,6 @@ public class ReceiverClientThread implements Runnable{
 			System.out.println("Não foi possivel enviar uma repsosta ao ConsulRequest");
 			e.printStackTrace();
 		}
-    	
     }
     
     private void execPDU_APP_REG(PDU_APP_REG pdu){
