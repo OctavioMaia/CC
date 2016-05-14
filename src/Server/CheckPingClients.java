@@ -18,16 +18,13 @@ public class CheckPingClients implements Runnable{
 				this.server.checkTimeStampClient(user, CheckPingClients.maxTime);
 			}
 			try {
-				System.out.println("Daqui a " + CheckPingClients.maxTime/1000 + " segundos volto a verificar os clientes");
+				System.out.println("Daqui a " + CheckPingClients.maxTime/1000.0 + " segundos volto a verificar os clientes");
 				Thread.sleep(CheckPingClients.maxTime);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
 				System.out.println("Não foi possivel esperar " + CheckPingClients.maxTime/1000 + " segundos");
 				break;
 			}
 		}
 	}
 
-	
-	
 }

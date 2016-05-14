@@ -37,11 +37,20 @@ public class MusicSearch extends JFrame {
 	private void buttonRequestActionPerformed(ActionEvent e) {
 		Map<String, String> res = fatherFrame.cliente.consultRequest(this.textBanda.getText(), this.textMusic.getText(), this.textExt.getText());
 		if(res!=null){
-			JOptionPane.showMessageDialog(this,
-				    "Existem utilizadores com esta musica mas a função de comunicação ainda nao está disponivel",
-				    "Music Request Message",
-				    JOptionPane.PLAIN_MESSAGE);
+			if(res.size()==0){
+				JOptionPane.showMessageDialog(this,
+					    "Nenhum utilizador contem a musica pedida",
+					    "Music Request Message",
+					    JOptionPane.PLAIN_MESSAGE);
+			}else{
+				JOptionPane.showMessageDialog(this,
+					    "Existem utilizadores com esta musica mas a função de comunicação ainda nao está disponivel",
+					    "Music Request Message",
+					    JOptionPane.PLAIN_MESSAGE);
+			}
 		}
+		this.fatherFrame.setVisible(true);
+		this.dispose();
 	}
 
 

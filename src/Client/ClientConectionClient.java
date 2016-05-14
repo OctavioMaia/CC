@@ -9,12 +9,13 @@ public class ClientConectionClient implements Runnable{
 	private Client cliente;
 	private Thread mainCliente;
 	
-	public ClientConectionClient(Thread main, Client c) {
+	public ClientConectionClient(Thread main, Client c){
 		try {
+			this.mainCliente = main;
 			this.socketUDP = new DatagramSocket(0);
 			this.cliente = c;
-			this.cliente.setPortUDP(this.socketUDP.getPort());
-			System.out.println("O utilizador " + this.cliente.getUser() + " está ativo para receber trafico UDP na porta" + this.cliente.getPortUDP() );
+			this.cliente.setPortUDP(this.socketUDP.getLocalPort());
+			System.out.println("O utilizador " + this.cliente.getUser() + " está ativo para receber trafico UDP na porta " + this.cliente.getPortUDP() );
 		} catch (SocketException e) {
 			System.out.println("O utilizador " + this.cliente.getUser() + " não consegui abrir Socket UDP para comunicações com outros utilizadores");
 		}
@@ -23,7 +24,7 @@ public class ClientConectionClient implements Runnable{
 	@Override
 	public void run() {
 		while (mainCliente.getState()!=Thread.State.TERMINATED) {
-			System.out.println("Ainda falta fazer a parte de comunicação com os outros clientes");
+			//System.out.println("Ainda falta fazer a parte de comunicação com os outros clientes");
 		}
 	}
 }

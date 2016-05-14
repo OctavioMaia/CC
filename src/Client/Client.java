@@ -32,8 +32,6 @@ public class Client{
 	private InputStream is;
 	private OutputStream os;
 	
-	
-	
 	public Client(String hostServer, int portServer){
 		this.user = new String();
 		try {
@@ -81,16 +79,16 @@ public class Client{
 	public synchronized void setPass(String pass) {
 		this.pass = pass;
 	}
-	public int getPortTCP() {
+	public synchronized int getPortTCP() {
 		return portTCP;
 	}
-	public void setPortTCP(int portTCP) {
+	public synchronized void setPortTCP(int portTCP) {
 		this.portTCP = portTCP;
 	}
-	public int getPortUDP() {
+	public synchronized int getPortUDP() {
 		return portUDP;
 	}
-	public void setPortUDP(int portUDP) {
+	public synchronized void setPortUDP(int portUDP) {
 		this.portUDP = portUDP;
 	}
 	public synchronized Socket getSock() {
@@ -135,10 +133,10 @@ public class Client{
 	public synchronized void setOs(OutputStream os) {
 		this.os = os;
 	}
-	public String getFolderMusic() {
+	public synchronized String getFolderMusic() {
 		return folderMusic;
 	}
-	public void setFolderMusic(String folderMusic) {
+	public synchronized void setFolderMusic(String folderMusic) {
 		this.folderMusic = folderMusic;
 	}
 
@@ -147,17 +145,16 @@ public class Client{
 		PDU register = PDU_Buider.REGISTER_PDU(1, username, password, this.ip, p);
 		try {
 			os.write(PDU.toBytes(register));
-		} catch (IOException e) {
-			System.out.println("Não foi possivel criar o pack para envio para o servidor");
-		}
-		//partilhar duvida se esta parte devia de estar aqui ou devia ser uma leitura como o de registo fora desta função
-		try {
-			PDU_APP pdu_resp = PDUVersion.readPDU(is);
-			if(pdu_resp.getClass().getSimpleName().equals("PDU_APP_REG_RESP")){
-				resp = ((PDU_APP_REG_RESP)pdu_resp).getMensagem();
+			try {
+				PDU_APP pdu_resp = PDUVersion.readPDU(is);
+				if(pdu_resp.getClass().getSimpleName().equals("PDU_APP_REG_RESP")){
+					resp = ((PDU_APP_REG_RESP)pdu_resp).getMensagem();
+				}
+			} catch (IOException e1) {
+				System.out.println("Não foi recebida a resposta do servidor ao pedido de registo RESP: " + resp);
 			}
-		} catch (IOException e1) {
-			System.out.println("Não foi recebida a resposta do servidor ao pedido de registo RESP: " + resp);
+		} catch (IOException e) {
+			System.out.println("Não foi possivel enviar para o servidor um pedido de registo para o servidor");
 		}
 		return resp;
 	}
@@ -167,28 +164,29 @@ public class Client{
 		PDU login = PDU_Buider.LOGIN_PDU(1, username, password, this.ip, p);
 		try {
 			os.write(PDU.toBytes(login));
+			try {
+				PDU_APP pdu_resp = PDUVersion.readPDU(is);
+				if(pdu_resp.getClass().getSimpleName().equals("PDU_APP_REG_RESP")){
+					respMess = ((PDU_APP_REG_RESP)pdu_resp).getMensagem();
+				}
+				if(respMess==1){
+					setUser(username);
+					setPass(password);
+					setPortTCP(p);
+					this.conectServer = new ClientConnectionServer(Thread.currentThread(), this);
+					this.pingServer = new SendPingServer(this,Thread.currentThread());
+					Thread cs = new Thread(this.conectServer);
+					Thread ps = new Thread(this.pingServer);
+					Thread cc = new Thread(new ClientConectionClient(Thread.currentThread(),this));
+					cs.start();
+					ps.start();
+					cc.start();
+				}
+			} catch (IOException e1) {
+				System.out.println("Não foi recebida a resposta do servidor ao pedido de logn RESP: " + respMess);
+			}
 		} catch (IOException e) {
 			System.out.println("Não foi possivel enviar o pedido de login para o servidor");
-		}
-
-		try {
-			PDU_APP pdu_resp = PDUVersion.readPDU(is);
-			if(pdu_resp.getClass().getSimpleName().equals("PDU_APP_REG_RESP")){
-				respMess = ((PDU_APP_REG_RESP)pdu_resp).getMensagem();
-			}
-			if(respMess==1){
-				setUser(username);
-				setPass(password);
-				setPortTCP(p);
-				this.conectServer = new ClientConnectionServer(Thread.currentThread(), this);
-				this.pingServer = new SendPingServer(this,Thread.currentThread());
-				Thread cs = new Thread(this.conectServer);
-				Thread ps = new Thread(this.pingServer);
-				cs.start();
-				ps.start();
-			}
-		} catch (IOException e1) {
-			System.out.println("Não foi recebida a resposta do servidor ao pedido de registo RESP: " + respMess);
 		}
 		return respMess;
 	}
@@ -207,17 +205,17 @@ public class Client{
 		PDU pduRequest = PDU_Buider.CONSULT_REQUEST_PDU(1, this.ip, this.portTCP, banda, musica, ext, this.user);
 		try {
 			os.write(PDU.toBytes(pduRequest));
-		} catch (IOException e) {
-			System.out.println("Não foi possivel enviar o pedido de consulta para o servidor");
-			e.printStackTrace();
-		}
-		try {
-			PDU_APP pduResponse = PDUVersion.readPDU(is);
-			if(pduResponse.getClass().getName().equals("PDU_APP_CONS_RESP")){
-				result = ((PDU_APP_CONS_RESP) pduResponse).getResult();
+			try {
+				PDU_APP pduResponse = PDUVersion.readPDU(is);
+				if(pduResponse.getClass().getSimpleName().equals("PDU_APP_CONS_RESP")){
+					result = ((PDU_APP_CONS_RESP) pduResponse).getResult();
+				}
+			} catch (IOException e) {
+				System.out.println("Não foi possivel receber a resposta da consulta por parte do servidor");
+				e.printStackTrace();
 			}
 		} catch (IOException e) {
-			System.out.println("Não foi possivel receber a resposta da consulta por parte do servidor");
+			System.out.println("Não foi possivel enviar o pedido de consulta para o servidor");
 			e.printStackTrace();
 		}
 		return result;

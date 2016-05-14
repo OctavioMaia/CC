@@ -120,8 +120,9 @@ public class ClientInfo {
 	 * return falso caso contrario
 	 */
 	public boolean checkTimeStamp(int maxTime){
-		System.out.println("O utilizador " + this.user + " não envia ping á: " + (System.currentTimeMillis()-this.timeStanp) + " segundos. Fazer logout automático? " + ((System.currentTimeMillis()-this.timeStanp)>maxTime));
-		if((System.currentTimeMillis()-this.timeStanp)>maxTime){
+		long timeNow = System.currentTimeMillis();
+		System.out.println("O utilizador " + this.user + " não envia ping á: " + (timeNow-this.timeStanp)/1000.0 + " segundos. Fazer logout automático? " + ((System.currentTimeMillis()-this.timeStanp)>maxTime));
+		if((timeNow-this.timeStanp)>maxTime){
 			flagStopThread=true;
 			return false;
 		}
@@ -139,7 +140,9 @@ public class ClientInfo {
 				if(pdu.getClass().getSimpleName().equals("PDU_APP_CONS_RESP")){
 					PDU_APP_CONS_RESP pduResponse = ((PDU_APP_CONS_RESP)pdu);
 					if(pduResponse.getFonte()==1){
-						resp.put(pduResponse.getIp(), ""+pduResponse.getPort());
+						if(pduResponse.isFound()){
+							resp.put(pduResponse.getIp(), ""+pduResponse.getPort());
+						}
 					}else{
 						resp.putAll(pduResponse.getResult());
 					}

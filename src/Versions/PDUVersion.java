@@ -32,26 +32,25 @@ public class PDUVersion {
 		pdu[0]=0x01;
 		try {
 			nReadBytes += is.read(pdu,nReadBytes,11);
+			byte sizebyte[] = new byte[4];
+			
+			sizebyte[0]=pdu[7];
+			sizebyte[1]=pdu[8];
+			sizebyte[2]=pdu[9];
+			sizebyte[3]=pdu[10];
+			
+			int tam = PDU.intfromByte(sizebyte);
+					
+			try {
+				is.read(pdu,nReadBytes,tam);
+			} catch (IOException e) {
+				System.out.println(Thread.currentThread().getName() + " Não foi possivel realizar a leitura dos bytes do campo data.");
+				e.printStackTrace();
+			}
 		} catch (IOException e) {
 			System.out.println(Thread.currentThread().getName() + " Não foi possivel realizar a leitura dos bytes desejados.");
 			e.printStackTrace();
 		}
-		byte sizebyte[] = new byte[4];
-		
-		sizebyte[0]=pdu[7];
-		sizebyte[1]=pdu[8];
-		sizebyte[2]=pdu[9];
-		sizebyte[3]=pdu[10];
-		
-		int tam = PDU.intfromByte(sizebyte);
-				
-		try {
-			is.read(pdu,nReadBytes,tam);
-		} catch (IOException e) {
-			System.out.println(Thread.currentThread().getName() + " Não foi possivel realizar a leitura dos bytes do campo data.");
-			e.printStackTrace();
-		}
-		
 		return PDU_Reader.read(pdu);	
 	}
 	
