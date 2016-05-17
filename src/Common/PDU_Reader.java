@@ -21,7 +21,7 @@ public final class PDU_Reader {
 		for (PDU p  : ps) {
 			//byte secu = p.getSecurity();
 			//byte tipo = p.getTipo();
-			int num = (p.getOptions()[3]-1);
+			int num = (p.getOptions()[2]-1);
 			byte[] datapdu = p.getData();
 			if(num==0){
 				//ter atençao a estas manhosices
@@ -104,7 +104,8 @@ public final class PDU_Reader {
 			break;
 		case(PDU.DATA):
 			int tam = p.getOptions()[3];
-			pa = new PDU_APP_DATA(version, null, null, tam, false);
+			int num =p.getOptions()[2];
+			pa = new PDU_APP_DATA(version, null, null, tam, false,num);
 			break;
 		case(PDU.REQUEST):
 			data = new String(p.getData());
