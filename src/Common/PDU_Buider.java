@@ -154,6 +154,11 @@ public final class PDU_Buider {
 		return ret;
 	}
 	
+	static public PDU ACK_PDU( int num){
+		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ACK,REGISTO,(byte)0x00,(byte)0x00,(byte)num,new byte[0]);
+		return ret;
+	}
+	
 	protected static byte[] concatenarArray(byte[] one, byte[] two){
 		byte[] c = new byte[one.length + two.length];
 		System.arraycopy(one, 0, c, 0, one.length);
