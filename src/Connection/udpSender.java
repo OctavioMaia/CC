@@ -20,25 +20,26 @@ public class udpSender { //manda musicas
 	
 	
 	
-	private int timeOutTry;
-	private int timeOutDesistir;
+	//private int timeOutTry;
+	//private int timeOutDesistir;
 	
 	
-	private int windowMax;
-	private int windowActualSize; //diminuir quando mando aumentar quando recebo ack
+	//private int windowMax;
+	//private int windowActualSize; //diminuir quando mando aumentar quando recebo ack
 	
 	
-	private int lastDataNumSent; //ultimo pacote enviado
+	//private int lastDataNumSent; //ultimo pacote enviado
 	
 	
-	private int lastACK; //ultimo ack recebido pois pode vir o 5 e depois o 4
+	//private int lastACK; //ultimo ack recebido pois pode vir o 5 e depois o 4
 
 	private ArrayList<PDU> paraEnvio; // onde tenho as cenas para enviar tem de estar por ordem
 	
-	private ReentrantLock lock;
-	private Condition esperaACK;
-	private Condition possivelEnviar;
+	//private ReentrantLock lock;
+	//private Condition esperaACK;
+	//private Condition possivelEnviar;
 	
+	private ControlTCP controlo;
 	
 	public udpSender(DatagramSocket dataSend, DatagramSocket ackRecive, int timeOutTry,
 			int timeOutDesistir, int windowMax, ArrayList<PDU> paraEnvio) {
@@ -46,43 +47,42 @@ public class udpSender { //manda musicas
 		this.dataSend = dataSend;
 		this.ackRecive = ackRecive;
 		this.contolACK = null;
-		this.timeOutTry = timeOutTry;
-		this.timeOutDesistir = timeOutDesistir;
-		this.windowMax = windowMax;
-		this.windowActualSize = windowMax;
-		this.lastDataNumSent = 0;
-		this.lastACK = 0;
+		//this.timeOutTry = timeOutTry;
+		//this.timeOutDesistir = timeOutDesistir;
+		//this.windowMax = windowMax;
+		//this.windowActualSize = windowMax;
+		//this.lastDataNumSent = 0;
+		//this.lastACK = 0;
 		this.paraEnvio = paraEnvio;
-		this.lock = new ReentrantLock();
-		this.esperaACK = this.lock.newCondition();
-		this.possivelEnviar = this.lock.newCondition();
+		//this.lock = new ReentrantLock();
+		//this.esperaACK = this.lock.newCondition();
+		//this.possivelEnviar = this.lock.newCondition();
+		this.controlo=new ControlTCP(timeOutTry, timeOutDesistir, windowMax, paraEnvio.size());
 	}
 
 
-	public Condition getPossivelEnviar(){
-		return this.possivelEnviar;
-	}
 
 	public void sendData() throws InterruptedException, IOException{
-		try{
 			//criara a trhead para controlo
-			this.lock.lock();
-			while(lastACK!= paraEnvio.size()){
-				while(this.windowActualSize<=0){
-					possivelEnviar.signalAll(); //nao posso enviar mais vou dizer ao rector de ack para verificar as receçoes
-					esperaACK.wait();
+			
+			while(controlo.getLastACK()!= controlo.getParaEnvioNUM()){
+				try{
+					this.controlo.getLock().lock(); //ver se o lock esta bem aqui
+					while(this.controlo.getWindowActualSize()<=0){
+						//	possivelEnviar.signalAll(); //nao posso enviar mais vou dizer ao rector de ack para verificar as receçoes
+						this.controlo.getEsperaACK().wait();
+					}
+					//lastDataNumSent++; // tenho de enviar o proximo
+					int lastDataNumSent =this.controlo.getLastDataNumSent();
+					byte[] buf = PDU.toBytes(paraEnvio.get(lastDataNumSent)); //envio o seginte ao ultimo ack
+					this.controlo.setLastDataNumSent(lastDataNumSent+1);
+					DatagramPacket p = new DatagramPacket(buf, buf.length);
+					dataSend.send(p);
+					this.controlo.diminuiWindowAtual();
+				}finally{
+					this.controlo.getLock().unlock();
 				}
-				//lastDataNumSent++; // tenho de enviar o proximo
-				byte[] buf = PDU.toBytes(paraEnvio.get(lastDataNumSent)); //envio o seginte ao ultimo ack
-				lastDataNumSent++;
-				DatagramPacket p = new DatagramPacket(buf, buf.length);
-				dataSend.send(p);
-				this.windowActualSize--;
 			}
-		}
-		finally{
-			this.lock.unlock();
-		}
 	}
 
 
@@ -123,78 +123,6 @@ public class udpSender { //manda musicas
 
 
 
-	public int getTimeOutTry() {
-		return timeOutTry;
-	}
-
-
-
-	public void setTimeOutTry(int timeOutTry) {
-		this.timeOutTry = timeOutTry;
-	}
-
-
-
-	public int getTimeOutDesistir() {
-		return timeOutDesistir;
-	}
-
-
-
-	public void setTimeOutDesistir(int timeOutDesistir) {
-		this.timeOutDesistir = timeOutDesistir;
-	}
-
-
-
-	public int getWindowMax() {
-		return windowMax;
-	}
-
-
-
-	public void setWindowMax(int windowMax) {
-		this.windowMax = windowMax;
-	}
-
-
-
-	public int getWindowActualSize() {
-		return windowActualSize;
-	}
-
-
-
-	public void setWindowActualSize(int windowActualSize) {
-		this.windowActualSize = windowActualSize;
-	}
-
-
-
-	public int getLastDataNumSent() {
-		return lastDataNumSent;
-	}
-
-
-
-	public void setLastDataNumSent(int lastDataNumSent) {
-		this.lastDataNumSent = lastDataNumSent;
-	}
-
-
-
-	public int getLastACK() {
-		return lastACK;
-	}
-
-
-
-	public void setLastACK(int lastACK) {
-		this.lastACK = lastACK;
-	}
-
-
-
 	public ArrayList<PDU> getParaEnvio() {
 		return paraEnvio;
 	}
@@ -204,30 +132,6 @@ public class udpSender { //manda musicas
 	public void setParaEnvio(ArrayList<PDU> paraEnvio) {
 		this.paraEnvio = paraEnvio;
 	}
-
-
-
-	public ReentrantLock getLock() {
-		return lock;
-	}
-
-
-
-	public void setLock(ReentrantLock lock) {
-		this.lock = lock;
-	}
-
-
-
-	public Condition getEsperaACK() {
-		return esperaACK;
-	}
-
-
-
-	public void setEsperaACK(Condition esperaACK) {
-		this.esperaACK = esperaACK;
-	}
-
-	
 }
+
+

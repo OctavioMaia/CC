@@ -2,35 +2,41 @@ package Connection;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.util.ArrayList;
 
 import Common.PDU;
 
-class udpSenderContr implements Runnable{
+class udpSenderContr implements Runnable{ //sotrata dos ACK
 
 	private udpSender sender;
 	private DatagramPacket dp;
+	private ControlTCP control;
 	private final static int maxSize=100;
-	public udpSenderContr(udpSender sender) {
+	
+	public udpSenderContr(udpSender sender,ControlTCP control) {
 		super();
 		this.sender = sender;
+		this.control=control;
 		byte[] buf = new byte[maxSize];
 		this.dp=new DatagramPacket(buf, buf.length);
 	}
 
 	private void control() throws InterruptedException{
+		ArrayList<Integer> ackRecivedList = new ArrayList<>();
 		boolean goBack=false;
 		try{
 			//criara a trhead para controlo
-			this.sender.getLock().lock();
-			while(sender.getLastACK()!= sender.getParaEnvio().size()){
-				while(!goBack && this.sender.getWindowActualSize()>0){
-					this.sender.getEsperaACK().signal(); //aviso que ja posso enviar
-					this.sender.getPossivelEnviar().wait();
+			
+			while(control.getLastACK()!= control.getParaEnvioNUM()){
+				this.control.getLock().lock(); //vou macher nos controlos nesta iteraçao
+				if(!goBack && this.control.getWindowActualSize()>0){
+					this.control.getEsperaACK().signal(); //aviso que ja posso enviar
+					//this.sender.getPossivelEnviar().wait();
 				}
 				//tenho de receber um ack
 				int timeouts=0;
 				boolean recive=false;
-				while(timeouts*this.sender.getTimeOutTry()<this.sender.getTimeOutDesistir() && !recive){
+				while(timeouts*this.control.getTimeOutTry()<this.control.getTimeOutDesistir() && !recive){
 					try {
 						this.sender.getAckRecive().receive(dp);
 						timeouts=0;
@@ -38,7 +44,8 @@ class udpSenderContr implements Runnable{
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						if(timeouts*this.sender.getTimeOutTry()>=this.sender.getTimeOutDesistir()){
+						if(timeouts*this.control.getTimeOutTry()>=this.control.getTimeOutDesistir()){
+							this.control.getLock().unlock(); //nao sei seé preciso
 							throw new RuntimeException("TimeOUT");
 						}
 						timeouts++;
@@ -46,19 +53,25 @@ class udpSenderContr implements Runnable{
 				}
 				//recebi o ack
 				int ackRecived = PDU.fromBytes(this.dp.getData()).getOptions()[3];
-				
-				if(ackRecived>=this.sender.getLastACK()){ //correu bem recebi um ack que estava a espera
-					int windowaumeto = ackRecived-this.sender.getLastACK();
-					this.sender.setLastACK(ackRecived);
-				}else{
-					int windowaumeto = this.sender.getLastACK()-ackRecived;
-					this.sender.setLastACK(ackRecived);
+				//ESTOU TODO COMIDO AQUI 
+				//mandei o 6 e estou a epera de cinfirmaçao do 3 recebi ack de 2
+				if(ackRecived>=this.control.getLastDataNumSent()-this.control.getLastACK()){ //correu bem recebi um ack que estava a espera
+					//mandei o 6 ultima confirmaçao do 3 recebi ack de 5
+					int windowaumeto = ackRecived-this.control.getLastACK();
+					this.control.setLastACK(ackRecived);
+					this.control.aumentaWindowAtual(windowaumeto);
+					//ackRecivedList.add(ackRecived); //digo que ja recebi ate
+					
+				}else{  
+					//mandei o 6 e ultima recebi ack de 2
+					int windowaumeto = this.control.getLastDataNumSent()-ackRecived;
+					this.control.setLastACK(ackRecived);
 					goBack=true;
 				}
 			}
 		}
 		finally{
-			this.sender.getLock().unlock();
+			this.control.getLock().unlock();
 		}
 	}
 	
