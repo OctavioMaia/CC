@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import com.sun.swing.internal.plaf.synth.resources.synth;
+
 import Common.PDU;
 
 public class ControlTCP {
@@ -12,24 +14,13 @@ public class ControlTCP {
 	private Condition esperaACK;
 	private Condition possivelEnviar;
 	
-	
-	
 	private int timeOutTry;
 	private int timeOutDesistir;
-	
-	
 	private int windowMax;
 	private int windowActualSize; //diminuir quando mando aumentar quando recebo ack
-	
-	
 	private int lastDataNumSent; //ultimo pacote enviado
-	
-	
 	private int lastACK; //ultimo ack recebido pois pode vir o 5 e depois o 4
-
 	private int paraEnvioNUM; //total de pacotes a enviar
-	
-	
 
 	public ControlTCP( int timeOutTry, int timeOutDesistir, int windowMax, int paraEnvioNUM) {
 		super();
@@ -49,94 +40,71 @@ public class ControlTCP {
 		this.paraEnvioNUM = paraEnvioNUM;
 	}
 
-	public void diminuiWindowAtual(){
+	public synchronized void diminuiWindowAtual(){
 		this.windowActualSize--;
 	}
-	
-	public void aumentaWindowAtual(int size){
+	public synchronized void aumentaWindowAtual(int size){
 		this.windowActualSize+=size;
 	}
 	
-	public ReentrantLock getLock() {
+	public synchronized ReentrantLock getLock() {
 		return lock;
 	}
-
-	public void setLock(ReentrantLock lock) {
+	public synchronized void setLock(ReentrantLock lock) {
 		this.lock = lock;
 	}
-
-	public Condition getEsperaACK() {
+	public synchronized Condition getEsperaACK() {
 		return esperaACK;
 	}
-
-	public void setEsperaACK(Condition esperaACK) {
+	public synchronized void setEsperaACK(Condition esperaACK) {
 		this.esperaACK = esperaACK;
 	}
-
-	public Condition getPossivelEnviar() {
+	public synchronized Condition getPossivelEnviar() {
 		return possivelEnviar;
 	}
-
-	public void setPossivelEnviar(Condition possivelEnviar) {
+	public synchronized void setPossivelEnviar(Condition possivelEnviar) {
 		this.possivelEnviar = possivelEnviar;
 	}
-
-	public int getTimeOutTry() {
+	public synchronized int getTimeOutTry() {
 		return timeOutTry;
 	}
-
-	public void setTimeOutTry(int timeOutTry) {
+	public synchronized void setTimeOutTry(int timeOutTry) {
 		this.timeOutTry = timeOutTry;
 	}
-
-	public int getTimeOutDesistir() {
+	public synchronized int getTimeOutDesistir() {
 		return timeOutDesistir;
 	}
-
-	public void setTimeOutDesistir(int timeOutDesistir) {
+	public synchronized void setTimeOutDesistir(int timeOutDesistir) {
 		this.timeOutDesistir = timeOutDesistir;
 	}
-
-	public int getWindowMax() {
+	public synchronized int getWindowMax() {
 		return windowMax;
 	}
-
-	public void setWindowMax(int windowMax) {
+	public synchronized void setWindowMax(int windowMax) {
 		this.windowMax = windowMax;
 	}
-
-	public int getWindowActualSize() {
+	public synchronized int getWindowActualSize() {
 		return windowActualSize;
 	}
-
-	public void setWindowActualSize(int windowActualSize) {
+	public synchronized void setWindowActualSize(int windowActualSize) {
 		this.windowActualSize = windowActualSize;
 	}
-
-	public int getLastDataNumSent() {
+	public synchronized int getLastDataNumSent() {
 		return lastDataNumSent;
 	}
-
-	public void setLastDataNumSent(int lastDataNumSent) {
+	public synchronized void setLastDataNumSent(int lastDataNumSent) {
 		this.lastDataNumSent = lastDataNumSent;
 	}
-
-	public int getLastACK() {
+	public synchronized int getLastACK() {
 		return lastACK;
 	}
-
-	public void setLastACK(int lastACK) {
+	public synchronized void setLastACK(int lastACK) {
 		this.lastACK = lastACK;
 	}
-
-	public int getParaEnvioNUM() {
+	public synchronized int getParaEnvioNUM() {
 		return paraEnvioNUM;
 	}
-
-	public void setParaEnvioNUM(int paraEnvioNUM) {
+	public synchronized void setParaEnvioNUM(int paraEnvioNUM) {
 		this.paraEnvioNUM = paraEnvioNUM;
 	}
-	
-	
-
 }

@@ -15,7 +15,6 @@ public class udpReciver { //receve musicas e envia ACK
 	private  final static int sizeBuffer=48*1024;
 	private DatagramSocket sendACK; // por onde mando cenas
 	private DatagramSocket reciveData; // por onde recevo
-	//private int dataWaitnumeration;
 	private int timeOutTry; // se passar este temoo mandar ultimo ack
 	private int timeOutDesistir; //mandar cominicaçao para as couves
 	private int recived;
@@ -112,64 +111,41 @@ public class udpReciver { //receve musicas e envia ACK
 		this.sendACK.close();
 	}
 
-
 	public DatagramSocket getSendACK() {
 		return sendACK;
 	}
-
-
 	public void setSendACK(DatagramSocket sendACK) {
 		this.sendACK = sendACK;
 	}
-
-
 	public DatagramSocket getReciveData() {
 		return reciveData;
 	}
-
-
 	public void setReciveData(DatagramSocket reciveData) {
 		this.reciveData = reciveData;
 	}
-
-
 	public int getTimeOutTry() {
 		return timeOutTry;
 	}
-
-
 	public void setTimeOutTry(int timeOutTry) {
 		this.timeOutTry = timeOutTry;
 	}
-
-
 	public int getTimeOutDesistir() {
 		return timeOutDesistir;
 	}
-
-
 	public void setTimeOutDesistir(int timeOutDesistir) {
 		this.timeOutDesistir = timeOutDesistir;
 	}
-
-
 	public ArrayList<PDU> getaReceber() {
 		return aReceber;
 	}
-
-
 	public void setaReceber(ArrayList<PDU> aReceber) {
 		this.aReceber = aReceber;
 	}
-
-
 	@Override
 	public String toString() {
 		return "udpReciver [sendACK=" + sendACK + ", reciveData=" + reciveData + ", timeOutTry=" + timeOutTry
 				+ ", timeOutDesistir=" + timeOutDesistir + ", aReceber=" + aReceber + "]";
 	}
-
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -181,8 +157,6 @@ public class udpReciver { //receve musicas e envia ACK
 		result = prime * result + timeOutTry;
 		return result;
 	}
-
-
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

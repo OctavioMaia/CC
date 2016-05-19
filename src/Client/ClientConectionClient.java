@@ -25,9 +25,18 @@ public class ClientConectionClient implements Runnable{
 	public void run() {
 		System.out.println("O utilizador " + this.cliente.getUser() + " está ativo para receber trafico UDP na porta " + this.localPortUDP + " para o utilizador " + this.userRequest + " com ip " + this.ipUserRequest+".");
 		while (mainCliente.getState()!=Thread.State.TERMINATED) {
-			//System.out.println("Ainda falta fazer a parte de comunicação com os outros clientes");
+			
 		}
 	}
+	
+	private void receivedProbes(){
+		//tem de esperar pela confirmação
+	}
+	
+	private void sendProbes(){
+		
+	}
+	
 
 	public DatagramSocket getSocketUDP() {
 		return socketUDP;

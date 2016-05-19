@@ -15,30 +15,8 @@ public class udpSender { //manda musicas
 	private DatagramSocket dataSend; // por onde mando cenas
 	private DatagramSocket ackRecive; // por onde recevo
 	
-	
 	private Thread contolACK; //ver melhor
-	
-	
-	
-	//private int timeOutTry;
-	//private int timeOutDesistir;
-	
-	
-	//private int windowMax;
-	//private int windowActualSize; //diminuir quando mando aumentar quando recebo ack
-	
-	
-	//private int lastDataNumSent; //ultimo pacote enviado
-	
-	
-	//private int lastACK; //ultimo ack recebido pois pode vir o 5 e depois o 4
-
-	private ArrayList<PDU> paraEnvio; // onde tenho as cenas para enviar tem de estar por ordem
-	
-	//private ReentrantLock lock;
-	//private Condition esperaACK;
-	//private Condition possivelEnviar;
-	
+	private ArrayList<PDU> paraEnvio; // onde tenho as cenas para enviar tem de estar por ordem	
 	private ControlTCP controlo;
 	
 	public udpSender(DatagramSocket dataSend, DatagramSocket ackRecive, int timeOutTry,
@@ -47,20 +25,9 @@ public class udpSender { //manda musicas
 		this.dataSend = dataSend;
 		this.ackRecive = ackRecive;
 		this.contolACK = null;
-		//this.timeOutTry = timeOutTry;
-		//this.timeOutDesistir = timeOutDesistir;
-		//this.windowMax = windowMax;
-		//this.windowActualSize = windowMax;
-		//this.lastDataNumSent = 0;
-		//this.lastACK = 0;
 		this.paraEnvio = paraEnvio;
-		//this.lock = new ReentrantLock();
-		//this.esperaACK = this.lock.newCondition();
-		//this.possivelEnviar = this.lock.newCondition();
 		this.controlo=new ControlTCP(timeOutTry, timeOutDesistir, windowMax, paraEnvio.size());
 	}
-
-
 
 	public void sendData() throws InterruptedException, IOException{
 			//criara a trhead para controlo
@@ -85,50 +52,27 @@ public class udpSender { //manda musicas
 			}
 	}
 
-
-
 	public DatagramSocket getDataSend() {
 		return dataSend;
 	}
-
-
-
 	public void setDataSend(DatagramSocket dataSend) {
 		this.dataSend = dataSend;
 	}
-
-
-
 	public DatagramSocket getAckRecive() {
 		return ackRecive;
 	}
-
-
-
 	public void setAckRecive(DatagramSocket ackRecive) {
 		this.ackRecive = ackRecive;
 	}
-
-
-
 	public Thread getContolACK() {
 		return contolACK;
 	}
-
-
-
 	public void setContolACK(Thread contolACK) {
 		this.contolACK = contolACK;
 	}
-
-
-
 	public ArrayList<PDU> getParaEnvio() {
 		return paraEnvio;
 	}
-
-
-
 	public void setParaEnvio(ArrayList<PDU> paraEnvio) {
 		this.paraEnvio = paraEnvio;
 	}
