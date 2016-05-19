@@ -85,11 +85,11 @@ public class Teste {
 		System.out.println("Time:" + millis);*/
 		try {
 			ArrayList<PDU> papp = PDU_Buider.DATA_PDU("/Users/joaosilva/Desktop/merda/Stromae - Alors on danse - Radio Edit.mp3", "Stromae - Alors on danse - Radio Edit.mp3");
-			PDU_APP_DATA pdata = PDU_Reader.read(papp);
+			//PDU_APP_DATA pdata = PDU_Reader.read(papp);
 			
 			
-			System.out.println("Blocos:" + pdata.getBlocos() + "___" +papp.size());
-			System.out.println("Nome:" + pdata.getNome());
+			//System.out.println("Blocos:" + pdata.getBlocos() + "___" +papp.size());
+			//System.out.println("Nome:" + pdata.getNome());
 		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
