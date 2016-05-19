@@ -11,6 +11,8 @@ import java.util.HashSet;
 import java.util.Map;
 
 import Common.PDU;
+import Common.PDU_APP;
+import Common.PDU_APP_CONS_RESP;
 import Common.PDU_Buider;
 import Versions.PDUVersion;
 
@@ -192,8 +194,38 @@ public class ServerInfo {
 				Map<String,String> clientResult = this.clients.get(userOnline).consultRequestUser(banda, musica, ext);
 				result.putAll(clientResult);
 			}
-			
+		}
+		if (result.size()==0 && masterPort!=-1) {
+			Map<String,String> masterResult = consultMaster(banda, musica, ext);
+			result.putAll(masterResult);
 		}
 		return result;
 	}
+	
+	protected synchronized Map<String,String> consultMaster(String banda, String musica, String ext){
+		Map<String,String> result = new HashMap<>();
+		
+		PDU pdurequest = PDU_Buider.CONSULT_REQUEST_PDU(0, this.masterIP, this.masterPort, banda, musica, ext, this.id);
+		try {
+			osMasterSocket.write(PDU.toBytes(pdurequest));
+			try {
+				PDU_APP pdu = PDUVersion.readPDU(isMasterSocket);
+				if(pdu.getClass().getSimpleName().equals("PDU_APP_CONS_RESP")){
+					PDU_APP_CONS_RESP pduResponse = ((PDU_APP_CONS_RESP)pdu);
+					if(pduResponse.getFonte()==0){
+						result.putAll(pduResponse.getResult());
+					}
+				}
+			} catch (IOException e) {
+				System.out.println("Não foi possivel receber a resposta ao Consult Request realizada ao Master( "+banda+","+ musica+ ext + " )");
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			System.out.println("Não foi possivel enviar consult Request para o Master( "+banda+","+ musica+ ext + " )");
+			e.printStackTrace(); 
+		}
+		
+		return result;
+	}
+	
 }
