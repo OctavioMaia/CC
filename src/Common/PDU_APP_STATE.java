@@ -2,6 +2,9 @@ package Common;
 
 public class PDU_APP_STATE extends PDU_APP{
 
+	public static final int ARE_YOU_THERE = 1; 
+	public static final int I_AM_HERE_PDU = 0;
+	
 	private String ip;
 	private int port;
 	private int tipo ; //pegunta ou resposta

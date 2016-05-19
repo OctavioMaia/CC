@@ -16,44 +16,56 @@ public class Server {
 	public Server(int port) {
 		try {
 			this.server = new ServerSocket(port);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		try {
 			this.info = new ServerInfo(Inet4Address.getLocalHost().getHostAddress(),port);
-		} catch (UnknownHostException e) {
+		} catch (IOException e) {
 			try {
+				System.out.println("Não foi possivel inicializar o servidor");
 				server.close();
 			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				System.out.println("Não foi possive criar o servidor Socket");
 			}
-			e.printStackTrace();
 		}
 	}
 	
+	
+	protected synchronized ServerInfo getInfo() {
+		return info;
+	}
+	protected synchronized void setInfo(ServerInfo info) {
+		this.info = info;
+	}
+	
 	public void startServer(){
-		System.out.println(this.info.getLocalIP());
+		System.out.println(this.info.getId());
+		Thread cp = new Thread( new CheckPingClients(info, Thread.currentThread()));
+		cp.start();
 		while(true){
-            Socket sockCliente = null;
             try {
-            	sockCliente = server.accept();
+            	Socket sockCliente = server.accept();
+            	Thread t = new Thread( new ReceiverClientThread(sockCliente,this.info));
+    			t.start();
             } catch (IOException ex) {
-                ex.printStackTrace();
                 System.out.println("Erro ao criar socket para cliente.");
             }
-            Thread t = new Thread(new ReceiverClientThread(sockCliente,this.info));
-			t.start();            
         }
+	}
+	private void connectToMaster(String ip, int port) throws IOException{
+		this.info.connectToMaster(ip, port);
 	}
 	
 	public static void main(String argv[]){
 		Server s = new Server(Integer.parseInt(argv[0]));
+		if(argv.length==3){
+			try {
+				s.connectToMaster(argv[1], Integer.parseInt(argv[2]));
+				System.out.println("Connect to master server");
+				SendPingMaster spm = new SendPingMaster(s.getInfo(), Thread.currentThread());
+				Thread tSPM = new Thread(spm);
+				tSPM.start();
+			} catch (IOException e) {
+				System.out.println("Não foi possivel estabelecer conecção com o server master ("+argv[1]+":"+Integer.parseInt(argv[2]) +")");
+			}
+		}
 		s.startServer();
-		
 	}
-	
-	
 }
