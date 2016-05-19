@@ -200,6 +200,7 @@ public class Client{
 				if(pduResponse.getClass().getSimpleName().equals("PDU_APP_CONS_RESP")){
 					result = ((PDU_APP_CONS_RESP) pduResponse).getResult();
 				}
+				//vamos ver se temos cliente a quem pdeir e enviar os proves
 			} catch (IOException e) {
 				System.out.println("Não foi possivel receber a resposta da consulta por parte do servidor");
 				e.printStackTrace();

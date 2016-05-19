@@ -74,8 +74,10 @@ public class ClientConnectionServer implements Runnable{
 			DatagramSocket dt;
 			try {
 				dt = new DatagramSocket(0);
-				ClientConectionClient cc = new ClientConectionClient(Thread.currentThread(), this.cliente, dt, pdu.getIdUser(), pdu.getIp());
-				Thread tcc = new Thread(cc);
+				//Criar Thread para o outro cliente enviar o probe e depois nos enviarmos a musica
+				SendConectionClient scc = new SendConectionClient();
+				//ClientConectionClient cc = new ClientConectionClient(Thread.currentThread(), this.cliente, dt, pdu.getIdUser(), pdu.getIp());
+				Thread tcc = new Thread(scc);
 				tcc.start();
 				PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), dt.getLocalPort(), true, null );
 				try {
