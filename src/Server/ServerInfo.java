@@ -15,7 +15,6 @@ import Common.PDU;
 import Common.PDU_APP;
 import Common.PDU_APP_REG_RESP;
 import Common.PDU_Buider;
-import Versions.PDUVersion;
 
 public class ServerInfo {
 	private String id;
@@ -118,10 +117,6 @@ public class ServerInfo {
 		this.masterPort = masterPort;
 	}
 	
-	
-	protected synchronized ClientInfo getUser(String user){
-		return this.clients.get(user);
-	}
 	protected synchronized int addRegisto(int origem, String uname, String pass, String ip, int port){
 		//futuramente verificar a origem pois pode ser o registo de um servidor
 		if(clients.containsKey(uname)){
