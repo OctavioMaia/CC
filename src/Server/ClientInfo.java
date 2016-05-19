@@ -3,6 +3,7 @@ package Server;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.DatagramSocket;
 import java.net.Socket;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class ClientInfo {
 	private Socket sockConsulta;
     private OutputStream osConsulta;
     private InputStream isConsulta;
-	
+    
  	public ClientInfo(int TipoClienteOrigem,String user, String pass, String ip, int port, Thread currentThread) {
  		this.tipoCliente = TipoClienteOrigem;
 		this.user = user;
@@ -110,6 +111,8 @@ public class ClientInfo {
 		this.isConsulta = isConsulta;
 	}
 
+	
+	
 	public synchronized void logout(){
 		this.flagStopThread = true ;
 		this.runRequest=null;

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import Client.SendPingServer;
 import Common.PDU;
 import Common.PDU_APP;
 import Common.PDU_APP_CONS_RESP;
@@ -35,7 +34,6 @@ public class ServerInfo {
 			localIP = Inet4Address.getLocalHost().getHostAddress();
 		} catch (UnknownHostException e) {
 			System.out.println("Não foi possivel obter o ip local do server");
-			e.printStackTrace();
 		}
 		this.id=localIP+":"+port;
 		this.port = port;
@@ -54,6 +52,11 @@ public class ServerInfo {
 		this.port = portServer;
 		this.clients = new HashMap<>();
 		this.online = new HashSet<>();
+		this.sockMaster=null;
+		this.isMasterSocket=null;
+		this.osMasterSocket=null;
+		this.masterIP=null;
+		this.masterPort=-1;
 	}
 
 	//Getters and Setters
@@ -214,7 +217,7 @@ public class ServerInfo {
 	protected synchronized Map<String,String> consultMaster(String banda, String musica, String ext){
 		Map<String,String> result = new HashMap<>();
 		
-		PDU pdurequest = PDU_Buider.CONSULT_REQUEST_PDU(0, this.masterIP, this.masterPort, banda, musica, ext, this.id);
+		PDU pdurequest = PDU_Buider.CONSULT_REQUEST_PDU(0, this.localIP, this.port, banda, musica, ext, this.id);
 		try {
 			osMasterSocket.write(PDU.toBytes(pdurequest));
 			try {

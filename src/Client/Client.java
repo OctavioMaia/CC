@@ -23,7 +23,6 @@ public class Client{
 	private String ip;
 	private String pass;
 	private int portTCP; //porta a onde vou estar a escuta para o server
-	private int portUDP; //porta a onde vou estar a escuta para os clientes
 	private String folderMusic;
 	private ClientConnectionServer conectServer;
 	private SendPingServer pingServer;
@@ -56,7 +55,6 @@ public class Client{
 			System.out.println("Não foi possivel criar o servidor TCP");
 		}
 		this.portTCP = this.serverSocket.getLocalPort();
-		this.portUDP = -1;
 		this.conectServer = null;
 		this.pingServer=null;
 	}
@@ -84,12 +82,6 @@ public class Client{
 	}
 	public synchronized void setPortTCP(int portTCP) {
 		this.portTCP = portTCP;
-	}
-	public synchronized int getPortUDP() {
-		return portUDP;
-	}
-	public synchronized void setPortUDP(int portUDP) {
-		this.portUDP = portUDP;
 	}
 	public synchronized Socket getSock() {
 		return sock;
@@ -177,10 +169,8 @@ public class Client{
 					this.pingServer = new SendPingServer(this,Thread.currentThread());
 					Thread cs = new Thread(this.conectServer);
 					Thread ps = new Thread(this.pingServer);
-					Thread cc = new Thread(new ClientConectionClient(Thread.currentThread(),this));
 					cs.start();
 					ps.start();
-					cc.start();
 				}
 			} catch (IOException e1) {
 				System.out.println("Não foi recebida a resposta do servidor ao pedido de logn RESP: " + respMess);

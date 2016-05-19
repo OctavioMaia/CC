@@ -45,12 +45,11 @@ public class Server {
             	Thread t = new Thread( new ReceiverClientThread(sockCliente,this.info));
     			t.start();
             } catch (IOException ex) {
-                ex.printStackTrace();
                 System.out.println("Erro ao criar socket para cliente.");
             }
         }
 	}
-	public void connectToMaster(String ip, int port) throws IOException{
+	private void connectToMaster(String ip, int port) throws IOException{
 		this.info.connectToMaster(ip, port);
 	}
 	

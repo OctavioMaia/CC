@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.DatagramSocket;
 import java.net.Socket;
+import java.net.SocketException;
 
 import Common.PDU;
 import Common.PDU_APP;
@@ -67,14 +69,30 @@ public class ClientConnectionServer implements Runnable{
 				found=true;
 			}
 		}
-		//enviar a porta UDP que este cliente vai ter disponivel para comunicar com outros clientes.
-		if(this.cliente.getPortUDP()!=-1){
-			//significa que o cliente tem o DatagraSocket inicializado
-			PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.cliente.getPortUDP(), found, null );
+		if(found){
+			//Criar o datagram para o cliente que pediu a musica
+			DatagramSocket dt;
+			try {
+				dt = new DatagramSocket(0);
+				ClientConectionClient cc = new ClientConectionClient(Thread.currentThread(), this.cliente, dt, pdu.getIdUser(), pdu.getIp());
+				Thread tcc = new Thread(cc);
+				tcc.start();
+				PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), dt.getLocalPort(), true, null );
+				try {
+					this.osConsult.write(PDU.toBytes(pduResponse));
+				} catch (IOException e) {
+					System.out.println("Não foi possivel responder ao Consult Request por parte do servidor");
+					e.printStackTrace();
+				}
+			} catch (SocketException e1) {
+				System.out.println("Não foi possivel abrir ligação para o cliente " + pdu.getIdUser());
+			}
+		}else {
+			PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), -1, false, null );
 			try {
 				this.osConsult.write(PDU.toBytes(pduResponse));
 			} catch (IOException e) {
-				System.out.println("Não foi possivel responder ao Consul Request por parte do servidor");
+				System.out.println("Não foi possivel responder ao Consult Request por parte do servidor");
 				e.printStackTrace();
 			}
 		}
