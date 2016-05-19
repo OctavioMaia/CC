@@ -6,6 +6,8 @@ package presentation;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
+
 import javax.swing.*;
 
 import Client.Client;
@@ -83,12 +85,46 @@ public class Menu extends JFrame {
 		this.registarButton.setEnabled(true);
 		this.loginButton.setEnabled(true);
 		this.state.setText(".....");
+		this.buttonChangeFolder.setEnabled(false);
 	}
 
 	private void loginButtonActionPerformed(ActionEvent e) {
 		Login log = new Login(this);
 		log.setVisible(true);
 		this.setVisible(false);
+		this.buttonChangeFolder.setEnabled(true);
+	}
+
+	private void musicRequestButtonActionPerformed(ActionEvent e) {
+		if(this.folder.getText()!=null){
+			MusicSearch ms = new MusicSearch(this);
+			ms.setVisible(true);
+			this.setVisible(false);
+		}else{
+			JOptionPane.showMessageDialog(this,
+				    "É necessário existir uma pasta para a musica",
+				    "Menu Folder Music Message",
+				    JOptionPane.PLAIN_MESSAGE);
+		}
+		
+	}
+
+	protected boolean changeFolderMusic(){
+		boolean res = false;
+		JFileChooser fileChooser = new JFileChooser();
+		fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+	    int returnValue = fileChooser.showOpenDialog(null);
+	    if (returnValue == JFileChooser.APPROVE_OPTION){
+		    this.cliente.setFolderMusic(fileChooser.getSelectedFile().getAbsolutePath());
+		    this.folder.setText(fileChooser.getSelectedFile().getAbsolutePath());
+		    System.out.println(fileChooser.getSelectedFile().getAbsolutePath());
+		    res=true;
+	    }
+	    return res;
+	}
+	
+	private void buttonChangeFolderActionPerformed(ActionEvent e) {
+		changeFolderMusic();
 	}
 
 	private void initComponents() {
@@ -100,6 +136,10 @@ public class Menu extends JFrame {
 		registarButton = new JButton();
 		logoutButton = new JButton();
 		state = new JLabel();
+		musicRequestButton = new JButton();
+		label2 = new JLabel();
+		folder = new JLabel();
+		buttonChangeFolder = new JButton();
 
 		//======== this ========
 		setTitle("Menu");
@@ -107,12 +147,12 @@ public class Menu extends JFrame {
 		Container contentPane = getContentPane();
 
 		//---- sairButton ----
-		sairButton.setText("Sair");
+		sairButton.setText("Exit");
 		sairButton.setFont(new Font("Tahoma", Font.BOLD, 14));
 		sairButton.addActionListener(e -> sairButtonActionPerformed(e));
 
 		//---- label1 ----
-		label1.setText("Estado:");
+		label1.setText("State");
 		label1.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
 		//---- loginButton ----
@@ -139,6 +179,24 @@ public class Menu extends JFrame {
 		//---- state ----
 		state.setFont(new Font("Tahoma", Font.PLAIN, 14));
 
+		//---- musicRequestButton ----
+		musicRequestButton.setText("Music Request");
+		musicRequestButton.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		musicRequestButton.addActionListener(e -> musicRequestButtonActionPerformed(e));
+
+		//---- label2 ----
+		label2.setText("Music Folder:");
+		label2.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		//---- folder ----
+		folder.setFont(new Font("Tahoma", Font.PLAIN, 14));
+
+		//---- buttonChangeFolder ----
+		buttonChangeFolder.setText("Change");
+		buttonChangeFolder.setFont(new Font("Tahoma", Font.PLAIN, 14));
+		buttonChangeFolder.setEnabled(false);
+		buttonChangeFolder.addActionListener(e -> buttonChangeFolderActionPerformed(e));
+
 		GroupLayout contentPaneLayout = new GroupLayout(contentPane);
 		contentPane.setLayout(contentPaneLayout);
 		contentPaneLayout.setHorizontalGroup(
@@ -147,15 +205,23 @@ public class Menu extends JFrame {
 					.addContainerGap()
 					.addGroup(contentPaneLayout.createParallelGroup()
 						.addGroup(contentPaneLayout.createSequentialGroup()
-							.addGap(0, 274, Short.MAX_VALUE)
+							.addGap(0, 0, Short.MAX_VALUE)
 							.addComponent(sairButton, GroupLayout.PREFERRED_SIZE, 75, GroupLayout.PREFERRED_SIZE))
+						.addComponent(loginButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(logoutButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(musicRequestButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+						.addComponent(registarButton, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 						.addGroup(contentPaneLayout.createSequentialGroup()
-							.addComponent(label1)
-							.addGap(18, 18, 18)
-							.addComponent(state, GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE))
-						.addComponent(loginButton, GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-						.addComponent(logoutButton, GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE)
-						.addComponent(registarButton, GroupLayout.DEFAULT_SIZE, 349, Short.MAX_VALUE))
+							.addGroup(contentPaneLayout.createParallelGroup()
+								.addComponent(label2)
+								.addComponent(label1))
+							.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+							.addGroup(contentPaneLayout.createParallelGroup()
+								.addComponent(state, GroupLayout.DEFAULT_SIZE, 404, Short.MAX_VALUE)
+								.addGroup(contentPaneLayout.createSequentialGroup()
+									.addComponent(folder, GroupLayout.DEFAULT_SIZE, 321, Short.MAX_VALUE)
+									.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+									.addComponent(buttonChangeFolder)))))
 					.addContainerGap())
 		);
 		contentPaneLayout.setVerticalGroup(
@@ -163,19 +229,29 @@ public class Menu extends JFrame {
 				.addGroup(contentPaneLayout.createSequentialGroup()
 					.addContainerGap()
 					.addGroup(contentPaneLayout.createParallelGroup()
-						.addComponent(label1)
-						.addComponent(state))
-					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 65, Short.MAX_VALUE)
+						.addGroup(contentPaneLayout.createSequentialGroup()
+							.addGap(0, 9, Short.MAX_VALUE)
+							.addComponent(label1))
+						.addComponent(state, GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED)
+					.addGroup(contentPaneLayout.createParallelGroup()
+						.addComponent(buttonChangeFolder)
+						.addGroup(contentPaneLayout.createParallelGroup(GroupLayout.Alignment.TRAILING)
+							.addComponent(folder, GroupLayout.PREFERRED_SIZE, 24, GroupLayout.PREFERRED_SIZE)
+							.addComponent(label2)))
+					.addPreferredGap(LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
 					.addComponent(registarButton)
 					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 					.addComponent(loginButton)
 					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
 					.addComponent(logoutButton)
-					.addGap(25, 25, 25)
+					.addPreferredGap(LayoutStyle.ComponentPlacement.UNRELATED)
+					.addComponent(musicRequestButton)
+					.addGap(82, 82, 82)
 					.addComponent(sairButton, GroupLayout.PREFERRED_SIZE, 30, GroupLayout.PREFERRED_SIZE)
 					.addContainerGap())
 		);
-		setSize(385, 295);
+		setSize(525, 395);
 		setLocationRelativeTo(null);
 		// JFormDesigner - End of component initialization  //GEN-END:initComponents
 	}
@@ -188,5 +264,9 @@ public class Menu extends JFrame {
 	private JButton registarButton;
 	private JButton logoutButton;
 	private JLabel state;
+	private JButton musicRequestButton;
+	private JLabel label2;
+	private JLabel folder;
+	private JButton buttonChangeFolder;
 	// JFormDesigner - End of variables declaration  //GEN-END:variables
 }

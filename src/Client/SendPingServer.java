@@ -23,19 +23,17 @@ public class SendPingServer implements Runnable{
 	@Override
 	public void run() {
 		while(this.main.getState()!=State.TERMINATED){
-			PDU pduIMH = PDU_Buider.I_AM_HERE_PDU(user.getIp(), user.getPort(), user.getUser());
+			PDU pduIMH = PDU_Buider.I_AM_HERE_PDU(user.getIp(), user.getPortTCP(), user.getUser());
 			try {
 				osConsulta.write(PDU.toBytes(pduIMH));
 				System.out.println("Enviei uma presença para o server");
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			try {
 				System.out.println("Daqui a " + maxTimeSend + " volto a enviar uma presença para o server ");
 				Thread.sleep(maxTimeSend);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}

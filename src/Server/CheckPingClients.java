@@ -15,18 +15,16 @@ public class CheckPingClients implements Runnable{
 	public void run() {
 		while(main.getState()!=Thread.State.TERMINATED){
 			for(String user : this.server.getOnline()){
-				System.out.println("Vou ver o utilizador " + user);
 				this.server.checkTimeStampClient(user, CheckPingClients.maxTime);
 			}
 			try {
+				System.out.println("Daqui a " + CheckPingClients.maxTime/1000.0 + " segundos volto a verificar os clientes");
 				Thread.sleep(CheckPingClients.maxTime);
 			} catch (InterruptedException e) {
-				System.out.println("Daqui a " + CheckPingClients.maxTime/1000 + " segundos volto a verificar os clientes");
-				e.printStackTrace();
+				System.out.println("Não foi possivel esperar " + CheckPingClients.maxTime/1000 + " segundos");
+				break;
 			}
 		}
 	}
 
-	
-	
 }

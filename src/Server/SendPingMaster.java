@@ -1,38 +1,33 @@
 package Server;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.Thread.State;
-
 import Common.PDU;
+import Common.PDU_Buider;
+
 
 public class SendPingMaster implements Runnable{
 
+	private ServerInfo server;
 	private Thread main;
-	private PDU pdu_ping;
-	private OutputStream osMaster;
+	private static int maxTimeSend = 40000;
 	
-	public SendPingMaster(Thread m, PDU pdu, OutputStream os) {
-		this.pdu_ping=pdu;
-		this.osMaster=os;
+	public SendPingMaster(ServerInfo s,Thread main) {
+		this.server=s;
+		this.main=main;
 	}
 	
 	@Override
 	public void run() {
-		while(main.getState()!=State.TERMINATED){
+		while(main.getState()!=Thread.State.TERMINATED){
 			try {
-				osMaster.write(PDU.toBytes(pdu_ping));
-				System.out.println("Enviei ping para o master");
-			} catch (IOException e) {
-				e.printStackTrace();
+				Thread.sleep(maxTimeSend);
+				PDU pdu = PDU_Buider.I_AM_HERE_PDU(server.getLocalIP(), server.getPort(), server.getId()); 
+				server.getOsMasterSocket().write(PDU.toBytes(pdu));
+			} catch (IOException | InterruptedException e1) {
+				System.out.println(Thread.currentThread() + "Não é possivel enviar ping para Master");
+				break;
 			}
-			try {
-				Thread.sleep(40000);
-				//enviar ping para o master de 40 em 40 segundos
-				// este ping vai fazer login no server
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			} 
-		}	
+		}
 	}
+
 }

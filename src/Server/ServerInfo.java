@@ -8,20 +8,21 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 import Client.SendPingServer;
 import Common.PDU;
 import Common.PDU_APP;
 import Common.PDU_APP_REG_RESP;
 import Common.PDU_Buider;
-import Common.PDU_Reader;
-import Versions.PDUVersion1;
+import Versions.PDUVersion;
 
 public class ServerInfo {
+	private String id;
 	private String localIP;
 	private int port;
 	private HashMap<String,ClientInfo> clients; //user->ClienteInfo  clientes registados
-	private HashSet<String> online; 
+	private HashSet<String> online;
 	private Socket sockMaster;
 	//informações sobre o server master
 	private InputStream isMasterSocket;
@@ -36,6 +37,7 @@ public class ServerInfo {
 			System.out.println("Não foi possivel obter o ip local do server");
 			e.printStackTrace();
 		}
+		this.id=localIP+":"+port;
 		this.port = port;
 		this.clients = new HashMap<>();
 		this.online = new HashSet<>();
@@ -47,22 +49,24 @@ public class ServerInfo {
 	}
 	
 	public ServerInfo(String ipServer, int portServer){
+		this.id=ipServer+":"+portServer;
 		this.localIP = ipServer;
 		this.port = portServer;
 		this.clients = new HashMap<>();
 		this.online = new HashSet<>();
 	}
 
-	public HashSet<String> getOnline() {
-		return online;
+	//Getters and Setters
+	protected synchronized String getId() {
+		return id;
 	}
-	public void setOnline(HashSet<String> online) {
-		this.online = online;
+	protected synchronized void setId(String id) {
+		this.id = id;
 	}
 	protected synchronized String getLocalIP() {
 		return localIP;
 	}
-	public synchronized void setLocalIP(String localIP) {
+	protected synchronized void setLocalIP(String localIP) {
 		this.localIP = localIP;
 	}
 	protected synchronized int getPort() {
@@ -71,13 +75,53 @@ public class ServerInfo {
 	protected synchronized void setPort(int port) {
 		this.port = port;
 	}
-	protected synchronized HashMap<String, ClientInfo> getClientes() {
+	protected synchronized HashMap<String, ClientInfo> getClients() {
 		return clients;
 	}
-	protected synchronized void setClients(HashMap<String, ClientInfo> clientes) {
-		this.clients = clientes;
+	protected synchronized void setClients(HashMap<String, ClientInfo> clients) {
+		this.clients = clients;
 	}
-
+	protected synchronized HashSet<String> getOnline() {
+		return online;
+	}
+	protected synchronized void setOnline(HashSet<String> online) {
+		this.online = online;
+	}
+	protected synchronized Socket getSockMaster() {
+		return sockMaster;
+	}
+	protected synchronized void setSockMaster(Socket sockMaster) {
+		this.sockMaster = sockMaster;
+	}
+	protected synchronized InputStream getIsMasterSocket() {
+		return isMasterSocket;
+	}
+	protected synchronized void setIsMasterSocket(InputStream isMasterSocket) {
+		this.isMasterSocket = isMasterSocket;
+	}
+	protected synchronized OutputStream getOsMasterSocket() {
+		return osMasterSocket;
+	}
+	protected synchronized void setOsMasterSocket(OutputStream osMasterSocket) {
+		this.osMasterSocket = osMasterSocket;
+	}
+	protected synchronized String getMasterIP() {
+		return masterIP;
+	}
+	protected synchronized void setMasterIP(String masterIP) {
+		this.masterIP = masterIP;
+	}
+	protected synchronized int getMasterPort() {
+		return masterPort;
+	}
+	protected synchronized void setMasterPort(int masterPort) {
+		this.masterPort = masterPort;
+	}
+	
+	
+	protected synchronized ClientInfo getUser(String user){
+		return this.clients.get(user);
+	}
 	protected synchronized int addRegisto(int origem, String uname, String pass, String ip, int port){
 		//futuramente verificar a origem pois pode ser o registo de um servidor
 		if(clients.containsKey(uname)){
@@ -94,17 +138,6 @@ public class ServerInfo {
 		return flag;
 		
 	}
-	/**
-	 * Função que realiza o login de um cliente no server
-	 * Isto so é possivel ser realizado se o cliente estiver
-	 * registado(2) e nao tiver com login feito(3).
-	 * E por fim a pass tem de corresponder
-	 * @param uname
-	 * @param pass
-	 * @param ip
-	 * @param port
-	 * @return
-	 */
 	protected synchronized int login(String uname, String pass, String ip, int port){
 		if(!clients.containsKey(uname)){
 			return 2; // nao tem registo feito
@@ -137,7 +170,7 @@ public class ServerInfo {
 		this.online.add(user);
 	}
 	
-	public synchronized void checkTimeStampClient(String user,int maxTime) {
+	protected synchronized void checkTimeStampClient(String user,int maxTime) {
 		ClientInfo c = this.clients.get(user);
 		if(c.checkTimeStamp(maxTime)==false){
 			//caso em que nao foi verificada a permaneicia do cliente no serviço
@@ -145,50 +178,37 @@ public class ServerInfo {
 			this.online.remove(user);
 		};
 	}
-
-	
-	protected synchronized void connectToMaster(String ip, int port){
+	protected synchronized void connectToMaster(String ip, int port) throws IOException{
 		this.masterIP=ip;
 		this.masterPort=port;
-		try {
-			this.sockMaster = new Socket(this.masterIP, this.masterPort);
-			this.isMasterSocket = sockMaster.getInputStream();
-			this.osMasterSocket = sockMaster.getOutputStream();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		
+		this.sockMaster = new Socket(this.masterIP, this.masterPort);
+		this.isMasterSocket = sockMaster.getInputStream();
+		this.osMasterSocket = sockMaster.getOutputStream();
 		//enviar um registo para o master
-		PDU pduRegisterMaster = PDU_Buider.REGISTER_PDU(0, this.localIP+":"+this.port, "", this.localIP, this.port);
-		try {
-			this.osMasterSocket.write(PDU.toBytes(pduRegisterMaster));
-		} catch (IOException e) {
-			System.out.println("Impossivel enviar mensagem de registo para o master");
-			e.printStackTrace();
-		}
-		byte pdu[] = new byte[11];
-		try {
-			isMasterSocket.read(pdu, 0, 11);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		PDU pduRegisterMaster = PDU_Buider.REGISTER_PDU(0, this.id, ""+this.port, this.localIP, this.port);
+		this.osMasterSocket.write(PDU.toBytes(pduRegisterMaster));
 		
-		PDU_APP app = PDU_Reader.read(pdu);
+		//receber confirmação de registo
+		PDUVersion.readPDU(isMasterSocket);
 		
-		if(app.getClass().getSimpleName().equals("PDU_APP_REG_RESP")){
-			PDU_APP_REG_RESP appResp = (PDU_APP_REG_RESP) app;
+		
+		PDU pduLoginMaster = PDU_Buider.LOGIN_PDU(0, this.id, ""+this.port, this.localIP, this.port);
+		this.osMasterSocket.write(PDU.toBytes(pduLoginMaster));
+		// receber confirmação de login
+		PDUVersion.readPDU(isMasterSocket);
 			
-			if(appResp.getMensagem()==1){
-				PDU pduPING = PDU_Buider.I_AM_HERE_PDU(localIP, port, localIP+":"+ port);
-				Thread pingMaster = new Thread(new SendPingMaster(Thread.currentThread(),pduPING,osMasterSocket));
-				pingMaster.start();
+		
+	}
+	protected synchronized Map<String,String> consultRequestToUsersOnline(String userRequest, String banda, String musica, String ext){
+		Map<String,String> result = new HashMap<>();
+		for (String userOnline : this.online) {
+			if(!userOnline.equals(userRequest)){
+				Map<String,String> clientResult = this.clients.get(userOnline).consultRequestUser(banda, musica, ext);
+				result.putAll(clientResult);
 			}
 			
 		}
-		
+		return result;
 	}
 }

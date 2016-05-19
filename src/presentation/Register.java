@@ -6,8 +6,6 @@ package presentation;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 
 import javax.swing.*;
 
@@ -39,7 +37,7 @@ public class Register extends JFrame {
 		int mensage = c.register(
 				this.textFieldUsername.getText(),
 				new String(this.passwordField.getPassword()),
-				c.getPort()
+				c.getPortTCP()
 				);
 		
 		switch (mensage) {
