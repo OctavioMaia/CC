@@ -10,11 +10,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import Client.SendPingServer;
 import Common.PDU;
-import Common.PDU_APP;
-import Common.PDU_APP_REG_RESP;
 import Common.PDU_Buider;
+import Versions.PDUVersion;
 
 public class ServerInfo {
 	private String id;
@@ -23,11 +21,12 @@ public class ServerInfo {
 	private HashMap<String,ClientInfo> clients; //user->ClienteInfo  clientes registados
 	private HashSet<String> online;
 	private Socket sockMaster;
-	//informações sobre o server master
 	private InputStream isMasterSocket;
 	private OutputStream osMasterSocket;
 	private String masterIP;
 	private int masterPort;
+	
+	
 	
 	public ServerInfo(int port){
 		try {
@@ -43,7 +42,7 @@ public class ServerInfo {
 		this.sockMaster=null;
 		this.isMasterSocket=null;
 		this.osMasterSocket=null;
-		this.masterIP=null;
+		this.masterIP="";
 		this.masterPort=-1;
 	}
 	
@@ -117,6 +116,10 @@ public class ServerInfo {
 		this.masterPort = masterPort;
 	}
 	
+	
+	protected synchronized ClientInfo getUser(String user){
+		return this.clients.get(user);
+	}
 	protected synchronized int addRegisto(int origem, String uname, String pass, String ip, int port){
 		//futuramente verificar a origem pois pode ser o registo de um servidor
 		if(clients.containsKey(uname)){
@@ -152,19 +155,6 @@ public class ServerInfo {
 		}
 		return 0;
 	}
-
-	protected synchronized ClientInfo getUser(String user){
-		return this.clients.get(user);
-	}
-
-	protected synchronized boolean containsOnline(String user){
-		return this.online.contains(user);		
-	} 
-	
-	protected synchronized void addOnline(String user){
-		this.online.add(user);
-	}
-	
 	protected synchronized void checkTimeStampClient(String user,int maxTime) {
 		ClientInfo c = this.clients.get(user);
 		if(c.checkTimeStamp(maxTime)==false){
