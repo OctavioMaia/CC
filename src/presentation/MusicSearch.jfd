@@ -1,0 +1,51 @@
+JFDML JFormDesigner: "5.2.3.0.281" Java: "1.8.0_91" encoding: "UTF-8"
+
+new FormModel {
+	contentType: "form/swing"
+	root: new FormRoot {
+		add( new FormWindow( "javax.swing.JFrame", new FormLayoutManager( class org.jdesktop.layout.GroupLayout ) {
+			"$horizontalGroup": "par l {seq {space :::p, par l {seq l {par l:::p {comp label1::::82:x, comp label2::::82:x}, space u:::p, par l {comp textBanda:::::x, seq {comp textMusic:::p:272:p, space :0:0:x}}}, seq t {space :0:234:x, comp buttonRequest:::p::p, space :::p, comp buttonExit:::p::p}, seq l {comp label3:::p:82:p, space :p:10:p, comp textExt:::p:90:p, space :0:182:x}}, space :::p}}"
+			"$verticalGroup": "par l {seq l {space :p:39:p, par b {comp label1::b:p::p, comp textBanda::b:p::p}, space :::p, par b {comp label2::b:p::p, comp textMusic::b:p::p}, space :::p, par l {comp label3:::p::p, comp textExt:::p::p}, space ::116:x, par b {comp buttonExit::b:p::p, comp buttonRequest::b:p::p}, space :::p}}"
+		} ) {
+			name: "this"
+			"title": "Music Request"
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label1"
+				"text": "Band:"
+				"font": new java.awt.Font( "Tahoma", 0, 14 )
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textBanda"
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label2"
+				"text": "Music:"
+				"font": &Font0 new java.awt.Font( "Tahoma", 0, 14 )
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textMusic"
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "buttonExit"
+				"text": "Exit"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonCancelarActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "buttonRequest"
+				"text": "Request"
+				addEvent( new FormEvent( "java.awt.event.ActionListener", "actionPerformed", "buttonRequestActionPerformed", true ) )
+			} )
+			add( new FormComponent( "javax.swing.JLabel" ) {
+				name: "label3"
+				"text": "Ext(.ext)"
+				"font": #Font0
+			} )
+			add( new FormComponent( "javax.swing.JTextField" ) {
+				name: "textExt"
+			} )
+		}, new FormLayoutConstraints( null ) {
+			"location": new java.awt.Point( 0, 0 )
+			"size": new java.awt.Dimension( 400, 300 )
+		} )
+	}
+}

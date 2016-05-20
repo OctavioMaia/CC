@@ -1,49 +1,9 @@
-package Common;
-
-import java.util.ArrayList;
-import java.util.Collection;
+﻿package Common;
 import java.util.HashMap;
 import java.util.Map;
 
 public final class PDU_Reader {
 
-	
-	static public PDU_APP_DATA read(ArrayList<PDU> ps){
-		PDU_APP_DATA pa=null;
-		byte version = ps.get(0).getVersion();
-		int total = ps.get(0).getOptions()[3];
-		byte[][] bs = new byte[total][];
-		pa=new PDU_APP_DATA(version);
-		pa.setBlocos(total);
-		if(ps.size()!=total){
-			//mandar exeçao
-		}
-		for (PDU p  : ps) {
-			//byte secu = p.getSecurity();
-			//byte tipo = p.getTipo();
-			int num = (p.getOptions()[2]-1);
-			byte[] datapdu = p.getData();
-			if(num==0){
-				//ter atençao a estas manhosices
-				String s = new String(p.getData());
-				int sep = s.indexOf(';', 0);
-				String nome = s.substring(0, sep).replaceFirst(";", "");
-				datapdu = s.substring(sep+1).getBytes();
-				pa.setNome(nome);
-			}
-			bs[num]=datapdu;
-
-		}
-		byte[] musica = new byte[0];
-		for (int i = 0; i < total; i++) {
-			musica = PDU_Buider.concatenarArray(musica, bs[i]);
-		}
-		pa.setSong(musica);
-		pa.setComplete(true);
-		return pa;
-	}
-	
-	
 	static public PDU_APP read(PDU p){
 		String data;
 		PDU_APP pa=null;
@@ -102,17 +62,6 @@ public final class PDU_Reader {
 			pa = new PDU_APP_PROB_RESPONSE(version, campos[0].split("_")[1], campos[1].split("_")[1], 
 					Integer.parseInt(campos[2].split("_")[1]), (int)secu, Long.parseLong(campos[3].split("_")[1]));
 			break;
-		case(PDU.DATA):
-			int tam = p.getOptions()[3];
-			int num =p.getOptions()[2];
-			pa = new PDU_APP_DATA(version, null, null, tam, false,num);
-			break;
-		case(PDU.REQUEST):
-			data = new String(p.getData());
-			//int origem = (int)secu;
-			campos = data.split(";");
-			pa = new PDU_APP_REQUEST(version, campos[0].split("_")[1], campos[1].split("_")[1], Integer.parseInt(campos[2].split("_")[1]), (int)secu,campos[3].split("_")[1]);
-			break;
 		default:
 			break;
 		}
@@ -132,7 +81,7 @@ public final class PDU_Reader {
 			campos = data.split(";");
 			String ip = campos[0].split("_")[1];
 			int porta = Integer.parseInt(campos[1].split("_")[1]);
-			for (int i = 2; i < campos.length; i++) {
+			for (int i = 3; i < campos.length; i++) {
 				String nome = campos[i].split("_")[0];
 				String info = campos[i].split("_")[1];
 				map.put(nome, info);
