@@ -8,10 +8,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Map;
 
-import com.sun.corba.se.impl.ior.NewObjectKeyTemplateBase;
-
 import Common.PDU;
-import Common.PDU_APP_PROB_REQUEST;
 import Common.PDU_Buider;
 import Connection.udpReciver;
 import Connection.udpSender;
@@ -30,6 +27,8 @@ public class ReceiveConectionClient implements Runnable{
 	private DatagramSocket provideSocketUDP; // provide que foi escolhido da lista de respostas (crio com o que vem no map)
 	private Client cliente; //a minha informação
 	private String ipProbiderChooser;
+	private Map<String,Integer> timesProbes;
+	
 	
 	public ReceiveConectionClient(Map<String,String> results, Client cliente){
 		this.resultsRequest=results;
@@ -42,15 +41,13 @@ public class ReceiveConectionClient implements Runnable{
 		this.cliente = cliente;
 		this.ipProbiderChooser=null;
 	}
-	
 
-	private void sendProbeToProvider(){
+	private void sendProbeToProviders(){
 		PDU probeRequest = PDU_Buider.PROB_REQUEST_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.mySocketUDP.getLocalPort());
 		ArrayList<PDU> toSend = new ArrayList<>();
 		toSend.add(probeRequest);
 		
 		//enviar a todos os clientes vieram nos results o probe
-		
 		for(String userANDip : resultsRequest.keySet()){
 			try {
 				String ip = userANDip.split(":")[1];
@@ -60,26 +57,42 @@ public class ReceiveConectionClient implements Runnable{
 				try {
 					udpSEND.sendData();
 				} catch (InterruptedException | IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					this.resultsRequest.remove(userANDip);
+					System.out.println("Não foi possivel enviar o probe");
 				}
-				
-				
-				
 			} catch (NumberFormatException | SocketException | UnknownHostException e) {
 				System.out.println("Não foi possivel abrir a ligação com o cliente com a identificação " + userANDip + " para a porta " + this.resultsRequest.get(userANDip)+".");
 			}
-			
-			
 		}
 	}
 	
-	public ReceiveConectionClient() {
+	
+	
+	private void waitForAllResponses(){
+		int numeroProbesWaiting = resultsRequest.size();
+		while (numeroProbesWaiting>0) {
+			//udpReciver updrec = new udpReciver(sendACK, reciveData, numeroProbesWaiting, numeroProbesWaiting)
+			numeroProbesWaiting--;
+		}
 	}
+	
+	private void chooseProvider(){
+		
+	}
+	
+	
+	private void closeConnections(){
+		
+	}
+	
+	
+	
 	
 	@Override
 	public void run() {
-		//System.out.println("O utilizador " + this.cliente.getUser() + " está ativo para receber trafico UDP na porta " + this.localPortUDP + " para o utilizador " + this.userRequest + " com ip " + this.ipUserRequest+".");
+		sendProbeToProviders();
+		
+		
 		
 	}
 
