@@ -21,7 +21,7 @@ public class UDPsender { //manda musicas
 	private ControlTCP_F controlo;
 	private InetAddress adressToSend;
 	private int portToSend;
-	
+
 	public UDPsender(DatagramSocket dataSend,InetAddress ad,int port, int timeOutTry,
 			int timeOutDesistir, int windowMax, ArrayList<PDU> paraEnvio) {
 		super();
@@ -42,11 +42,11 @@ public class UDPsender { //manda musicas
 		
 			while(controlo.getLastACK()!= controlo.getParaEnvioNUM()){
 				try{
-					//this.controlo.getLock().lock(); //ver se o lock esta bem aqui
-					while(this.controlo.getWindowActualSize()<=0){
+					this.controlo.getLock().lock(); //ver se o lock esta bem aqui
+					//while(this.controlo.getWindowActualSize()<=0){
 						//	possivelEnviar.signalAll(); //nao posso enviar mais vou dizer ao rector de ack para verificar as receçoes
-						this.controlo.getEsperaACK().wait();
-					}
+						//this.controlo.getEsperaACK().wait();
+					//}
 					//lastDataNumSent++; // tenho de enviar o proximo
 					int lastDataNumSent =this.controlo.getLastDataNumSent();
 					byte[] buf = PDU.toBytes(paraEnvio.get(lastDataNumSent)); //envio o seginte ao ultimo ack
@@ -55,7 +55,7 @@ public class UDPsender { //manda musicas
 					dataSend.send(p);
 					this.controlo.diminuiWindowAtual();
 				}finally{
-					//this.controlo.getLock().unlock();
+					this.controlo.getLock().unlock();
 				}
 			}
 	}

@@ -13,13 +13,19 @@ public class RuiEnviar {
 
 	
 	public static void main(String[] args) {
-		String hostToSend="192.168.1.83";
-		int portToSend=51350;
+		String hostToSend="172.26.45.211";
+		int portToSend=58364;
 		DatagramSocket dataSend;
 		try {
 			dataSend = new DatagramSocket(0);
 			ArrayList<PDU> paraEnvio = new ArrayList<>();
-			paraEnvio.add(PDU_Buider.PROB_REQUEST_PDU(1, "rui", hostToSend, dataSend.getLocalPort()));
+			
+			
+			paraEnvio = PDU_Buider.DATA_PDU("/Users/rjaf/Desktop/kit_TP2-2/000001.mp3", "000001.mp3");
+			
+			
+			//paraEnvio.add(PDU_Buider.PROB_REQUEST_PDU(1, "rui", hostToSend, dataSend.getLocalPort()));
+			//paraEnvio.add(PDU_Buider.PROB_REQUEST_PDU(1, "freitas", hostToSend, dataSend.getLocalPort()));
 			
 			try {
 				UDPsender sender = new UDPsender(dataSend,InetAddress.getByName(hostToSend),portToSend, 5, 50, 5, paraEnvio);
@@ -37,6 +43,9 @@ public class RuiEnviar {
 		} catch (SocketException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} catch (IOException e2) {
+			// TODO Auto-generated catch block
+			e2.printStackTrace();
 		}
 		
 	}

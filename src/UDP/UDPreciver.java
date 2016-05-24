@@ -62,10 +62,10 @@ public class UDPreciver { //receve musicas e envia ACK
 		}
 
 		PDU aux = PDU.fromBytes(p.getData());
-		PDU_APP pdata = PDU_Reader.read(aux); //ver para nao ser so data
-		//int numAux = pdata.getNumeration();
-		//int totalSegments = pdata.getBlocos();
-		//if(numAux==1){
+		PDU_APP_DATA pdata = (PDU_APP_DATA) PDU_Reader.read(aux); //ver para nao ser so data
+		int numAux = pdata.getNumeration();
+		int totalSegments = pdata.getBlocos();
+		if(numAux==1){
 			recived=1;
 			this.aReceber.add(aux);
 			//Fazar AcK de 1
@@ -73,7 +73,7 @@ public class UDPreciver { //receve musicas e envia ACK
 		sendACK(recived,p.getAddress(),p.getPort());
 		//recebi um datagram sei quantos quero receber
 		
-		/*while(recived<totalSegments){
+		while(recived<totalSegments){
 			timeouts=0;
 			recive=false;
 			while(timeouts*this.timeOutTry<this.timeOutDesistir && !recive){
@@ -102,8 +102,8 @@ public class UDPreciver { //receve musicas e envia ACK
 				
 			}
 			sendACK(recived,p.getAddress(),p.getPort());
-		}*/
-			
+		}
+		}	
 	}
 	
 	public void closeConnections(){
