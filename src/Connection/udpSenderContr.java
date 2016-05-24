@@ -22,15 +22,19 @@ class udpSenderContr implements Runnable{ //sotrata dos ACK
 	}
 
 	private void control() throws InterruptedException{
-		ArrayList<Integer> ackRecivedList = new ArrayList<>();
+		//ArrayList<Integer> ackRecivedList = new ArrayList<>();
 		//boolean goBack=false;
 		try{
 			//criara a trhead para controlo
 			
 			while(control.getLastACK()!= control.getParaEnvioNUM()){
+				System.out.println("Controlo quero lock");
 				this.control.getLock().lock(); //vou macher nos controlos nesta iteraçao
+				System.out.println("Controlo tenho lock, vou esperar");
+				this.control.getPossivelEnviar().wait();
+				System.out.println("Controlo acordei");
 				if(/*!goBack && */this.control.getWindowActualSize()>0){
-					this.control.getEsperaACK().signal(); //aviso que ja posso enviar
+					this.control.getEsperaACK().signal(); //aviso que ja posso enviar mas vou recber a mesma ack
 					//this.sender.getPossivelEnviar().wait();
 				}
 				//tenho de receber um ack
@@ -53,12 +57,14 @@ class udpSenderContr implements Runnable{ //sotrata dos ACK
 				}
 				//recebi o ack
 				int ackRecived = PDU.fromBytes(this.dp.getData()).getOptions()[3];
+				System.out.println("Recebi ACK" + ackRecived+ " Espera "+ this.control.getLastACK());
 				//ESTOU TODO COMIDO AQUI 
 				if(ackRecived>=this.control.getLastACK()){ //correu bem recebi um ack que estava a espera
 					//mandei o 6 ultima confirmaçao do 3 recebi ack de 5
 					int windowaumeto = ackRecived-this.control.getLastACK();
 					this.control.setLastACK(ackRecived);
 					this.control.aumentaWindowAtual(windowaumeto);
+					System.out.println("Aumentar Janela: " + this.control.getWindowActualSize());
 					//ackRecivedList.add(ackRecived); //digo que ja recebi ate
 					
 				}/*else{ 

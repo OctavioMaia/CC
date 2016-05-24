@@ -20,6 +20,16 @@ public class PDU {
 		return sizebytes;
 	}
 
+	
+	public int getTotal(){
+		 Byte b  = this.op4;
+		 return b.intValue();
+	}
+	
+	public int getNUM(){
+	 Byte b  = this.op3;
+	 return b.intValue();
+	}
 	public void setSizebytes(byte[] sizebytes) {
 		this.sizebytes = sizebytes;
 	}
@@ -41,6 +51,7 @@ public class PDU {
 	 public static final byte CONFIRM =0x09;
 	 public static final byte ACK =0x0A;
 	 public static final byte REGISTER_RESPONSE =0x0B;
+	 public static final byte SREJ=0x0C;
 	 
 	 public static final int MAXDATASIZE= (48*1024)-(7+4);
 	 
@@ -238,6 +249,16 @@ public class PDU {
 
 	public void setData(byte[] data) {
 		this.data = data;
+	}
+
+
+	@Override
+	public String toString() {
+		Byte num=op3;
+		Byte tot=op4;
+		return "AA->PDU [version=" + version + ", security=" + security + ", tipo=" + tipo + ", op1=" + op1 + ", op2=" + op2
+				+ ", op3=" + num.intValue()+ ", op4=" + tot.intValue() + ", sizebytes=" + Arrays.toString(sizebytes) + ", data="
+				+ Arrays.toString(data) + "]";
 	}
 	 
 	
