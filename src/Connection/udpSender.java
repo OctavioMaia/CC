@@ -12,11 +12,12 @@ import Common.PDU;
 
 public class udpSender { //manda musicas
 	
-	private DatagramSocket dataSend; // por onde mando cenas
-	private DatagramSocket ackRecive; // por onde recevo
+	private DatagramPacket dataSend; // por onde mando cenas Cenas do sevidor
+	
+	private DatagramSocket ackRecive; // por onde recevo ACK Sou eu que crio
 	
 	
-	private Thread contolACK; //ver melhor
+	private ControlTCP contolACK; //ver melhor
 	
 	
 	
@@ -41,7 +42,7 @@ public class udpSender { //manda musicas
 	
 	private ControlTCP controlo;
 	
-	public udpSender(DatagramSocket dataSend, DatagramSocket ackRecive, int timeOutTry,
+	public udpSender(DatagramPacket dataSend, DatagramSocket ackRecive, int timeOutTry,
 			int timeOutDesistir, int windowMax, ArrayList<PDU> paraEnvio) {
 		super();
 		this.dataSend = dataSend;
@@ -57,6 +58,7 @@ public class udpSender { //manda musicas
 		//this.lock = new ReentrantLock();
 		//this.esperaACK = this.lock.newCondition();
 		//this.possivelEnviar = this.lock.newCondition();
+		int maxWin = Math.max(windowMax, paraEnvio.size());
 		this.controlo=new ControlTCP(timeOutTry, timeOutDesistir, windowMax, paraEnvio.size());
 	}
 
@@ -64,21 +66,35 @@ public class udpSender { //manda musicas
 
 	public void sendData() throws InterruptedException, IOException{
 			//criara a trhead para controlo
-			
+			Thread t = new Thread(new udpSenderContr (this,this.controlo));
+			t.start();
 			while(controlo.getLastACK()!= controlo.getParaEnvioNUM()){
 				try{
+					System.out.println("espera entrar");
 					this.controlo.getLock().lock(); //ver se o lock esta bem aqui
+					this.controlo.getPossivelEnviar().signalAll();
+					System.out.println("sai");
 					while(this.controlo.getWindowActualSize()<=0){
 						//	possivelEnviar.signalAll(); //nao posso enviar mais vou dizer ao rector de ack para verificar as receçoes
+						System.out.println("espera enviar");
 						this.controlo.getEsperaACK().wait();
 					}
 					//lastDataNumSent++; // tenho de enviar o proximo
 					int lastDataNumSent =this.controlo.getLastDataNumSent();
-					byte[] buf = PDU.toBytes(paraEnvio.get(lastDataNumSent)); //envio o seginte ao ultimo ack
-					this.controlo.setLastDataNumSent(lastDataNumSent+1);
-					DatagramPacket p = new DatagramPacket(buf, buf.length);
-					dataSend.send(p);
-					this.controlo.diminuiWindowAtual();
+					if(lastDataNumSent<paraEnvio.size()){
+						
+						PDU p =paraEnvio.get(lastDataNumSent);
+						/*System.out.println("Numro enviado: "+ p.getOptions()[2]);
+						System.out.println("Numro dito enviado: "+ lastDataNumSent+1);*/
+						byte[] buf = PDU.toBytes(p); //envio o seginte ao ultimo ack
+						
+						this.controlo.setLastDataNumSent(lastDataNumSent+1);
+						dataSend.setData(buf);
+						System.out.println("Numro enviado: "+ p.getOptions()[2]);
+						System.out.println("Numro dito enviado: "+ lastDataNumSent+1);
+						ackRecive.send(dataSend);
+						this.controlo.diminuiWindowAtual();
+					}
 				}finally{
 					this.controlo.getLock().unlock();
 				}
@@ -87,13 +103,13 @@ public class udpSender { //manda musicas
 
 
 
-	public DatagramSocket getDataSend() {
+	public DatagramPacket getDataSend() {
 		return dataSend;
 	}
 
 
 
-	public void setDataSend(DatagramSocket dataSend) {
+	public void setDataSend(DatagramPacket dataSend) {
 		this.dataSend = dataSend;
 	}
 
@@ -110,7 +126,7 @@ public class udpSender { //manda musicas
 	}
 
 
-
+/*
 	public Thread getContolACK() {
 		return contolACK;
 	}
@@ -120,7 +136,7 @@ public class udpSender { //manda musicas
 	public void setContolACK(Thread contolACK) {
 		this.contolACK = contolACK;
 	}
-
+*/
 
 
 	public ArrayList<PDU> getParaEnvio() {
