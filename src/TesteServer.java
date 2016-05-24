@@ -1,15 +1,24 @@
 import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
 import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import Common.*;
+import Connection.Reciver;
+import Connection.Sender;
+import Connection.udpReciver;
+import Connection.udpSender;
 
-public class Teste {
+public class TesteServer {
 	
 	
 	static private int intfromByte(byte[] sizebytes){
@@ -58,7 +67,12 @@ public class Teste {
 		}*/
 		//freitas();
 		//System.out.println(argv[0]);
-		jms();
+		try {
+			jms();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private static void freitas(){
@@ -66,7 +80,7 @@ public class Teste {
 	}
 	
 	
-	static private void jms(){
+	static private void jms() throws IOException, InterruptedException{
 		/*PDU info = PDU_Buider.REGISTER_PDU(1, "JMS", "123", "192.168.1.1", 6970);
 		byte[] infoA = PDU.toBytes(info);
 		PDU info2 = PDU.fromBytes(infoA);
@@ -83,7 +97,7 @@ public class Teste {
 		System.out.println(PDU_Reader.read(PDU.toBytes(amhere)).toString());
 		long millis = System.currentTimeMillis();
 		System.out.println("Time:" + millis);*/
-		try {
+		/*try {
 			ArrayList<PDU> papp = PDU_Buider.DATA_PDU("/Users/joaosilva/Desktop/merda/Stromae - Alors on danse - Radio Edit.mp3", "Stromae - Alors on danse - Radio Edit.mp3");
 			//PDU_APP_DATA pdata = PDU_Reader.read(papp);
 			
@@ -94,7 +108,31 @@ public class Teste {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
+		
+		DatagramSocket servidor = new DatagramSocket(7070);
+		Thread.sleep(7000);
+		int portaservidor = servidor.getLocalPort();
+		
+		System.out.println("Porta: " +portaservidor);
+		/*Scanner in = new Scanner(System.in);
+		in.nextLine();*/
+		/*System.out.println("Vou recever prob");
+		Reciver rec = new Reciver(0, 100000, null, servidor);
+		rec.recive();
+		System.out.println("RECEBIDO prob");
+		PDU p = rec.getRecived().get(0);
+		PDU_APP_PROB_REQUEST pr = (PDU_APP_PROB_REQUEST) PDU_Reader.read(p);
+		String ipPair = pr.getIp();*/
+		int port = 6969;
+		InetAddress address = InetAddress.getByName("127.0.0.1");
+		DatagramPacket cliente = new DatagramPacket(new byte[Reciver.getBuffsize()], 0, Reciver.getBuffsize(), address, port);
+		
+		ArrayList<PDU> papp = PDU_Buider.DATA_PDU("/Users/joaosilva/Desktop/a.mp3", "a.mp3");
+		System.out.println("Li Musica");
+		Sender sender = new Sender(papp, 4, 10000, cliente, servidor);
+		sender.send();
+		System.out.println("Enviado");
 		
 		
 	}

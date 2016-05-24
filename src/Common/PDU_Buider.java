@@ -22,7 +22,8 @@ public final class PDU_Buider {
 		String info = "UN_" + username + ";PW_"+pass+";IP_"+ip+";PT_"+port;
 		byte[] data  = info.getBytes();	
 		byte tam =  (byte) data.length;
-        return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,LOGIN,tam,(byte)0x01,(byte)0x01,data);
+		Integer i=1;
+        return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,LOGIN,tam,i.byteValue(), i.byteValue(),data);
 		
 	}
 	static public PDU LOGOUT_PDU(int tipo/*0 server 1 cliente*/,String username,String pass,String ip , int port){
@@ -30,7 +31,8 @@ public final class PDU_Buider {
 		String info = "UN_" + username + ";PW_"+pass+";IP_"+ip+";PT_"+port;
 		byte[] data  = info.getBytes();	
 		byte tam =  (byte) data.length;
-        return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,LOGOUT,tam,(byte)0x01,(byte)0x01,data);
+		Integer i=1;
+        return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,LOGOUT,tam,i.byteValue(), i.byteValue(),data);
 		
 	}
 
@@ -39,32 +41,38 @@ public final class PDU_Buider {
 		String info = "UN_" + username + ";PW_"+pass+";IP_"+ip+";PT_"+port;
 		byte[] data  = info.getBytes();	
 		byte tam =  (byte) data.length;
-        return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,REGISTO,tam,(byte)0x01,(byte)0x01,data);
+		Integer i=1;
+        return new PDU((byte)0x01,(byte)tipo,PDU.REGISTER,REGISTO,tam,i.byteValue(), i.byteValue(),data);
 		
 	}
 	static public PDU REGISTER_PDU_RESPONSE( int mensagem){
-		PDU ret = new PDU((byte)0x01,(byte)mensagem,PDU.REGISTER_RESPONSE,REGISTO,(byte)0x00,(byte)0x01,(byte)0x01,new byte[0]);
+		Integer i=1;
+		PDU ret = new PDU((byte)0x01,(byte)mensagem,PDU.REGISTER_RESPONSE,REGISTO,(byte)0x00,i.byteValue(), i.byteValue(),new byte[0]);
 		return ret;
 	}
 	
 	static public PDU LOGIN_PDU_RESPONSE( int mensagem){
-		PDU ret = new PDU((byte)0x01,(byte)mensagem,PDU.REGISTER_RESPONSE,LOGIN,(byte)0x00,(byte)0x01,(byte)0x01,new byte[0]);
+		Integer i=1;
+		PDU ret = new PDU((byte)0x01,(byte)mensagem,PDU.REGISTER_RESPONSE,LOGIN,(byte)0x00,i.byteValue(), i.byteValue(),new byte[0]);
 		return ret;
 	}
 	static public PDU LOGOUT_PDU_RESPONSE( int mensagem){
-		PDU ret = new PDU((byte)0x01,(byte)mensagem,PDU.REGISTER_RESPONSE,LOGOUT,(byte)0x00,(byte)0x01,(byte)0x01,new byte[0]);
+		Integer i=1;
+		PDU ret = new PDU((byte)0x01,(byte)mensagem,PDU.REGISTER_RESPONSE,LOGOUT,(byte)0x00,i.byteValue(), i.byteValue(),new byte[0]);
 		return ret;
 	}
 	
 	static public  PDU ARE_YOU_THERE_PDU(String ip, int port, String idUser){ //ver se tem de mandar o ip e porta de respsota
 		String mensagem = "ID_"+idUser+";IP_"+ip+";PT_"+port;
-		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ARE_YOU_THERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
+		Integer i=1;
+		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ARE_YOU_THERE,(byte)0x00,(byte)0x00,i.byteValue(), i.byteValue(),mensagem.getBytes());
 		return ret;
 	}
 	
 	static public  PDU I_AM_HERE_PDU(String ip, int port,String idUser){ //ver se tem de mandar o ip e porta de respsota
 		String mensagem = "ID_"+idUser+";IP_"+ip+";PT_"+port;
-		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.I_AM_HERE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
+		Integer i=1;
+		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.I_AM_HERE,(byte)0x00,(byte)0x00,i.byteValue(), i.byteValue(),mensagem.getBytes());
 		return ret;
 	}
 
@@ -77,7 +85,8 @@ public final class PDU_Buider {
 	 * */
 	static public PDU CONSULT_REQUEST_PDU(int fonte /*0 server 1 cliente*/,String ip, int port, String banda, String musica, String ext, String userID){
 		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port+";BAND_"+banda+";MUSIC_"+musica+";EXT_"+ext;
-		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_REQUEST,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		Integer i=1;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_REQUEST,(byte)0x00,(byte)0x00,i.byteValue(), i.byteValue(),mensagem.getBytes());
 		return ret;
 	}
 	
@@ -92,6 +101,7 @@ public final class PDU_Buider {
 	 * */
 	static public PDU CONSULT_RESPONSE_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port, boolean found, Map<String,String> results ){
 		PDU ret =null;
+		Integer i =1;
 		if(fonte == 0){
 			int total = results.size();
 			String mensagem = "IP_"+ip+";PT_"+port;
@@ -101,14 +111,14 @@ public final class PDU_Buider {
 				String nome =it.next();
 				mensagem += ";"+ nome+"_"+results.get(nome);
 			}
-			ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x00, (byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+			ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x00, (byte)0x00,i.byteValue(), i.byteValue(), mensagem.getBytes());
 		}else{
 			if(found){
 				String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port;
-				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x01, (byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x01, (byte)0x00,i.byteValue(), i.byteValue(), mensagem.getBytes());
 			}else{
 				String mensagem = "ID_"+userID+";IP_"+ip;
-				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x00, (byte)0x00,(byte)0x01,(byte)0x01,mensagem.getBytes());
+				ret =new PDU((byte)0x01, (byte)fonte, PDU.CONSULT_RESPONSE, (byte)0x00, (byte)0x00,i.byteValue(), i.byteValue(),mensagem.getBytes());
 			}
 		}
 		
@@ -119,21 +129,24 @@ public final class PDU_Buider {
 	 */
 	static public PDU PROB_REQUEST_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port){
 		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port;
-		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.PROBE_REQUEST,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		Integer  i =1;
+		PDU ret =  new PDU((byte)0x01, (byte)fonte, PDU.PROBE_REQUEST, (byte)0x00, (byte)0x00, i.byteValue(), i.byteValue(), mensagem.getBytes());
 		return ret;
 		
 	}
 	
 	static public PDU REQUEST_FILE_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port, String musica){
 		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port+";MU_"+musica;
-		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.REQUEST,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		Integer  i =1;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.REQUEST,(byte)0x00,(byte)0x00,i.byteValue(), i.byteValue(), mensagem.getBytes());
 		return ret;
 		
 	}
 	
 	static public PDU PROB_RESPONSE_PDU(int fonte /*0 server 1 cliente*/,String userID,String ip, int port,long timestamp){
 		String mensagem = "ID_"+userID+";IP_"+ip+";PT_"+port+";TS_"+timestamp;
-		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.PROBE_RESPONSE,(byte)0x00,(byte)0x00,(byte)0x01,(byte)0x01, mensagem.getBytes());
+		Integer  i =1;
+		PDU ret = new PDU((byte)0x01, (byte)fonte, PDU.PROBE_RESPONSE,(byte)0x00,(byte)0x00,i.byteValue(), i.byteValue(), mensagem.getBytes());
 		return ret;
 	}
 	static public ArrayList<PDU> DATA_PDU(String path,String song) throws IOException{
@@ -148,16 +161,35 @@ public final class PDU_Buider {
 			if(i==0){
 				mensagem = concatenarArray((song+";").getBytes(),mensagem);
 			}
-			PDU p = new PDU((byte)0x01, (byte)0x00, PDU.DATA,(byte)0x00,(byte)0x00,(byte)(i+1),(byte)totalPDUs, mensagem);
+			Integer i1 = i+1;
+			Integer i2 = totalPDUs;
+			PDU p = new PDU((byte)0x01, (byte)0x00, PDU.DATA,(byte)0x00,(byte)0x00,i1.byteValue(),i2.byteValue(), mensagem);
 			ret.add(p);
 		}
 		return ret;
 	}
 	
 	static public PDU ACK_PDU( int num){
-		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ACK,REGISTO,(byte)0x00,(byte)0x00,(byte)num,new byte[0]);
+		Integer i =num;
+		
+		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.ACK,REGISTO,(byte)0x00,i.byteValue(),i.byteValue(),new byte[0]);
 		return ret;
 	}
+	
+	static public PDU SREJ_PDU(Boolean[] rejec) {
+		Integer i =1;
+		String mensagem="";
+		for (int j = 0; j < rejec.length; j++) {
+			//System.out.println(x);
+			if(rejec[j]==false){
+				mensagem+=j+";";
+			}
+		}
+		
+		PDU ret = new PDU((byte)0x01,(byte)0x00,PDU.SREJ,REGISTO,(byte)0x00,i.byteValue(),i.byteValue(),mensagem.getBytes());
+		return ret;
+	}
+	
 	
 	protected static byte[] concatenarArray(byte[] one, byte[] two){
 		byte[] c = new byte[one.length + two.length];
