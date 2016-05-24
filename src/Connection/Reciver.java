@@ -110,7 +110,7 @@ public class Reciver {
 				//recebi todos que estava
 			}catch(SocketTimeoutException e){
 				//nao recebi todos
-				if(time<this.trys){
+				if(time<this.trys/* && this.done()==false*/){
 					System.out.println("Vou mandar Retry");
 					this.sendRetry();
 					System.out.println("Recebi Retry");

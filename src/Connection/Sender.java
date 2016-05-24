@@ -91,6 +91,9 @@ public class Sender {
 			}catch (SocketTimeoutException  e){
 					System.out.println("nao recebi mais nenhuma rejeiçao");
 					fim=true;
+			}catch(Exception e){
+				e.printStackTrace();
+				throw new RuntimeException("DEu bosta");
 			}
 			
 			for (int i = 0; i < rec.length && !fim; i++) {

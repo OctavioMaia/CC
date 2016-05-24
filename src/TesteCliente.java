@@ -53,7 +53,7 @@ public class TesteCliente {
 		send.send();
 		System.out.println("prob enviado");
 		*/
-		Reciver rec = new Reciver(3, 10000, destino, cliente);
+		Reciver rec = new Reciver(10, 10000, destino, cliente);
 		System.out.println("Vou receber musica");
 		rec.recive();
 		System.out.println("musica Recebida");

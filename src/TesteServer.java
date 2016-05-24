@@ -130,7 +130,7 @@ public class TesteServer {
 		
 		ArrayList<PDU> papp = PDU_Buider.DATA_PDU("/Users/joaosilva/Desktop/a.mp3", "a.mp3");
 		System.out.println("Li Musica");
-		Sender sender = new Sender(papp, 4, 10000, cliente, servidor);
+		Sender sender = new Sender(papp, 10, 10000, cliente, servidor);
 		sender.send();
 		System.out.println("Enviado");
 		

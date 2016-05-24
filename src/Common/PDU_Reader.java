@@ -11,8 +11,8 @@ public final class PDU_Reader {
 	static public PDU_APP_DATA read(ArrayList<PDU> ps){
 		PDU_APP_DATA pa=null;
 		byte version = ps.get(0).getVersion();
-		Byte b = ps.get(0).getOptions()[3];
-		int total = b.intValue();
+		PDU p1 = ps.get(0);
+		int total =p1.getTotal();
 		byte[][] bs = new byte[total][];
 		pa=new PDU_APP_DATA(version);
 		pa.setBlocos(total);
@@ -22,8 +22,7 @@ public final class PDU_Reader {
 		for (PDU p  : ps) {
 			//byte secu = p.getSecurity();
 			//byte tipo = p.getTipo();
-			Byte by = (p.getOptions()[2]);
-			int num = by.intValue();
+			int num = p.getNUM()-1;
 			byte[] datapdu = p.getData();
 			if(num==0){
 				//ter atençao a estas manhosices
@@ -118,11 +117,14 @@ public final class PDU_Reader {
 		case(PDU.SREJ):
 			ArrayList<Integer> recived = new ArrayList<>();
 			data = new String(p.getData());
-			//int origem = (int)secu;
-			campos = data.split(";");
-			for (String string : campos) {
-				recived.add(Integer.parseInt(string));
+			if(!data.isEmpty()){
+				//int origem = (int)secu;
+				campos = data.split(";");
+				for (String string : campos) {
+					recived.add(Integer.parseInt(string));
+				}
 			}
+			
 			pa= new PDU_APP_SREJ(version, recived);
 			//pa = new PDU_APP_REQUEST(version, campos[0].split("_")[1], campos[1].split("_")[1], Integer.parseInt(campos[2].split("_")[1]), (int)secu,campos[3].split("_")[1]);
 		break;
