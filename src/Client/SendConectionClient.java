@@ -15,8 +15,7 @@ public class SendConectionClient implements Runnable{
 	@Override
 	public void run() {
 		while(!probeReceive && requestToSend){
-			udpReciver udpRec = new udpReciver(sendACK, reciveData, timeOutTry, timeOutDesistir);
-		
+			//udpReciver udpRec = new udpReciver(sendACK, reciveData, timeOutTry, timeOutDesistir);
 		}
 	}
 
