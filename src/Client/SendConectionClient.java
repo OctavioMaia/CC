@@ -49,6 +49,7 @@ public class SendConectionClient implements Runnable{
 		try {
 			//receber o probeRequest
 			receive = new Reciver(trys, timeWait, myPair, mySocket);
+			receive.recive();
 			recivedPDUs = receive.getRecived();
 			PDU_APP_PROB_REQUEST pduRequest = (PDU_APP_PROB_REQUEST) PDU_Reader.read(recivedPDUs.get(0));
 		
@@ -59,9 +60,11 @@ public class SendConectionClient implements Runnable{
 			PDU probeResponse = PDU_Buider.PROB_RESPONSE_PDU(1, user.getUser(), mySocket.getLocalAddress().getHostAddress(), mySocket.getLocalPort(), System.currentTimeMillis());
 			toSend.add(probeResponse);
 			send = new Sender(toSend, trys, timeWait, myPair, mySocket);
+			send.send();
 			
 			//tentativa para receber 
 			receive = new Reciver(trys, timeWait, myPair, mySocket);
+			receive.recive();
 			recivedPDUs = receive.getRecived();
 			if(PDU_Reader.read(recivedPDUs.get(0)).getClass().getSimpleName().equals("PDU_APP_REQUEST")){
 				//confirmação de que o pdu que recebemos é o request do ficheiro(fomos o cliente escolhido)
@@ -69,7 +72,7 @@ public class SendConectionClient implements Runnable{
 				send = new Sender(toSend, trys, timeWait, myPair, mySocket);
 				//ver como posso confirmar que foram enviados todos os ficherios data
 			};
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println("Não foi possivel terminar a connecção");
 		}

@@ -147,7 +147,7 @@ public final class PDU_Reader {
 			campos = data.split(";");
 			String ip = campos[0].split("_")[1];
 			int porta = Integer.parseInt(campos[1].split("_")[1]);
-			for (int i = 2; i < campos.length; i++) {
+			for (int i = 3; i < campos.length; i++) {
 				String nome = campos[i].split("_")[0];
 				String info = campos[i].split("_")[1];
 				map.put(nome, info);

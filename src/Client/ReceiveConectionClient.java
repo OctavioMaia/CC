@@ -51,6 +51,7 @@ public class ReceiveConectionClient implements Runnable{
 		//enviar a todos os clientes vieram nos results o probe
 		for(String userANDip : resultsRequest.keySet()){
 			try {
+				System.out.println("Teste:"+ userANDip );
 				String ip = userANDip.split(":")[1];
 				System.out.println("Vou enviar probe para o ip -> " + ip );
 				
@@ -98,6 +99,8 @@ public class ReceiveConectionClient implements Runnable{
 		return probesRecevidos;
 	}
 	
+	
+	
 	private void chooseProvider(){
 		
 	}
@@ -113,9 +116,10 @@ public class ReceiveConectionClient implements Runnable{
 	@Override
 	public void run() {
 		sendProbeToProviders();
-		
-		
-		
+		ArrayList<PDU> r = waitForAllResponses();
+		for(PDU p : r){
+			System.out.println(p.toString());
+		}
 	}
 
 }
