@@ -1,16 +1,24 @@
 package Client;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Map;
 
+
 import Common.PDU;
+import Common.PDU_APP;
+import Common.PDU_APP_DATA;
+import Common.PDU_APP_PROB_RESPONSE;
 import Common.PDU_Buider;
+import Common.PDU_Reader;
 import Connection.Reciver;
 import Connection.Sender;
 
@@ -26,7 +34,8 @@ public class ReceiveConectionClient implements Runnable{
 	
 	private Map<String,String> resultsRequest; //resultados do request
 	private DatagramSocket mySocketUDP; //o meu socket (sou eu a criar )
-	private DatagramPacket provideSocketUDP; // provide que foi escolhido da lista de respostas (crio com o que vem no map)
+	private DatagramPacket myPairTransfFile;
+	private PDU_APP_PROB_RESPONSE pduProbeRespChoose;
 	private Client cliente; //a minha informação
 	private String ipProbiderChooser;
 	private Map<String,Integer> timesProbes;
@@ -35,15 +44,17 @@ public class ReceiveConectionClient implements Runnable{
 	public ReceiveConectionClient(Map<String,String> results, Client cliente) throws SocketException{
 		this.resultsRequest=results;
 		this.mySocketUDP = new DatagramSocket(0);
-		this.provideSocketUDP = null;
+		this.pduProbeRespChoose = null;
+		byte[] buf = new byte[maxSize];
+		this.myPairTransfFile = new DatagramPacket(buf, buf.length);
 		this.cliente = cliente;
 		this.ipProbiderChooser=null;
 	}
 
 	private void sendProbeToProviders(){
-		
 		byte[] buf = new byte[maxSize];
 		DatagramPacket dataSend;
+		
 		PDU probeRequest = PDU_Buider.PROB_REQUEST_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.mySocketUDP.getLocalPort());
 		ArrayList<PDU> toSend = new ArrayList<>();
 		toSend.add(probeRequest);
@@ -73,16 +84,12 @@ public class ReceiveConectionClient implements Runnable{
 	
 	
 	private ArrayList<PDU> waitForAllResponses(){
-		int numeroProbesWaiting = resultsRequest.size();
 		byte[] buf = new byte[maxSize];
 		DatagramPacket dataPair;
 		
 		ArrayList<PDU> probesRecevidos = new ArrayList<>();
-
-		
-		
+	
 		for(String userANDip : resultsRequest.keySet()){
-			
 				String ip = userANDip.split(":")[1];
 				System.out.println("Vou receber probe do ip -> " + ip );
 				try {
@@ -101,25 +108,70 @@ public class ReceiveConectionClient implements Runnable{
 	
 	
 	
-	private void chooseProvider(){
+	private void chooseProvider(ArrayList<PDU> probeResponse) throws IOException{
+		PDU_APP aux;
+		for(PDU pdu : probeResponse){
+			aux = PDU_Reader.read(pdu);
+			
+			if(aux.getClass().getSimpleName().equals("PDU_APP_PROB_RESPONSE")){
+				PDU_APP_PROB_RESPONSE pduR = (PDU_APP_PROB_RESPONSE) aux;
+				if(this.pduProbeRespChoose!=null){
+					if(pduR.getTimestamp() > this.pduProbeRespChoose.getTimestamp()){
+						this.pduProbeRespChoose = pduR;
+					}
+				}else{
+					this.pduProbeRespChoose = pduR;
+				}
+			}
+		}
 		
+		
+		myPairTransfFile.setAddress(InetAddress.getByName(this.pduProbeRespChoose.getIp()));
+		myPairTransfFile.setPort(this.pduProbeRespChoose.getPort());
+		
+		ArrayList<PDU> toSend = new ArrayList<>();
+		toSend.add(PDU_Buider.REQUEST_FILE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), this.mySocketUDP.getLocalPort(), "Ver o que se vai enviar aqui"));
+		
+		Sender sendRequestFile = new Sender(toSend, trys, timeWait, myPairTransfFile, mySocketUDP);
+		sendRequestFile.send();
+		
+		/*foi enviado ao cliente que tem a musica e que foi escolhido 
+		 *o pedido para enviar o ficheiro
+		 */
 	}
 	
-	
-	private void closeConnections(){
-		
+	private void receiveFile() throws IOException{
+		Reciver recive = new Reciver(trys, timeWait,myPairTransfFile, mySocketUDP);
+		recive.recive();
+		ArrayList<PDU> rec = recive.getRecived();
+		if(rec.size()!=0){
+			PDU_APP_DATA pduDATA = PDU_Reader.read(rec);
+			//criar ficlherio de audio
+			File f = new File(this.cliente.getFolderMusic(), "naosei.mp3");
+			Files.write(f.toPath(), pduDATA.getSong(), StandardOpenOption.CREATE);
+			//dados guradados no ficheiro
+		}
 	}
-	
-	
-	
-	
+		
 	@Override
 	public void run() {
+		Thread.currentThread().setName("ReceiveConectionClient");
+		System.out.println("Vou enviar os probes ao cliente que me responderam");
 		sendProbeToProviders();
-		ArrayList<PDU> r = waitForAllResponses();
-		for(PDU p : r){
-			System.out.println(p.toString());
+		System.out.println("Vou ficar a escuta pelas respostas");
+		ArrayList<PDU> response = waitForAllResponses();
+		for(PDU p : response){
+			System.out.println("Probe Resposnse recebido: "+p.toString());
 		}
+		if(response.size()!=0){
+			try {
+				chooseProvider(response);
+				receiveFile();
+			} catch (IOException e) {
+				System.out.println("Não foi possivel realizar o pedido de musica a nenhum dos clientes que erespondeu afirmativamente");
+			}
+		}
+		mySocketUDP.close();
 	}
 
 }

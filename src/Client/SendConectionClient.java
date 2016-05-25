@@ -1,17 +1,13 @@
 package Client;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 
 import Common.PDU;
 import Common.PDU_APP_PROB_REQUEST;
-import Common.PDU_APP_REQUEST;
 import Common.PDU_Buider;
 import Common.PDU_Reader;
 import Connection.Reciver;
@@ -40,8 +36,10 @@ public class SendConectionClient implements Runnable{
 		myPair = new DatagramPacket(buf, buf.length);
 	}
 	
+	
 	@Override
 	public void run() {
+		Thread.currentThread().setName("SendConectionClient");
 		Reciver receive;
 		Sender send;
 		ArrayList<PDU> recivedPDUs;
@@ -62,11 +60,11 @@ public class SendConectionClient implements Runnable{
 			send = new Sender(toSend, trys, timeWait, myPair, mySocket);
 			send.send();
 			
-			//tentativa para receber 
+			//tentativa para receber o requestFile
 			receive = new Reciver(trys, timeWait, myPair, mySocket);
 			receive.recive();
 			recivedPDUs = receive.getRecived();
-			if(PDU_Reader.read(recivedPDUs.get(0)).getClass().getSimpleName().equals("PDU_APP_REQUEST")){
+			if(recivedPDUs.size()!=0 && PDU_Reader.read(recivedPDUs.get(0)).getClass().getSimpleName().equals("PDU_APP_REQUEST")){
 				//confirmação de que o pdu que recebemos é o request do ficheiro(fomos o cliente escolhido)
 				toSend = PDU_Buider.DATA_PDU(ficheiroEnvio.getAbsolutePath(), ficheiroEnvio.getName());
 				send = new Sender(toSend, trys, timeWait, myPair, mySocket);
@@ -74,7 +72,7 @@ public class SendConectionClient implements Runnable{
 			};
 		} catch (Exception e) {
 			e.printStackTrace();
-			System.out.println("Não foi possivel terminar a connecção");
+			System.out.println("SendCliente:" + e.getMessage());
 		}
 		
 	}

@@ -13,6 +13,7 @@ public class CheckPingClients implements Runnable{
 
 	@Override
 	public void run() {
+		Thread.currentThread().setName("CheckPingClients");
 		while(main.getState()!=Thread.State.TERMINATED){
 			for(String user : this.server.getOnline()){
 				this.server.checkTimeStampClient(user, CheckPingClients.maxTime);

@@ -118,6 +118,7 @@ public class ClientConnectionServer implements Runnable{
 	
 	@Override
 	public void run() {
+		Thread.currentThread().setName("ClientConnectionServer");
 		startServer();
 		while(main.getState()!=Thread.State.TERMINATED && sock.isConnected() ){
 			try {
