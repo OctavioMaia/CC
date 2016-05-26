@@ -74,7 +74,7 @@ public class ReceiveConectionClient implements Runnable{
 					this.resultsRequest.remove(userANDip);
 					System.out.println("Não foi possivel enviar o probe");
 				}
-			} catch (NumberFormatException | UnknownHostException e) {
+			} catch (NumberFormatException | UnknownHostException | SocketException e) {
 				this.resultsRequest.remove(userANDip);
 				System.out.println("Não foi possivel abrir a ligação com o cliente com a identificação " + userANDip + " para a porta " + this.resultsRequest.get(userANDip)+".");
 			}
