@@ -3,6 +3,7 @@ package Connection;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
@@ -22,6 +23,8 @@ public class Reciver {
 	//private DatagramPacket toRecive;
 	private ArrayList<PDU> recived;
 	
+	private InetAddress addr;
+	private int porta;
 	private static final int BuffSize=49*1024;
 	
 	public Reciver(int trys, int timeWait, DatagramPacket pair, DatagramSocket my) throws SocketException {
@@ -36,6 +39,19 @@ public class Reciver {
 		//byte[] data = new byte[BuffSize];
 		//this.toRecive=new DatagramPacket(data, BuffSize);
 	}
+	
+	public void terminate(){
+		this.addr = my.getInetAddress();
+		this.porta =my.getPort();
+		my.close();
+	}
+	
+	public void reconnect() throws SocketException{
+		if(my.isClosed()){
+			this.my = new DatagramSocket(this.porta, this.addr);
+		}
+	}
+	
 	private PDU reciveOne() throws IOException, SocketTimeoutException{
 		byte[] data = new byte[BuffSize];
 		DatagramPacket toRecive = new DatagramPacket(data, BuffSize);

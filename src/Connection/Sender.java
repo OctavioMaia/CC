@@ -3,13 +3,16 @@ package Connection;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.TreeMap;
 
-import Common.PDU;
+import Common.*;
+import Common.PDU_APP;
 import Common.PDU_APP_SREJ;
 import Common.PDU_Reader;
 
@@ -23,14 +26,19 @@ public class Sender {
 	private DatagramPacket pair;
 	private DatagramSocket my;
 	private static final int BuffSize=49*1024;
-	public Sender(ArrayList<PDU> tosend,  int trys, int timeWait,DatagramPacket pair,DatagramSocket my) {
+	
+	
+	//reconectar
+	private InetAddress addr;
+	private int porta;
+	public Sender(ArrayList<PDU> tosend,  int trys, int timeWait,DatagramPacket pair,DatagramSocket my) throws SocketException {
 		super();
 		this.tosend = tosend;
 		this.trys = trys;
 		this.timeWait = timeWait;
 		this.pair=pair;
 		this.my=my;
-		
+		this.my.setSoTimeout(timeWait);
 		this.rec = new boolean[tosend.size()];
 		//assumo que nada foi reconhecido;
 		for (int i = 0; i < rec.length; i++) {
@@ -40,6 +48,17 @@ public class Sender {
 		
 	}
 	
+	public void terminate(){
+		this.addr = my.getInetAddress();
+		this.porta =my.getPort();
+		my.close();
+	}
+	
+	public void reconnect() throws SocketException{
+		if(my.isClosed()){
+			this.my = new DatagramSocket(this.porta, this.addr);
+		}
+	}
 	
 	public void send() throws IOException{
 		int time=0;
@@ -62,6 +81,13 @@ public class Sender {
 			}
 			time++;
 			fim=true; //assumo o fim que tudo foi mandado bem
+			if(tosend.size()==1) { //fo tem um para enviar
+				PDU_APP p = PDU_Reader.read(tosend.get(0));
+				if (p instanceof PDU_APP_PROB_RESPONSE || p instanceof PDU_APP_PROB_REQUEST ) { //esse 1 é um prob nao quero ack
+					return;
+					
+				}
+			}
 			//ja foi tudo enviado
 			//limpara o que manda
 			data =new byte[0];
