@@ -61,12 +61,14 @@ public class ClientConnectionServer implements Runnable{
 	
 	private void execPDU_APP_CONSULT_REQUEST(PDU_APP_CONS_REQ pdu){
 		boolean found=false;
+		File chooser = null;
 		File[] files = new File(this.cliente.getFolderMusic()).listFiles();
 		for(int i=0; i<files.length && !found ;i++){
 			if(files[i].isFile() && files[i].getName().contains(pdu.getBanda()) 
 								 && files[i].getName().contains(pdu.getMusica()) 
 								 && files[i].getName().contains(pdu.getExt()) ){
 				found=true;
+				chooser = files[i];
 			}
 		}
 		if(found){
@@ -74,8 +76,9 @@ public class ClientConnectionServer implements Runnable{
 			DatagramSocket dt;
 			try {
 				dt = new DatagramSocket(0);
-				ClientConectionClient cc = new ClientConectionClient(Thread.currentThread(), this.cliente, dt, pdu.getIdUser(), pdu.getIp());
-				Thread tcc = new Thread(cc);
+				//Criar Thread para o outro cliente enviar o probe e depois nos enviarmos a musica
+				SendConectionClient scc = new SendConectionClient(this.cliente,chooser,dt);
+				Thread tcc = new Thread(scc);
 				tcc.start();
 				PDU pduResponse = PDU_Buider.CONSULT_RESPONSE_PDU(1, this.cliente.getUser(), this.cliente.getIp(), dt.getLocalPort(), true, null );
 				try {
@@ -98,7 +101,6 @@ public class ClientConnectionServer implements Runnable{
 		}
 	}
 	
-	
 	/*
 	 * Função que vai invocar outras funçoes de acordo com
 	 * o tipo de pdu que receber
@@ -116,6 +118,7 @@ public class ClientConnectionServer implements Runnable{
 	
 	@Override
 	public void run() {
+		Thread.currentThread().setName("ClientConnectionServer");
 		startServer();
 		while(main.getState()!=Thread.State.TERMINATED && sock.isConnected() ){
 			try {

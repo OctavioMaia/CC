@@ -144,7 +144,7 @@ public class ClientInfo {
 					PDU_APP_CONS_RESP pduResponse = ((PDU_APP_CONS_RESP)pdu);
 					if(pduResponse.getFonte()==1){
 						if(pduResponse.isFound()){
-							resp.put(pduResponse.getIp(), ""+pduResponse.getPort());
+							resp.put(this.user+":"+pduResponse.getIp(), ""+pduResponse.getPort());
 						}
 					}else{
 						resp.putAll(pduResponse.getResult());

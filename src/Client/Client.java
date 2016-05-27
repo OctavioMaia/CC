@@ -199,7 +199,10 @@ public class Client{
 				PDU_APP pduResponse = PDUVersion.readPDU(is);
 				if(pduResponse.getClass().getSimpleName().equals("PDU_APP_CONS_RESP")){
 					result = ((PDU_APP_CONS_RESP) pduResponse).getResult();
+					Thread trcc = new Thread( new ReceiveConectionClient(result, this) );
+					trcc.start();
 				}
+
 			} catch (IOException e) {
 				System.out.println("Não foi possivel receber a resposta da consulta por parte do servidor");
 				e.printStackTrace();

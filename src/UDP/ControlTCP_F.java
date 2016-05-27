@@ -1,4 +1,4 @@
-package Connection;
+package UDP;
 
 import java.util.ArrayList;
 import java.util.concurrent.locks.Condition;
@@ -8,7 +8,7 @@ import com.sun.swing.internal.plaf.synth.resources.synth;
 
 import Common.PDU;
 
-public class ControlTCP {
+public class ControlTCP_F {
 
 	private ReentrantLock lock;
 	private Condition esperaACK;
@@ -22,7 +22,7 @@ public class ControlTCP {
 	private int lastACK; //ultimo ack recebido pois pode vir o 5 e depois o 4
 	private int paraEnvioNUM; //total de pacotes a enviar
 
-	public ControlTCP( int timeOutTry, int timeOutDesistir, int windowMax, int paraEnvioNUM) {
+	public ControlTCP_F( int timeOutTry, int timeOutDesistir, int windowMax, int paraEnvioNUM) {
 		super();
 		this.lock = new ReentrantLock();
 		this.esperaACK = this.lock.newCondition();

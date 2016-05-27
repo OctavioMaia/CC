@@ -149,6 +149,7 @@ public class ReceiverClientThread implements Runnable{
     }
     
     public void run() {
+    	Thread.currentThread().setName("ReceiverClientThread");
     	while(sockRegisto.isConnected()){
 			try {
 				PDU_APP pdu = PDUVersion.readPDU(isRegisto);
