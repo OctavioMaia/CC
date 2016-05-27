@@ -83,6 +83,7 @@ public class Reciver {
 		//byte[] data=null;
 		 
 		PDU p  = PDU_Buider.SREJ_PDU(this.rec);
+		System.out.println("testeSREJ"+p.toString());
 		pair.setData(PDU.toBytes(p));
 		my.send(this.pair);
 	}

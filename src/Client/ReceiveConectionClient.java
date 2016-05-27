@@ -44,6 +44,7 @@ public class ReceiveConectionClient implements Runnable{
 	public ReceiveConectionClient(Map<String,String> results, Client cliente) throws SocketException{
 		this.resultsRequest=results;
 		this.mySocketUDP = new DatagramSocket(0);
+		mySocketUDP.setReceiveBufferSize(PDU.MAXDATASIZE*51);
 		this.pduProbeRespChoose = null;
 		byte[] buf = new byte[maxSize];
 		this.myPairTransfFile = new DatagramPacket(buf, buf.length);

@@ -55,7 +55,7 @@ public class SendConectionClient implements Runnable{
 			myPair.setPort(pduRequest.getPort());
 			
 			//enviar probeResponse
-			PDU probeResponse = PDU_Buider.PROB_RESPONSE_PDU(1, user.getUser(), mySocket.getLocalAddress().getHostAddress(), mySocket.getLocalPort(), System.currentTimeMillis());
+			PDU probeResponse = PDU_Buider.PROB_RESPONSE_PDU(1, user.getUser(), this.user.getIp(), mySocket.getLocalPort(), System.currentTimeMillis());
 			toSend.add(probeResponse);
 			send = new Sender(toSend, trys, timeWait, myPair, mySocket);
 			send.send();
@@ -67,7 +67,8 @@ public class SendConectionClient implements Runnable{
 			if(recivedPDUs.size()!=0 && PDU_Reader.read(recivedPDUs.get(0)).getClass().getSimpleName().equals("PDU_APP_REQUEST")){
 				//confirmação de que o pdu que recebemos é o request do ficheiro(fomos o cliente escolhido)
 				toSend = PDU_Buider.DATA_PDU(ficheiroEnvio.getAbsolutePath(), ficheiroEnvio.getName());
-				send = new Sender(toSend, trys, timeWait, myPair, mySocket);
+				send = new Sender(toSend, trys, 20000, myPair, mySocket);
+				send.send();
 				//ver como posso confirmar que foram enviados todos os ficherios data
 			};
 		} catch (Exception e) {

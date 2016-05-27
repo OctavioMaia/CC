@@ -102,8 +102,14 @@ public class Sender {
 				//while(erroR<tosend.size()){
 					System.out.println("ESpera de recebetr para mandar de novo");
 					this.my.receive(erroRecebido);
+					System.out.println("Recevi");
 					erro=PDU.fromBytes(erroRecebido.getData());
 					//ver o ack
+					PDU_APP pap = PDU_Reader.read(erro);
+					if(!(pap instanceof PDU_APP_SREJ)){
+						System.out.println("Não foi SREJ vou sair");
+						return;
+					}
 					PDU_APP_SREJ srej = (PDU_APP_SREJ)PDU_Reader.read(erro);
 					//indixErro=erro.getNUM()-1;
 					ArrayList<Integer> erronum = srej.getRetransmit();
