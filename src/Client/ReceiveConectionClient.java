@@ -37,8 +37,6 @@ public class ReceiveConectionClient implements Runnable{
 	private DatagramPacket myPairTransfFile;
 	private PDU_APP_PROB_RESPONSE pduProbeRespChoose;
 	private Client cliente; //a minha informação
-	private String ipProbiderChooser;
-	private Map<String,Integer> timesProbes;
 	
 	
 	public ReceiveConectionClient(Map<String,String> results, Client cliente) throws SocketException{
@@ -49,7 +47,6 @@ public class ReceiveConectionClient implements Runnable{
 		byte[] buf = new byte[maxSize];
 		this.myPairTransfFile = new DatagramPacket(buf, buf.length);
 		this.cliente = cliente;
-		this.ipProbiderChooser=null;
 	}
 
 	private void sendProbeToProviders(){
@@ -148,7 +145,7 @@ public class ReceiveConectionClient implements Runnable{
 		if(rec.size()!=0){
 			PDU_APP_DATA pduDATA = PDU_Reader.read(rec);
 			//criar ficlherio de audio
-			File f = new File(this.cliente.getFolderMusic(), "naosei.mp3");
+			File f = new File(this.cliente.getFolderMusic(), pduDATA.getNome());
 			Files.write(f.toPath(), pduDATA.getSong(), StandardOpenOption.CREATE);
 			//dados guradados no ficheiro
 		}
