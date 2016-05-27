@@ -1,46 +1,47 @@
-package Connection;
+package UDP;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.SocketException;
 import java.util.ArrayList;
 
 import Common.PDU;
+import Common.PDU_APP;
 import Common.PDU_APP_DATA;
 import Common.PDU_Buider;
 import Common.PDU_Reader;
 
-public class udpReciver { //receve musicas e envia ACK
+public class UDPreciver { //receve musicas e envia ACK
 	private  final static int sizeBuffer=48*1024;
-	private DatagramSocket sendACK; // por onde mando cenas
+	//private DatagramSocket sendACK; // por onde mando cenas
 	private DatagramSocket reciveData; // por onde recevo
 	private int timeOutTry; // se passar este temoo mandar ultimo ack
 	private int timeOutDesistir; //mandar cominicaçao para as couves
 	private int recived;
 	private ArrayList<PDU> aReceber; //onde vou meter as coisas que recebo
 
-	public udpReciver(DatagramSocket sendACK, DatagramSocket reciveData, int timeOutTry, int timeOutDesistir) throws SocketException {
+	public UDPreciver(DatagramSocket reciveData, int timeOutTry, int timeOutDesistir) throws SocketException {
 		super();
-		this.sendACK = sendACK;
 		this.reciveData = reciveData;
 		this.timeOutTry = timeOutTry;
 		this.timeOutDesistir = timeOutDesistir;
 		this.aReceber = new ArrayList<>();
-		this.reciveData.setSoTimeout(timeOutTry);
+		//this.reciveData.setSoTimeout(timeOutTry);
 		this.recived=0;
 
 	}
 
-	private void sendACK(int num) throws IOException{
+	private void sendACK(int num, InetAddress adress, int port) throws IOException{
 		PDU ack = PDU_Buider.ACK_PDU(num);
 		byte[] bytes = PDU.toBytes(ack);
-		sendACK.send(new DatagramPacket(bytes, bytes.length));
+		reciveData.send(new DatagramPacket(bytes, bytes.length,adress,port));
 	}
 
 	
 	public void recive() throws IOException{
-		byte[] buf = new byte[udpReciver.sizeBuffer];
+		byte[] buf = new byte[UDPreciver.sizeBuffer];
 		DatagramPacket p = new DatagramPacket(buf, sizeBuffer);
 		int timeouts=0;
 		
@@ -51,26 +52,25 @@ public class udpReciver { //receve musicas e envia ACK
 				timeouts=0;
 				recive=true;
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				if(timeouts*this.timeOutTry>=this.timeOutDesistir){
 					throw new RuntimeException("TimeOUT");
 				}
-				sendACK(recived);
 				timeouts++;
+				sendACK(recived,p.getAddress(),p.getPort());
 			}
 		}
 
 		PDU aux = PDU.fromBytes(p.getData());
-		PDU_APP_DATA pdata = (PDU_APP_DATA)PDU_Reader.read(aux); //ver para nao ser so data
+		PDU_APP_DATA pdata = (PDU_APP_DATA) PDU_Reader.read(aux); //ver para nao ser so data
 		int numAux = pdata.getNumeration();
 		int totalSegments = pdata.getBlocos();
 		if(numAux==1){
 			recived=1;
 			this.aReceber.add(aux);
 			//Fazar AcK de 1
-		}
-		sendACK(recived);
+		//}
+		sendACK(recived,p.getAddress(),p.getPort());
 		//recebi um datagram sei quantos quero receber
 		
 		while(recived<totalSegments){
@@ -87,7 +87,7 @@ public class udpReciver { //receve musicas e envia ACK
 					if(timeouts*this.timeOutTry>=this.timeOutDesistir){
 						throw new RuntimeException("TimeOUT");
 					}
-					sendACK(recived);
+					sendACK(recived,p.getAddress(),p.getPort());
 					timeouts++;
 				}
 			}
@@ -101,22 +101,16 @@ public class udpReciver { //receve musicas e envia ACK
 				//Fazar AcK de recived
 				
 			}
-			sendACK(recived);
+			sendACK(recived,p.getAddress(),p.getPort());
 		}
-			
+		}	
 	}
 	
 	public void closeConnections(){
 		this.reciveData.close();
-		this.sendACK.close();
+		//this.sendACK.close();
 	}
 
-	public DatagramSocket getSendACK() {
-		return sendACK;
-	}
-	public void setSendACK(DatagramSocket sendACK) {
-		this.sendACK = sendACK;
-	}
 	public DatagramSocket getReciveData() {
 		return reciveData;
 	}
@@ -143,7 +137,7 @@ public class udpReciver { //receve musicas e envia ACK
 	}
 	@Override
 	public String toString() {
-		return "udpReciver [sendACK=" + sendACK + ", reciveData=" + reciveData + ", timeOutTry=" + timeOutTry
+		return "udpReciver [reciveData=" + reciveData + ", timeOutTry=" + timeOutTry
 				+ ", timeOutDesistir=" + timeOutDesistir + ", aReceber=" + aReceber + "]";
 	}
 	@Override
@@ -152,7 +146,6 @@ public class udpReciver { //receve musicas e envia ACK
 		int result = 1;
 		result = prime * result + ((aReceber == null) ? 0 : aReceber.hashCode());
 		result = prime * result + ((reciveData == null) ? 0 : reciveData.hashCode());
-		result = prime * result + ((sendACK == null) ? 0 : sendACK.hashCode());
 		result = prime * result + timeOutDesistir;
 		result = prime * result + timeOutTry;
 		return result;
@@ -165,7 +158,7 @@ public class udpReciver { //receve musicas e envia ACK
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		udpReciver other = (udpReciver) obj;
+		UDPreciver other = (UDPreciver) obj;
 		if (aReceber == null) {
 			if (other.aReceber != null)
 				return false;
@@ -175,11 +168,6 @@ public class udpReciver { //receve musicas e envia ACK
 			if (other.reciveData != null)
 				return false;
 		} else if (!reciveData.equals(other.reciveData))
-			return false;
-		if (sendACK == null) {
-			if (other.sendACK != null)
-				return false;
-		} else if (!sendACK.equals(other.sendACK))
 			return false;
 		if (timeOutDesistir != other.timeOutDesistir)
 			return false;

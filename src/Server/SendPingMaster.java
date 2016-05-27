@@ -18,6 +18,7 @@ public class SendPingMaster implements Runnable{
 	
 	@Override
 	public void run() {
+		Thread.currentThread().setName("SendPingMaster");
 		while(main.getState()!=Thread.State.TERMINATED){
 			try {
 				Thread.sleep(maxTimeSend);
