@@ -44,7 +44,7 @@ public class MusicSearch extends JFrame {
 					    JOptionPane.PLAIN_MESSAGE);
 			}else{
 				JOptionPane.showMessageDialog(this,
-					    "Existem utilizadores com esta musica mas a função de comunicação ainda nao está disponivel",
+					    "Existem utilizadores com esta musica o processo de transferencia será iniciado",
 					    "Music Request Message",
 					    JOptionPane.PLAIN_MESSAGE);
 			}
