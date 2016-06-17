@@ -111,18 +111,12 @@ public class ReceiverClientThread implements Runnable{
         		System.out.println("Login realizado com sucesso: " + pdu.getUname() + " -> " + pdu.getIp() +":"+pdu.getPort());
         	} catch (IOException e) {
     			System.out.println("Não foi possivel abrir o socktConsulta");
-    			try {
-					this.user.getSockConsulta().close();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
     			mensagem=4;
     			e.printStackTrace();
     		}
     	}
     	
     	PDU respPDU = PDU_Buider.LOGIN_PDU_RESPONSE(mensagem);
-
     	
     	try {
 			osRegisto.write(PDU.toBytes(respPDU));
@@ -130,6 +124,9 @@ public class ReceiverClientThread implements Runnable{
 			System.out.println("Não foi possivel enviar a mensagem de registo");
 			e.printStackTrace();
 		}
+    	
+    	
+    	
     }
     
     private void app_registo(PDU_APP_REG pdu){

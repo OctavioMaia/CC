@@ -18,7 +18,7 @@ import Connection.Sender;
 public class SendConectionClient implements Runnable{
 	
 	public static final int trys = 20;
-	public static final int timeWait = 6000; 
+	public static final int timeWait = 30000; 
 	public static final int maxSize = 48*1029;
 	
 
@@ -35,7 +35,6 @@ public class SendConectionClient implements Runnable{
 		byte[] buf = new byte[maxSize];
 		myPair = new DatagramPacket(buf, buf.length);
 	}
-	
 	
 	@Override
 	public void run() {
